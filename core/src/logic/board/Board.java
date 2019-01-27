@@ -2,6 +2,7 @@ package logic.board;
 
 import logic.board.cell.Cell;
 import logic.naturalDisasters.NaturalDisastersController;
+import logic.player.Player;
 
 import java.util.ArrayList;
 

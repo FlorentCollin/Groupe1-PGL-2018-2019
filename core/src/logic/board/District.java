@@ -2,6 +2,7 @@ package logic.board;
 
 import logic.board.cell.Cell;
 import logic.item.Capital;
+import logic.player.Player;
 
 public class District {
 	private Player player;
