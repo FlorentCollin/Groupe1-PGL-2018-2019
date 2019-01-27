@@ -1,5 +1,6 @@
 package logic.board.cell;
 
+import logic.board.District;
 import logic.item.Item;
 
 public class Cell {
