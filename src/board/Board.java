@@ -1,3 +1,9 @@
+import java.util.ArrayList;
+
+package board
+
+import cell.Cell;
+
 public class Board{
 	private Cell[][] board;
 	private int columns, rows;
