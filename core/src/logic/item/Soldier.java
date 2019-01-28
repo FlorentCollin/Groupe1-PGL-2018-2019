@@ -4,6 +4,7 @@ public class Soldier extends Item{
 	private SoldierLevel level;
 	
 	public Soldier() {
+		this.mode = Mode.all;
 		this.level = SoldierLevel.level1;
 	}
 	
