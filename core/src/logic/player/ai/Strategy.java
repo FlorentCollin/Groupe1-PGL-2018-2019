@@ -8,19 +8,19 @@ import logic.item.Soldier;
 import logic.player.Player;
 
 public abstract class Strategy {
-	
+
 	public Strategy() {
-		
+
 	}
-	
+
 	/*
-	 * Permet de déplacer un soldat sur la carte
-	 * @param soldier le soldat à déplacer
+	 * Permet de dÃ©placer un soldat sur la carte
+	 * @param soldier le soldat Ã  dÃ©placer
 	 * */
 	public void move(Soldier soldier) {
 		/* TO DO */
 	}
-	
+
 	/*
 	 * Permet d'acheter un soldat
 	 * @return un nouveau soldat
@@ -29,45 +29,45 @@ public abstract class Strategy {
 		/* TO DO */
 		return null;
 	}
-	
+
 	/*
 	 * Permet de placer un soldat nouvellement acheter sur le plateau de jeu
-	 * @param soldier le soldat à placer
+	 * @param soldier le soldat Ã  placer
 	 * */
 	public void placeNewSoldier(Soldier soldier) {
 		/* TO DO */
 	}
-	
+
 	/*
-	 * Permet d'attaquer un enemi ciblé
+	 * Permet d'attaquer un enemi ciblÃ©
 	 * @param soldier le soldat avec lequel attaquer
-	 * @param enemy le joueur à attaquer
+	 * @param enemy le joueur Ã  attaquer
 	 * */
 	public void attack(Soldier soldier, Player enemy) {
 		/* to do */
 	}
-	
+
 	/*
-	 * Permet de se défendre
-	 * @param soldier le soldat avec lequel défendre*/
+	 * Permet de se dÃ©fendre
+	 * @param soldier le soldat avec lequel dÃ©fendre*/
 	public void defend(Soldier soldier) {
 		/* to do */
 	}
-	
+
 	/*
-	 * Permet de séléctionner l'enemy à attaquer
-	 * @return le joueur à attaquer
+	 * Permet de sÃ©lÃ©ctionner l'enemy Ã  attaquer
+	 * @return le joueur Ã  attaquer
 	 * */
 	public Player selectEnemy() {
 		/* to do */
 		return null;
 	}
-	
+
 	/*
 	 * Permet de jouer le tour
 	 * */
 	public void play(Board board, ArrayList<Cell> cells, ArrayList<Soldier> soldiers) {
 		/* to do */
 	}
-	
+
 }

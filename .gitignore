@@ -1,2 +1,6 @@
-/!.gradle*/
-/*.class/
+core/build/
+core/out/
+out
+.idea
+*.class
+.gradle/

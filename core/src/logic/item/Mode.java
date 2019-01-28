@@ -1,16 +1,16 @@
 package logic.item;
 
 /* 
- * Cette classe sert à connaître le mode dans lequel se trouve un item.
- * C'est à dire, si il est possible de l'acheter, le déplacer ou encore l'améliorer.
- * De cette façon il est plus aisé d'ajouter d'autres items.
+ * Cette classe sert Ã  connaÃ®tre le mode dans lequel se trouve un item.
+ * C'est Ã  dire, si il est possible de l'acheter, le dÃ©placer ou encore l'amÃ©liorer.
+ * De cette faÃ§on il est plus aisÃ© d'ajouter d'autres items.
  * Si on utilisait des classes on aurait besoin de trois Interface : 
  * 			Buyable
  * 			Movable
  * 			Improvable
- * Ceci rend plus compliqué l'implémentation.
+ * Ceci rend plus compliquÃ© l'implÃ©mentation.
  * 
- * On pourrait changer par des superclasses à la limite en fait ... à voir demain*/
+ * On pourrait changer par des superclasses Ã  la limite en fait ... Ã  voir demain*/
 public enum Mode {
 	onlyBuyable(true, false, false), onlyMovable(false, true, false), onlyImprovable(false, false, true),
 	notByable(false, true, true), notMovable(true, false, true), notImprovable(true, true, false),
