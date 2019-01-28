@@ -13,6 +13,11 @@ public class Board{
 	private ArrayList<District> districts;
 	private NaturalDisastersController naturalDisastersController;
 
-	public Board(int columns, int rows){
+	public Board(int columns, int rows, Player[] players, NaturalDisastersController naturalDisastersController){
+		this.columns = columns;
+		this.rows = rows;
+		board = new Cell[rows][columns];
+		this.players = players;
+		this.naturalDisastersController = naturalDisastersController;
 	}
 }
