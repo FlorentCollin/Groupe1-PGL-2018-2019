@@ -1,8 +1,8 @@
 package unitTests;
 
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 public class test1Test {
 
