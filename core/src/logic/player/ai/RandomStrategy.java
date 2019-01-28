@@ -1,5 +1,7 @@
 package logic.player.ai;
 
-public class RandomStrategy {
-
+public class RandomStrategy extends Strategy{
+	public RandomStrategy() {
+		
+	}
 }
