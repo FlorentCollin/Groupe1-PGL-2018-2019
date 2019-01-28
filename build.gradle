@@ -77,4 +77,5 @@ tasks.eclipse.doLast {
 task cleanBuildDir(type: Delete) {
     delete "${projectDir}/out"
     delete "${projectDir}/core/out"
+    delete "${projectDir}/desktop/out"
 }
