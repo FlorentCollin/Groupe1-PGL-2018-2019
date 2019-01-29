@@ -15,4 +15,8 @@ public class Soldier extends Item{
 		super(player);
 		this.level = level;
 	}
+	
+	public SoldierLevel getLevel() {
+		return this.level;
+	}
 }

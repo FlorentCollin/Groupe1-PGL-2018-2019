@@ -1,5 +1,7 @@
 package logic.board;
 
+import java.util.ArrayList;
+
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.player.Player;
@@ -10,10 +12,11 @@ public class District {
 				numbCell,
 				numbTree;
 	private Capital capital;
-	private Cell[] cells;
+	private ArrayList<Cell> cells;
 	
-	public District() {
-		
+	public District(Player player) {
+		cells = new ArrayList<Cell>();
+		this.player = player;
 	}
 	
 	public void addCell(Cell cell) {
@@ -32,8 +35,16 @@ public class District {
 		this.player = player;
 	}
 	
-	public void calculateGold() {
-		
+	/*
+	 * Permet de calculer le revenu du district
+	 * @return le revenu du district
+	 * */
+	public int calculateGold() {
+		return 0;
+	}
+	
+	public ArrayList<Cell> getCells() {
+		return this.cells;
 	}
 	
 }

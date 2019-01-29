@@ -13,8 +13,16 @@ public abstract class Item {
 	public Item() {
 		
 	}
+	
+	/*
+	 * Permet de savoir si un item peut être achetable, déplaçable ou améliorable
+	 * @return le mode dans lequel se trouve l'item
+	 * */
 	public Mode getMode() {
 		return this.mode;
 	}
 	
+	public Player getPlayer() {
+		return this.player;
+	}
 }

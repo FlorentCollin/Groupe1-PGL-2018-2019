@@ -15,12 +15,7 @@ public class Cell {
 	}
 	
 	public void setItem(Item item) {
-		if(this.item == null) {
-			this.item = item;
-		}
-		else if(this.item.getClass().getSimpleName()=="Item") {
-			/* to do */
-		}
+		this.item = item;
 	}
 	
 }
