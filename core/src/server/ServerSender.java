@@ -18,8 +18,12 @@ public class ServerSender extends Thread{
     @Override
     public void run() {
         while(true) {
-            message = messageToSend.take();
-            // TODO
+            try {
+                message = messageToSend.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
