@@ -75,12 +75,13 @@ public class ServerListener extends Thread{
         }
         //Boucle qui lit les données envoyées par le client et place ces données dans un string
         String messageStr = "";
+        int len;
         do {
             ByteBuffer buffer = ByteBuffer.allocate(100);
             buffer.clear();
-            int len = clientChannel.read(buffer);
+            len = clientChannel.read(buffer);
             messageStr += new String(buffer.array(), StandardCharsets.UTF_8);
-        } while (len != 0 || len != 100);
+        } while (len == 100); //len == 100 indique que l'entièreté du message n'a pas encore été lu
         Message message = gson.fromJson(messageStr, Message.class);
         //TODO
     }

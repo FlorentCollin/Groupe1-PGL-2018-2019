@@ -1,4 +1,5 @@
 package communication;
 
-public class OfflineMessageSender {
+public class OfflineMessageSender extends Thread {
+
 }

@@ -2,7 +2,6 @@ package server;
 
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * Classe donnant des informations sur l'état actuel du server
