@@ -5,6 +5,7 @@ import communication.Message;
 import roomController.RoomController;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -28,6 +29,7 @@ public class ServerListener extends Thread{
         this.messageToSend = messageToSend;
         serverChannel = ServerSocketChannel.open(); //Ouverture du serveur
         serverChannel.configureBlocking(false);
+        serverChannel.bind(new InetSocketAddress(port)); //On lie le serveur au port donné en paramètre
 
         //Création du selector qui retiens les différents clients connectés
         selector = Selector.open();
