@@ -17,6 +17,7 @@ public enum Mode {
 	all(true, true, true), nothing(false, false, false);
 	
 	private boolean buyable, movable, improvable;
+	private int price = 0;
 	
 	Mode(boolean buyable, boolean movable, boolean improvable){
 		this.buyable = buyable;
@@ -34,5 +35,13 @@ public enum Mode {
 	
 	public boolean isImprovable() {
 		return this.improvable;
+	}
+	
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	
+	public int getPrice() {
+		return this.price;
 	}
 }
