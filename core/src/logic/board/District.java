@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import logic.board.cell.Cell;
 import logic.item.Capital;
+import logic.item.Item;
+import logic.item.Soldier;
+import logic.item.Tree;
 import logic.player.Player;
 
 public class District {
 	private Player player;
-	private int gold,
-				numbCell,
-				numbTree;
+	private int gold;
 	private Capital capital;
 	private ArrayList<Cell> cells;
 	
@@ -27,10 +28,6 @@ public class District {
 		cells.remove(cells.indexOf(cell));
 	}
 	
-	public void addTree() {
-		this.numbTree += 1;
-	}
-	
 	public void setCapital(Capital capital) {
 		this.capital = capital;
 	}
@@ -43,8 +40,18 @@ public class District {
 	 * Permet de calculer le revenu du district
 	 * @return le revenu du district
 	 * */
-	public int calculateGold() {
-		return 0;
+	public void calculateGold() {
+		Item item;
+		for(Cell cell : cells) {
+			item = cell.getItem();
+			gold += 1;
+			if(item instanceof Soldier) {
+				gold -= ((Soldier) item).getLevel().getSalary();
+			}
+			else if(item instanceof Tree) {
+				gold -= 1;
+			}
+		}
 	}
 	
 	public ArrayList<Cell> getCells() {
