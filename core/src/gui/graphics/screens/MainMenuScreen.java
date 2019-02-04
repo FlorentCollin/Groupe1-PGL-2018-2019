@@ -20,12 +20,10 @@ public class MainMenuScreen extends MenuScreen implements Screen {
         table.setFillParent(true);
         table.setDebug(true);
         stage.addActor(table);
-        Texture texture = new Texture("play.png");
-        ImageButton play = new ImageButton(new TextureRegionDrawable(new TextureRegion(texture)));
-        ImageButton exit = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture("exit.png"))));
-        table.add(play).uniformX();
-        table.row().pad(10,0,10,0);
-        table.add(exit).uniformX();
+        Skin uiskin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        TextButton button = new TextButton("This is a TextButton", uiskin);
+        table.add(button).uniformX();
+
     }
 
     @Override
@@ -35,7 +33,7 @@ public class MainMenuScreen extends MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0f,0f,0f,1);
+        Gdx.gl.glClearColor(8/255,8/255f,8/255f,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();

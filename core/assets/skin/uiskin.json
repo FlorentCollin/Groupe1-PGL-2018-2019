@@ -1,0 +1,18 @@
+{
+  BitmapFont: {
+    defaultFont: { file: fonts/Lemon_milk/LemonMilk.otf }
+    defaultFontItalic: { file: fonts/Lemon_milk/LemonMilkitalic.otf }
+  }
+  Color: {
+    white: { a: 1, r: 1, g: 1, b: 1}
+  }
+
+  ButtonStyle: {
+    default: { down: default-round-down, up: default-round },
+    toggle: { parent: default, checked: default-round-down }
+  }
+  TextButtonStyle: {
+    default: { parent: default, font: defaultFont, fontColor: white}
+    toggle: { parent: default, checked: default-round-down, downFontColor: white }
+  }
+}
