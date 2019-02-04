@@ -20,7 +20,11 @@ public class District {
 	}
 	
 	public void addCell(Cell cell) {
-		
+		cells.add(cell);
+	}
+	
+	public void removeCell(Cell cell) {
+		cells.remove(cells.indexOf(cell));
 	}
 	
 	public void addTree() {
