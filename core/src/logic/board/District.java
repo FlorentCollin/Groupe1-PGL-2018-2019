@@ -36,7 +36,7 @@ public class District {
 		this.player = player;
 	}
 	
-	/*
+	/**
 	 * Permet de calculer le revenu du district
 	 * @return le revenu du district
 	 * */
@@ -44,18 +44,28 @@ public class District {
 		Item item;
 		for(Cell cell : cells) {
 			item = cell.getItem();
-			gold += 1;
+			setGold(getGold() + 1);
 			if(item instanceof Soldier) {
-				gold -= ((Soldier) item).getLevel().getSalary();
+				setGold(getGold() - ((Soldier) item).getLevel().getSalary());
+				// Remise à zéro des soldats déplacé au tour précédent
+				((Soldier) item).setHasMoved(false);
 			}
 			else if(item instanceof Tree) {
-				gold -= 1;
+				setGold(getGold() - 1);
 			}
 		}
 	}
 	
 	public ArrayList<Cell> getCells() {
 		return this.cells;
+	}
+
+	public int getGold() {
+		return gold;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
 	}
 	
 }
