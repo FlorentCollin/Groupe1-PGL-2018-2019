@@ -17,17 +17,11 @@ public class MainMenuScreen extends MenuScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         table.setDebug(true);
-        TextButton button = new TextButton("Play", uiSkin);
-        button.scaleBy(10);
-        table.row().uniformX();
-        table.add(button);
-        stage.addActor(table);
-<<<<<<< HEAD
-        Skin uiskin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        Skin uiskin = new Skin(Gdx.files.internal("uiskin.json"));
         TextButton button = new TextButton("This is a TextButton", uiskin);
         table.add(button).uniformX();
-=======
->>>>>>> 035352f61b2af629aefdefac28d33fead443afc8
+        stage.addActor(table);
+
 
     }
 

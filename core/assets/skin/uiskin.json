@@ -1,7 +1,7 @@
 {
   BitmapFont: {
-    defaultFont: { file: fonts/Lemon_milk/LemonMilk.otf }
-    defaultFontItalic: { file: fonts/Lemon_milk/LemonMilkitalic.otf }
+    defaultFont: { file: fonts/Lemon_milk/LemonMilk.fnt }
+    defaultFontItalic: { file: fonts/Lemon_milk/LemonMilkitalic.fnt }
   }
   Color: {
     white: { a: 1, r: 1, g: 1, b: 1}
