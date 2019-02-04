@@ -6,16 +6,34 @@ import logic.item.Item;
 public class Cell {
 	private Item item;
 	private District district;
-	private int numberOfAdjacentWaterCell;
-	private boolean actifIncome;
+	private int numberOfAdjacentWaterCell; //?
+	private boolean actifIncome; //?
 	protected boolean accessible;
 
 	public Cell() {
 		
 	}
 	
+	public Cell(District district) {
+		this.district = district;
+		// Pour n'appeler qu'une seule méthode
+		district.addCell(this);
+	}
+	
 	public void setItem(Item item) {
 		this.item = item;
+	}
+	
+	public Item getItem() {
+		return this.item;
+	}
+	
+	public void setDistrcit(District district) {
+		this.district = district;
+	}
+	
+	public District getDistrict() {
+		return this.district;
 	}
 	
 }
