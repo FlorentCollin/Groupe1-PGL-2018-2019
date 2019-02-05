@@ -1,5 +1,6 @@
 package logic.item;
 
+import logic.item.level.SoldierLevel;
 import logic.player.Player;
 
 public class Soldier extends Item{
@@ -22,6 +23,10 @@ public class Soldier extends Item{
 	public SoldierLevel getLevel() {
 		return this.level;
 	}
+	
+	public void setLevel(SoldierLevel level) {
+		this.level = level;
+	}
 
 	public boolean getHasMoved() {
 		return hasMoved;
@@ -29,6 +34,11 @@ public class Soldier extends Item{
 
 	public void setHasMoved(boolean hasMoved) {
 		this.hasMoved = hasMoved;
+	}
+	
+	public void improve() {
+		level.improve(this);
+		hasMoved = false;
 	}
 	
 	
