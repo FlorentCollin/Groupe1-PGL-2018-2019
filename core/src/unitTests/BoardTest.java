@@ -21,7 +21,7 @@ public class BoardTest {
 		players[0] = p1;
 		players[1] = p2;
 		NaturalDisastersController naturalDisastersController = new NaturalDisastersController();
-		board = new Board(5,5, players, naturalDisastersController);
+		//board = new Board(5,5, players, naturalDisastersController);
 		
 	}
 	
