@@ -25,8 +25,16 @@ public class Slay extends Game {
 	}
 
 	@Override
-	public void dispose () {
+	public void render() {
+		Gdx.gl.glClearColor(16/255,16/255f,16/255f,1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		super.render();
+	}
 
+	@Override
+	public void dispose () {
+			Gdx.app.exit();
+			System.exit(0);
 	}
 
 	/**
@@ -38,11 +46,14 @@ public class Slay extends Game {
 			if(mainMenuScreen == null) {
 				mainMenuScreen = new MainMenuScreen(this);
 			}
+			this.getScreen().dispose();
 			this.setScreen(mainMenuScreen);
 		} else if(screen == SettingsMenuScreen.class) {
 			if(settingsMenuScreen == null) {
-				settingsMenuScreen = new SettingsMenuScreen(this);
+				settingsMenuScreen = new SettingsMenuScreen(this, mainMenuScreen.getStage());
 			}
+			this.getScreen().dispose();
+
 			this.setScreen(settingsMenuScreen);
 		}
 	}
