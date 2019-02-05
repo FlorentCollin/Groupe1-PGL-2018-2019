@@ -27,6 +27,15 @@ public class Board{
 		this.naturalDisastersController = naturalDisastersController;
 		this.districts = new ArrayList<District>();
 		this.shop = shop;
+		fullIn();
+	}
+	
+	private void fullIn() {
+		for(int i = 0; i<rows; i++) {
+			for(int j = 0; j<columns; j++) {
+				board[i][j] = new Cell();
+			}
+		}
 	}
 	
 	/**
@@ -67,6 +76,7 @@ public class Board{
 							cell.setItem(shop.getSelectedItem());
 							shop.buy(activeDistrict);
 							activeDistrict.addCell(cell);
+							cell.setDistrict(activeDistrict);
 						}
 						//la cellule appartient à un joueur enemi
 						else {
@@ -77,6 +87,7 @@ public class Board{
 									cell.setItem(shop.getSelectedItem());
 									shop.buy(activeDistrict);
 									activeDistrict.addCell(cell);
+									cell.setDistrict(activeDistrict);
 								}
 							}
 							//Il a tout autre chose sur la cellule
@@ -84,6 +95,7 @@ public class Board{
 								cell.setItem(shop.getSelectedItem());
 								shop.buy(activeDistrict);
 								activeDistrict.addCell(cell);
+								cell.setDistrict(activeDistrict);
 							}
 							//Ajouter le fait d'attérir sur une tour par exemple
 						}
@@ -113,13 +125,13 @@ public class Board{
 	
 	/**
 	 *Permet de vérifier qu'une cellule est un choix possible
-	 *@param possibleMove les déplacements possibles
+	 *@param possibleMoves les déplacements possibles
 	 *@param cell la cellule où souhaite se placer le joueur
 	 *@return true si cell fait partie de possibleMove
 	 *sinon false
 	 **/
-	private boolean isInPossibleMove(Cell[] possibleMove, Cell cell) {
-		for(Cell c : possibleMove) {
+	private boolean isInPossibleMove(ArrayList<Cell> possibleMoves, Cell cell) {
+		for(Cell c : possibleMoves) {
 			if(c == cell) {
 				return true;
 			}
@@ -132,8 +144,40 @@ public class Board{
 	 * @param district le district d'où le soldat a été acheté
 	 * @return les cellules sur lesquelles peut être placé le nouveau soldat
 	 * */
-	public Cell[] possibleMove(District district) {
-		return null;
+	public ArrayList<Cell> possibleMove(District district) {
+		ArrayList<Cell> possible = district.getCells();
+		int i,j;
+		ArrayList<Cell> toAdd = new ArrayList<Cell>();
+		for(Cell c : possible) {
+			i = getPosition(c)[0];
+			j = getPosition(c)[1];
+			if(getTop(i,j) != null) {
+				toAdd.add(getTop(i,j));
+			}
+			if(getBottom(i,j) != null) {
+				toAdd.add(getBottom(i,j));
+			}
+			if(getRight(i,j) != null) {
+				toAdd.add(getRight(i,j));
+			}
+			if(getLeft(i,j) != null) {
+				toAdd.add(getLeft(i,j));
+			}
+			if(getTopRight(i,j) != null) {
+				toAdd.add(getTopRight(i,j));
+			}
+			if(getTopLeft(i,j) != null) {
+				toAdd.add(getTopLeft(i,j));
+			}
+			if(getBottomRight(i,j) != null) {
+				toAdd.add(getBottomRight(i,j));
+			}
+			if(getBottomLeft(i,j) != null) {
+				toAdd.add(getBottomLeft(i,j));
+			}
+		}
+		possible.addAll(toAdd);
+		return possible;
 	}
 	
 	/**
@@ -150,4 +194,125 @@ public class Board{
 	public void setActiveDistrict(District activeDistrict) {
 		this.activeDistrict = activeDistrict;
 	}
+	
+	public Cell getCell(int i, int j) {
+		return board[i][j];
+	}
+	
+	/**
+	 * Peremt de récupérer la positon d'une cellule
+	 * @param c la cellule dont on souhaite connaître la position
+	 * @return la position de cette cellule
+	 * */
+	public int[] getPosition(Cell c) {
+		int[] position = new int[2];
+		for(int i = 0; i<rows; i++) {
+			for(int j = 0; j<columns; j++) {
+				if(board[i][j] == c) {
+					position[0] = i;
+					position[1] = j;
+				}
+			}
+		}
+		return position;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule au dessus
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule du dessus*/
+	private Cell getTop(int i, int j) {
+		if(i > 0) {
+			return board[i-1][j];
+		}
+		return null;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule en dessous
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule du dessous
+	 * */
+	private Cell getBottom(int i, int j) {
+		if(i < rows-1) {
+			return board[i+1][j];
+		}
+		return null;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule à droite
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule à droite
+	 * */
+	private Cell getRight(int i, int j) {
+		if(j < columns-1) {
+			return board[i][j+1];
+		}
+		return null;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule à gauche
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule à gauche*/
+	private Cell getLeft(int i, int j) {
+		if(j > 0) {
+			return board[i][j-1];
+		}
+		return null;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule en haut à droite
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule en haut à droite*/
+	private Cell getTopRight(int i, int j) {
+		if(i > 0 && j < columns-1) {
+			return board[i-1][j+1];
+		}
+		return null;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule sitée en haut à gauche
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule au dessus à gauche*/
+	private Cell getTopLeft(int i, int j) {
+		if(i > 0 && j > 0) {
+			return board[i-1][j-1];
+		}
+		return null;
+	}
+	
+	/**
+	 * Permet d'obtenir la cellule en dessous à droite
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule en dessous à droite*/
+	private Cell getBottomRight(int i, int j) {
+		if(i < rows-1 && j < columns-1) {
+			return board[i+1][j+1];
+		}
+		return null;
+	}
+	/**
+	 * Permet d'obtenir la cellule sitée en dessous à gauche
+	 * @param i la position en x
+	 * @param j la position en y
+	 * @return la cellule en dessous à gauche
+	 * */
+	private Cell getBottomLeft(int i, int j) {
+		if(i < rows-1 && j > 0) {
+			return board[i+1][j-1];
+		}
+		return null;
+	}
+	
 }
