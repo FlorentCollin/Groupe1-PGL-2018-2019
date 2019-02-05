@@ -3,31 +3,57 @@ package gui.graphics.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
 
-public class MainMenuScreen extends MenuScreen implements Screen {
+import java.util.ArrayList;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+
+public class MainMenuScreen extends MenuScreen implements Screen {
+    private Table table;
+    private ArrayList<TextButton> textButtons;
     public MainMenuScreen(Slay parent) {
         super(parent);
-        Skin uiSkin = new Skin(Gdx.files.internal("uiskin.json"));
-        Table table = new Table();
+        table = new Table();
         table.setFillParent(true);
-        table.setDebug(true);
-        Skin uiskin = new Skin(Gdx.files.internal("uiskin.json"));
-        TextButton button = new TextButton("This is a TextButton", uiskin);
-        table.add(button).uniformX();
+//        table.setDebug(true);
+        Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        textButtons = new ArrayList<>();
+        textButtons.add(new TextButton("Play Offline", uiSkin));
+        textButtons.add(new TextButton("Play Online", uiSkin));
+        textButtons.add(new TextButton("Settings", uiSkin));
+        textButtons.add(new TextButton("Exit", uiSkin));
+        textButtons.get(textButtons.size()-1).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent input, float x, float y) {
+                dispose();
+            }
+        });
+        table.setX(-Gdx.graphics.getWidth());
+        for(TextButton textButton : textButtons) {
+            table.add(textButton);
+            table.row().pad(10);
+        }
         stage.addActor(table);
-
-
     }
 
     @Override
     public void show() {
-
+        Action action = moveTo(0, table.getY(), 1, Interpolation.pow5);
+        table.addAction(action);
+//        int delay = 0;
+//        for(TextButton textButton : textButtons) {
+//            Vector2 position = textButton.localToStageCoordinates(new Vector2(textButton.getX(), textButton.getY()));
+//            textButton.addAction(sequence(delay(delay), moveTo(1000, position.y, 1, Interpolation.pow5)));
+//            delay += 0.2;
+//        }
     }
 
     @Override
@@ -60,6 +86,7 @@ public class MainMenuScreen extends MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        Gdx.app.exit();
+        System.exit(0);
     }
 }
