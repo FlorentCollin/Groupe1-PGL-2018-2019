@@ -15,13 +15,14 @@ public class Shop {
 	
 	public void buy(District district) {
 		district.setGold(district.getGold() - selectedItem.getMode().getPrice());
+		selectedItem = null;
 	}
 	
 	public void setSelectedItem(Item item) {
 		selectedItem = item;
 	}
 	
-	public Item getSelectedITem() {
+	public Item getSelectedItem() {
 		return this.selectedItem;
 	}
 
