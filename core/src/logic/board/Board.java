@@ -119,7 +119,7 @@ public class Board{
 	 * @param cell la cellule où se trouve l'item
 	 * @return les cellules sur lesquelles peut se déplacer l'item
 	 * */
-	public Cell[] possibleMove(Cell cell) {
+	public ArrayList<Cell> possibleMove(Cell cell) {
 		return null;
 	}
 	
@@ -131,12 +131,13 @@ public class Board{
 	 *sinon false
 	 **/
 	private boolean isInPossibleMove(ArrayList<Cell> possibleMoves, Cell cell) {
-		for(Cell c : possibleMoves) {
+		/*for(Cell c : possibleMoves) {
 			if(c == cell) {
 				return true;
 			}
 		}
-		return false;
+		return false;*/
+		return possibleMoves.indexOf(cell) > -1;
 	}
 	
 	/**
@@ -176,7 +177,12 @@ public class Board{
 				toAdd.add(getBottomLeft(i,j));
 			}
 		}
-		possible.addAll(toAdd);
+		//Permet d'éviter les doublons
+		for(Cell c : toAdd) {
+			if(possible.indexOf(c) == -1) {
+				possible.add(c);
+			}
+		}
 		return possible;
 	}
 	
