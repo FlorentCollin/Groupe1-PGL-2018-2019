@@ -1,13 +1,16 @@
 package unitTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import logic.board.Board;
 import logic.board.District;
+import logic.board.cell.Cell;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
@@ -119,8 +122,22 @@ public class BoardTest {
 	}
 	
 	@Test
-	public void testPossibleMove() {
-		
+	public void testGetPosition() {
+		Cell c = board.getCell(0, 4);
+		int[] position = board.getPosition(c);
+		assertTrue(position[0] == 0 && position[1] == 4);
+	}
+	
+	@Test
+	public void testPossibleMoveForDistrict() {
+		ArrayList<Cell> possibleMoves = board.possibleMove(district);
+		ArrayList<Cell> check = new ArrayList<Cell>();
+		for(int i = 0; i<3; i++) {
+			for(int j=0; j<3; j++) {
+				check.add(board.getCell(i, j));
+			}
+		}
+		assertTrue(possibleMoves.containsAll(check));
 	}
 
 }
