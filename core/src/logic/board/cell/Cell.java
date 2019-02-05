@@ -28,7 +28,7 @@ public class Cell {
 		return this.item;
 	}
 	
-	public void setDistrcit(District district) {
+	public void setDistrict(District district) {
 		this.district = district;
 	}
 	
