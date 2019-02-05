@@ -3,6 +3,8 @@ package logic.board;
 import java.util.ArrayList;
 
 import logic.board.cell.Cell;
+import logic.item.Soldier;
+import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
@@ -29,15 +31,64 @@ public class Board{
 	
 	/**
 	 * Permet de placer un item sur une cellule du plateau
-	 * @param item l'item à placer
 	 * @param i la position en x que doit prendre l'item
 	 * @param j la position en y que doit prendre l'item
 	 * */
 	public void placeNewItem(int i, int j){
 		if(i >= 0 && i < rows && j >= 0 && j < columns) {
 			Cell cell = board[i][j];
-			if(shop.getSelectedITem() != null) {
-				
+			//On vérifie qu'un item à été sélectionné dans le shop
+			if(shop.getSelectedItem() != null) {
+				//On vérifie que la case où souhaite se placer le joueur est un choix possible
+				if(isInPossibleMove(possibleMove(activeDistrict), cell)) {
+					//Cas où le joueur place l'item sur son district
+					if(cell.getDistrict() == activeDistrict) {
+						//la cellule ne contient pas d'item
+						if(cell.getItem() == null) {
+							cell.setItem(shop.getSelectedItem());
+							shop.buy(activeDistrict);
+						}
+						else if(cell.getItem().getClass().isInstance(shop.getSelectedItem())) {
+							if(cell.getItem().getMode().isImprovable()) {
+								cell.getItem().improve();
+								shop.buy(activeDistrict);
+							}
+						}
+						//la cellule contient un arbre
+						else if(cell.getItem() instanceof Tree) {
+							activeDistrict.setGold(activeDistrict.getGold()+3);
+							cell.setItem(shop.getSelectedItem());
+							shop.buy(activeDistrict);
+						}
+					}
+					else {
+						// la cellule n'appartient à personne
+						if(cell.getDistrict() == null) {
+							cell.setItem(shop.getSelectedItem());
+							shop.buy(activeDistrict);
+							activeDistrict.addCell(cell);
+						}
+						//la cellule appartient à un joueur enemi
+						else {
+							//Il y a un soldat sur la cellule
+							if(cell.getItem() instanceof Soldier) {
+								//On vérifie que le soldat qu'on veut ajouter est de niveau égual ou supérieur
+								if(((Soldier)shop.getSelectedItem()).getLevel().isUpperOrEquals(cell.getItem())) {
+									cell.setItem(shop.getSelectedItem());
+									shop.buy(activeDistrict);
+									activeDistrict.addCell(cell);
+								}
+							}
+							//Il a tout autre chose sur la cellule
+							else {
+								cell.setItem(shop.getSelectedItem());
+								shop.buy(activeDistrict);
+								activeDistrict.addCell(cell);
+							}
+							//Ajouter le fait d'attérir sur une tour par exemple
+						}
+					}
+				}
 			}
 		}
 	}
