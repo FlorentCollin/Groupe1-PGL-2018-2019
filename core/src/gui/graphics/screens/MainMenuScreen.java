@@ -45,6 +45,7 @@ public class MainMenuScreen extends MenuScreen implements Screen {
     }
 
     @Override
+
     public void show() {
         Action action = moveTo(0, table.getY(), 1, Interpolation.pow5);
         table.addAction(action);
