@@ -19,7 +19,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
 
 public class MainMenuScreen extends MenuScreen {
-    private VerticalGroup verticalGroup;
+    private VerticalGroup bouttonsGroup;
     private Group slayLogo;
     private TextButton whiteSlay;
     private TextButton shadowSlay;
@@ -34,7 +34,6 @@ public class MainMenuScreen extends MenuScreen {
     public MainMenuScreen(Slay parent) {
         super(parent);
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
-        verticalGroup = new VerticalGroup();
         Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFont;
@@ -43,6 +42,19 @@ public class MainMenuScreen extends MenuScreen {
         shorcutsButton = new TextButton("Shortcuts", textButtonStyle);
         settingsButton = new TextButton("Settings", textButtonStyle);
         exitButton = new TextButton("Exit", textButtonStyle);
+        //Ajout des bouttons dans un group
+        bouttonsGroup = new VerticalGroup();
+        bouttonsGroup.space(20);
+        bouttonsGroup.center();
+        bouttonsGroup.setX(-playOnlineButton.getWidth());
+        bouttonsGroup.setY(Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 10);
+        bouttonsGroup.addActor(playOfflineButton);
+        bouttonsGroup.addActor(playOnlineButton);
+        bouttonsGroup.addActor(shorcutsButton);
+        bouttonsGroup.addActor(settingsButton);
+        bouttonsGroup.addActor(exitButton);
+        //Création du rectangle qui apparait en dessous des bouttons lors que
+        // la souris de l'utilisateur se trouve sur un boutton
         underlineActor = new RectangleActor();
         underlineActor.setX(Gdx.graphics.getWidth() / 2);
         underlineActor.setY(Gdx.graphics.getHeight() / 2);
@@ -50,16 +62,7 @@ public class MainMenuScreen extends MenuScreen {
         underlineActor.setColor(Color.WHITE);
         stage.addActor(underlineActor);
 
-        verticalGroup.space(20);
-        verticalGroup.center();
-        verticalGroup.setX(-playOnlineButton.getWidth());
-        verticalGroup.setY(Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 10);
-        verticalGroup.addActor(playOfflineButton);
-        verticalGroup.addActor(playOnlineButton);
-        verticalGroup.addActor(shorcutsButton);
-        verticalGroup.addActor(settingsButton);
-        verticalGroup.addActor(exitButton);
-
+        //Création du logo Slay qui apparait en haut dans le menu principal
         slayLogo = new Group();
         textButtonStyle = uiSkin.get("logo", TextButton.TextButtonStyle.class);
         textButtonStyle.font = logoFont;
@@ -67,8 +70,7 @@ public class MainMenuScreen extends MenuScreen {
         textButtonStyle = uiSkin.get("logoShadow", TextButton.TextButtonStyle.class);
         textButtonStyle.font = logoFont;
         shadowSlay = new TextButton("SLAY", textButtonStyle);
-        shadowSlay.setX(-7);
-
+        shadowSlay.setX(-7); //Décalage de l'ombre pour créer une ombre portée
         shadowSlay.setY(-5);
         slayLogo.setX(-whiteSlay.getWidth());
         slayLogo.setY(Gdx.graphics.getHeight() /2 + Gdx.graphics.getHeight() / 5);
@@ -77,8 +79,10 @@ public class MainMenuScreen extends MenuScreen {
         slayLogo.addActor(whiteSlay);
 
         stage.addActor(slayLogo);
-        stage.addActor(verticalGroup);
+        stage.addActor(bouttonsGroup);
 
+        //Ajout des animations de soulignage du boutton sélectionné
+        //Ainsi que des différents listeners pour changer de menu ou quitter le jeu
         playOfflineButton.addListener(this.underlineAnimation(playOfflineButton));
         playOnlineButton.addListener(this.underlineAnimation(playOnlineButton));
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));
@@ -103,9 +107,9 @@ public class MainMenuScreen extends MenuScreen {
     }
 
     @Override
-
     public void show() {
-        verticalGroup.addAction(slideFromLeft(verticalGroup, Gdx.graphics.getWidth() / 2, verticalGroup.getY()));
+        //Animation d'entrée
+        bouttonsGroup.addAction(slideFromLeft(bouttonsGroup, Gdx.graphics.getWidth() / 2, bouttonsGroup.getY()));
         slayLogo.addAction(slideFromLeft(slayLogo, Gdx.graphics.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY()));
     }
     @Override
@@ -120,7 +124,8 @@ public class MainMenuScreen extends MenuScreen {
 
     @Override
     public void hide() {
-        verticalGroup.addAction(slideToLeft(verticalGroup));
+        //Animation de sortie
+        bouttonsGroup.addAction(slideToLeft(bouttonsGroup));
         slayLogo.addAction(slideToLeft(slayLogo));
     }
 
@@ -128,24 +133,33 @@ public class MainMenuScreen extends MenuScreen {
     public void dispose() {
     }
 
+    /**
+     * Méthode qui créer un ClickListener qui réagit pour créer l'effet de soulignage dans le menu
+     * lorsque l'utilisateur positionne sa souris au dessus d'un boutton
+     * @param actor l'actor sur lequel le ClickListener va agir
+     * @return le ClickListener configuré pour le soulignage
+     */
     private ClickListener underlineAnimation(Actor actor) {
         return new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                //On évite d'activer l'animation de soulignage si le parent est en train lui aussi d'effectuer une action
                 if(!actor.getParent().hasActions()) {
                 underlineActor.clearActions();
                 underlineActor.setSize(0, underlineActor.getHeight());
+                //Récupération des coordonnés pas rapport au stage et non au group
                 Vector2 coords = new Vector2(0,0);
                 actor.localToStageCoordinates(coords);
                 underlineActor.setX(coords.x);
                 underlineActor.setY(coords.y);
+                //Animation de soulignage
                 underlineActor.addAction(sizeTo(actor.getWidth(), underlineActor.getHeight(), 0.5f, ANIMATION_INTERPOLATION));
                 }
             }
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                underlineActor.clearActions();
+                underlineActor.clearActions(); //Permet de détruire l'action en cours 
                 underlineActor.setSize(0, underlineActor.getHeight());
             }
         };
