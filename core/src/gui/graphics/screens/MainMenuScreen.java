@@ -30,7 +30,7 @@ public class MainMenuScreen extends MenuScreen {
     private TextButton settingsButton;
     private TextButton exitButton;
 
-    private RectangleActor rectangleActor;
+    private RectangleActor underlineActor;
 
     public MainMenuScreen(Slay parent) {
         super(parent);
@@ -41,17 +41,16 @@ public class MainMenuScreen extends MenuScreen {
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFont;
         playOfflineButton = new TextButton("Play Offline", textButtonStyle);
-        playOfflineButton.setDebug(true);
         playOnlineButton = new TextButton("Play Online", textButtonStyle);
         shorcutsButton = new TextButton("Shortcuts", textButtonStyle);
         settingsButton = new TextButton("Settings", textButtonStyle);
         exitButton = new TextButton("Exit", textButtonStyle);
-        rectangleActor = new RectangleActor();
-        rectangleActor.setX(Gdx.graphics.getWidth() / 2);
-        rectangleActor.setY(Gdx.graphics.getHeight() / 2);
-        rectangleActor.setSize(0, 10);
-        rectangleActor.setColor(Color.WHITE);
-        stage.addActor(rectangleActor);
+        underlineActor = new RectangleActor();
+        underlineActor.setX(Gdx.graphics.getWidth() / 2);
+        underlineActor.setY(Gdx.graphics.getHeight() / 2);
+        underlineActor.setSize(0, 10);
+        underlineActor.setColor(Color.WHITE);
+        stage.addActor(underlineActor);
 
         verticalGroup.space(20);
         verticalGroup.center();
@@ -136,20 +135,20 @@ public class MainMenuScreen extends MenuScreen {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 if(!actor.getParent().hasActions()) {
-                rectangleActor.clearActions();
-                rectangleActor.setSize(0, rectangleActor.getHeight());
+                underlineActor.clearActions();
+                underlineActor.setSize(0, underlineActor.getHeight());
                 Vector2 coords = new Vector2(0,0);
                 actor.localToStageCoordinates(coords);
-                rectangleActor.setX(coords.x);
-                rectangleActor.setY(coords.y);
-                rectangleActor.addAction(sizeTo(actor.getWidth(), rectangleActor.getHeight(), 0.5f, ANIMATION_INTERPOLATION));
+                underlineActor.setX(coords.x);
+                underlineActor.setY(coords.y);
+                underlineActor.addAction(sizeTo(actor.getWidth(), underlineActor.getHeight(), 0.5f, ANIMATION_INTERPOLATION));
                 }
             }
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                rectangleActor.clearActions();
-                rectangleActor.setSize(0, rectangleActor.getHeight());
+                underlineActor.clearActions();
+                underlineActor.setSize(0, underlineActor.getHeight());
             }
         };
     }
