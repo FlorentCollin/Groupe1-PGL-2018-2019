@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import gui.graphics.screens.MainMenuScreen;
+import gui.graphics.screens.MenuScreen;
 import gui.graphics.screens.SettingsMenuScreen;
 
 /**
@@ -42,19 +43,20 @@ public class Slay extends Game {
 	 * @param screen Le menu ou l'interface de jeu qui va s'afficher pour l'utilisateur
 	 */
 	public void changeScreen(Class<?> screen) {
+	    MenuScreen nextScreen = null;
 		if(screen == MainMenuScreen.class) {
 			if(mainMenuScreen == null) {
 				mainMenuScreen = new MainMenuScreen(this);
 			}
-			this.getScreen().dispose();
-			this.setScreen(mainMenuScreen);
+			nextScreen = mainMenuScreen;
 		} else if(screen == SettingsMenuScreen.class) {
 			if(settingsMenuScreen == null) {
 				settingsMenuScreen = new SettingsMenuScreen(this, mainMenuScreen.getStage());
 			}
-			this.getScreen().dispose();
-
-			this.setScreen(settingsMenuScreen);
+			nextScreen = settingsMenuScreen;
 		}
+		System.out.println("Here");
+		this.setScreen(nextScreen);
+
 	}
 }

@@ -2,7 +2,6 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -12,13 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
 import gui.utils.RectangleActor;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
+import static gui.graphics.screens.animations.Animations.*;
 
 public class MainMenuScreen extends MenuScreen {
+    private MainMenuScreen thisMenu;
     private VerticalGroup verticalGroup;
     private Group slayLogo;
     private TextButton whiteSlay;
@@ -33,6 +34,7 @@ public class MainMenuScreen extends MenuScreen {
 
     public MainMenuScreen(Slay parent) {
         super(parent);
+        this.thisMenu = this; //Référence vers cette instance
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
         verticalGroup = new VerticalGroup();
         Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
@@ -75,7 +77,6 @@ public class MainMenuScreen extends MenuScreen {
         stage.addActor(slayLogo);
         stage.addActor(verticalGroup);
 
-
         playOfflineButton.addListener(this.underlineAnimation(playOfflineButton));
         playOnlineButton.addListener(this.underlineAnimation(playOnlineButton));
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));
@@ -104,8 +105,8 @@ public class MainMenuScreen extends MenuScreen {
     @Override
 
     public void show() {
-        verticalGroup.addAction(moveTo(Gdx.graphics.getWidth() / 2, verticalGroup.getY(), ANIMATION_DURATION, ANIMATION_INTERPOLATION));
-        slayLogo.addAction(moveTo(Gdx.graphics.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY(), ANIMATION_DURATION, ANIMATION_INTERPOLATION));
+        slideFromLeft(verticalGroup, Gdx.graphics.getWidth() / 2, verticalGroup.getY());
+        slideFromLeft(slayLogo, Gdx.graphics.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY());
     }
     @Override
     public void pause() {
@@ -119,19 +120,21 @@ public class MainMenuScreen extends MenuScreen {
 
     @Override
     public void hide() {
-
+        slideToLeft(verticalGroup);
+        slideToLeft(slayLogo);
     }
 
     @Override
     public void dispose() {
-        verticalGroup.addAction(moveTo(-playOfflineButton.getWidth(), verticalGroup.getY(), ANIMATION_DURATION, ANIMATION_INTERPOLATION));
-        slayLogo.addAction(moveTo( - whiteSlay.getWidth() , slayLogo.getY(), ANIMATION_DURATION, ANIMATION_INTERPOLATION));
+
+
     }
 
     private ClickListener underlineAnimation(Actor actor) {
         return new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                
                 if(!actor.hasActions()) {
                 rectangleActor.clearActions();
                 rectangleActor.setSize(0, rectangleActor.getHeight());

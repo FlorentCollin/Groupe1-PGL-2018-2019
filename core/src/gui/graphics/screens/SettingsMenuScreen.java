@@ -1,14 +1,16 @@
 package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
+import static gui.graphics.screens.animations.Animations.*;
 
 public class SettingsMenuScreen extends MenuScreen {
     private TextButton textButton;
@@ -21,18 +23,23 @@ public class SettingsMenuScreen extends MenuScreen {
         textButton = new TextButton("This is the settings screen", textButtonStyle);
         textButton.setX(Gdx.graphics.getWidth());
         textButton.setY(Gdx.graphics.getHeight() / 2);
+        textButton.setDebug(true);
+        textButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("clicked");
+                parent.changeScreen(MainMenuScreen.class);
+            }
+        });
+
         stage.addActor(textButton);
     }
 
     @Override
     public void show() {
-        textButton.addAction(moveTo(Gdx.graphics.getWidth() / 2 - textButton.getWidth() /2, textButton.getY(), ANIMATION_DURATION, ANIMATION_INTERPOLATION));
+        slideFromRight(textButton, Gdx.graphics.getWidth() / 2 - textButton.getWidth() / 2 , textButton.getY(), ANIMATION_DURATION / 2);
     }
 
-    @Override
-    public void resize(int width, int height) {
-
-    }
 
     @Override
     public void pause() {
@@ -46,7 +53,7 @@ public class SettingsMenuScreen extends MenuScreen {
 
     @Override
     public void hide() {
-
+        slideToRight(textButton);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = LwjglApplicationConfiguration.getDesktopDisplayMode().width;
 		config.height = LwjglApplicationConfiguration.getDesktopDisplayMode().height;
-		config.fullscreen = true;
+//		config.fullscreen = true;
 		config.resizable = false; //Permet de controller la taille de l'application
 
 		new LwjglApplication(new Slay(), config);
