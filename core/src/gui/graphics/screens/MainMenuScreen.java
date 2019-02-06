@@ -19,7 +19,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
 
 public class MainMenuScreen extends MenuScreen {
-    private MainMenuScreen thisMenu;
     private VerticalGroup verticalGroup;
     private Group slayLogo;
     private TextButton whiteSlay;
@@ -34,7 +33,6 @@ public class MainMenuScreen extends MenuScreen {
 
     public MainMenuScreen(Slay parent) {
         super(parent);
-        this.thisMenu = this; //Référence vers cette instance
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
         verticalGroup = new VerticalGroup();
         Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
