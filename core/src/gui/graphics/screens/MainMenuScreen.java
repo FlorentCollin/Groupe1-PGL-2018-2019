@@ -41,6 +41,7 @@ public class MainMenuScreen extends MenuScreen {
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFont;
         playOfflineButton = new TextButton("Play Offline", textButtonStyle);
+        playOfflineButton.setDebug(true);
         playOnlineButton = new TextButton("Play Online", textButtonStyle);
         shorcutsButton = new TextButton("Shortcuts", textButtonStyle);
         settingsButton = new TextButton("Settings", textButtonStyle);
@@ -51,15 +52,16 @@ public class MainMenuScreen extends MenuScreen {
         rectangleActor.setSize(0, 10);
         rectangleActor.setColor(Color.WHITE);
         stage.addActor(rectangleActor);
+
         verticalGroup.space(20);
+        verticalGroup.center();
+        verticalGroup.setX(-playOnlineButton.getWidth());
+        verticalGroup.setY(Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 10);
         verticalGroup.addActor(playOfflineButton);
         verticalGroup.addActor(playOnlineButton);
         verticalGroup.addActor(shorcutsButton);
         verticalGroup.addActor(settingsButton);
         verticalGroup.addActor(exitButton);
-        verticalGroup.center();
-        verticalGroup.setX(-playOnlineButton.getWidth());
-        verticalGroup.setY(Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 10);
 
         slayLogo = new Group();
         textButtonStyle = uiSkin.get("logo", TextButton.TextButtonStyle.class);
@@ -69,11 +71,14 @@ public class MainMenuScreen extends MenuScreen {
         textButtonStyle.font = logoFont;
         shadowSlay = new TextButton("SLAY", textButtonStyle);
         shadowSlay.setX(-7);
+
         shadowSlay.setY(-5);
-        slayLogo.addActor(shadowSlay);
-        slayLogo.addActor(whiteSlay);
         slayLogo.setX(-whiteSlay.getWidth());
         slayLogo.setY(Gdx.graphics.getHeight() /2 + Gdx.graphics.getHeight() / 5);
+
+        slayLogo.addActor(shadowSlay);
+        slayLogo.addActor(whiteSlay);
+
         stage.addActor(slayLogo);
         stage.addActor(verticalGroup);
 
@@ -82,20 +87,18 @@ public class MainMenuScreen extends MenuScreen {
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));
         settingsButton.addListener(this.underlineAnimation(settingsButton));
         settingsButton.addListener(new ClickListener() {
-           @Override
-           public void clicked(InputEvent event, float x, float y) {
-               parent.changeScreen(SettingsMenuScreen.class);
-           }
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                parent.changeScreen(SettingsMenuScreen.class);
+            }
         });
         exitButton.addListener(this.underlineAnimation(exitButton));
         exitButton.addListener(new ClickListener() {
-           @Override
+            @Override
             public void clicked(InputEvent event, float x, float y) {
-               parent.dispose();
-           }
+                parent.dispose();
+            }
         });
-
-
     }
 
     public Stage getStage() {
@@ -105,8 +108,8 @@ public class MainMenuScreen extends MenuScreen {
     @Override
 
     public void show() {
-        slideFromLeft(verticalGroup, Gdx.graphics.getWidth() / 2, verticalGroup.getY());
-        slideFromLeft(slayLogo, Gdx.graphics.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY());
+        verticalGroup.addAction(slideFromLeft(verticalGroup, Gdx.graphics.getWidth() / 2, verticalGroup.getY()));
+        slayLogo.addAction(slideFromLeft(slayLogo, Gdx.graphics.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY()));
     }
     @Override
     public void pause() {
@@ -120,29 +123,25 @@ public class MainMenuScreen extends MenuScreen {
 
     @Override
     public void hide() {
-        slideToLeft(verticalGroup);
-        slideToLeft(slayLogo);
+        verticalGroup.addAction(slideToLeft(verticalGroup));
+        slayLogo.addAction(slideToLeft(slayLogo));
     }
 
     @Override
     public void dispose() {
-
-
     }
 
     private ClickListener underlineAnimation(Actor actor) {
         return new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                
-                if(!actor.hasActions()) {
+                if(!actor.getParent().hasActions()) {
                 rectangleActor.clearActions();
                 rectangleActor.setSize(0, rectangleActor.getHeight());
                 Vector2 coords = new Vector2(0,0);
                 actor.localToStageCoordinates(coords);
                 rectangleActor.setX(coords.x);
                 rectangleActor.setY(coords.y);
-                stage.addActor(rectangleActor);
                 rectangleActor.addAction(sizeTo(actor.getWidth(), rectangleActor.getHeight(), 0.5f, ANIMATION_INTERPOLATION));
                 }
             }

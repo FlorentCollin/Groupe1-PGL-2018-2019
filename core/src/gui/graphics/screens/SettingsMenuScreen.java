@@ -5,11 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static gui.graphics.screens.animations.Animations.*;
 
 public class SettingsMenuScreen extends MenuScreen {
@@ -23,21 +25,19 @@ public class SettingsMenuScreen extends MenuScreen {
         textButton = new TextButton("This is the settings screen", textButtonStyle);
         textButton.setX(Gdx.graphics.getWidth());
         textButton.setY(Gdx.graphics.getHeight() / 2);
-        textButton.setDebug(true);
+
         textButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("clicked");
                 parent.changeScreen(MainMenuScreen.class);
             }
         });
-
         stage.addActor(textButton);
     }
 
     @Override
     public void show() {
-        slideFromRight(textButton, Gdx.graphics.getWidth() / 2 - textButton.getWidth() / 2 , textButton.getY(), ANIMATION_DURATION / 2);
+        textButton.addAction(slideFromRight(textButton, Gdx.graphics.getWidth() / 2 - textButton.getWidth() / 2 , textButton.getY(), ANIMATION_DURATION / 2));
     }
 
 
@@ -53,7 +53,7 @@ public class SettingsMenuScreen extends MenuScreen {
 
     @Override
     public void hide() {
-        slideToRight(textButton);
+        textButton.addAction(slideToRight(textButton));
     }
 
     @Override

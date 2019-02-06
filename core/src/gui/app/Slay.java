@@ -18,7 +18,6 @@ public class Slay extends Game {
 	private MainMenuScreen mainMenuScreen;
 	private SettingsMenuScreen settingsMenuScreen;
 
-	
 	@Override
 	public void create () {
 		mainMenuScreen = new MainMenuScreen(this);
@@ -29,7 +28,8 @@ public class Slay extends Game {
 	public void render() {
 		Gdx.gl.glClearColor(16/255,16/255f,16/255f,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		super.render();
+		this.getScreen().render(Gdx.graphics.getDeltaTime());
+//		super.render();
 	}
 
 	@Override
@@ -55,7 +55,6 @@ public class Slay extends Game {
 			}
 			nextScreen = settingsMenuScreen;
 		}
-		System.out.println("Here");
 		this.setScreen(nextScreen);
 
 	}
