@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.badlogic.gdx.Gdx;
+
 import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.Cell;
@@ -52,6 +54,7 @@ public class BoardTest {
 		board.setActiveDistrict(district);
 	}
 	
+	
 	@Test
 	public void testPlaceNewItemOnFreeTerritory() {
 		shop.setSelectedItem(new Soldier(p1));
@@ -90,6 +93,18 @@ public class BoardTest {
 	}
 	
 	@Test
+	public void testMoveFusion() {
+		Soldier soldier = new Soldier(p1);
+		shop.setSelectedItem(soldier);
+		board.placeNewItem(0, 0);
+		shop.setSelectedItem(new Soldier(p1));
+		board.placeNewItem(1, 0);
+		board.setSelectedCell(board.getCell(1, 0));
+		board.move(board.getCell(0, 0));
+		assertTrue(board.getCell(0, 0).getItem().getLevel()==SoldierLevel.level2);
+	}
+	
+	@Test
 	public void testPlaceOnEmptyEnemeyTerritory() {
 		Soldier soldier = new Soldier(p1);
 		shop.setSelectedItem(soldier);
@@ -102,6 +117,7 @@ public class BoardTest {
 		Soldier soldier = new Soldier(p1);
 		shop.setSelectedItem(soldier);
 		board.placeNewItem(1, 1);
+		board.nextPlayer();
 		Soldier soldier2 = new Soldier(p2);
 		board.setActiveDistrict(district2);
 		shop.setSelectedItem(soldier2);
@@ -115,17 +131,11 @@ public class BoardTest {
 		shop.setSelectedItem(soldier);
 		board.placeNewItem(1, 1);
 		Soldier soldier2 = new Soldier(p2);
+		board.nextPlayer();
 		board.setActiveDistrict(district2);
 		shop.setSelectedItem(soldier2);
 		board.placeNewItem(1, 1);
 		assertTrue(board.getCell(1, 1).getDistrict() == district && board.getCell(1, 1).getItem() == soldier);
-	}
-	
-	@Test
-	public void testGetPosition() {
-		Cell c = board.getCell(0, 4);
-		int[] position = board.getPosition(c);
-		assertTrue(position[0] == 0 && position[1] == 4);
 	}
 	
 	@Test
@@ -139,5 +149,42 @@ public class BoardTest {
 		}
 		assertTrue(possibleMoves.containsAll(check));
 	}
-
+	
+	@Test
+	public void testPossibleMoveForCell() {
+		Cell cell = board.getCell(1, 1);
+		ArrayList<Cell> possibleMoves = board.possibleMove(cell);
+		ArrayList<Cell> check = new ArrayList<Cell>();
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				check.add(board.getCell(i, j));
+			}
+		}
+		check.remove(board.getCell(2, 0));
+		check.remove(board.getCell(2, 2));
+		assertTrue(possibleMoves.containsAll(check));
+	}
+	
+	@Test
+	public void testMove() {
+		Soldier soldier = new Soldier(p1);
+		shop.setSelectedItem(soldier);
+		board.placeNewItem(1, 1);
+		board.setSelectedCell(board.getCell(1, 1));
+		board.move(board.getCell(2, 2));
+		assertTrue(board.getCell(2, 2).getDistrict() == board.getActiveDistrict()
+				&& board.getCell(2, 2).getItem() == soldier
+				&& board.getCell(1, 1).getItem() == null);
+	}
+	
+	@Test
+	public void testMerge() {
+		district2.setPlayer(p1);
+		shop.setSelectedItem(new Soldier(p1));
+		board.placeNewItem(1, 1);
+		board.setSelectedCell(board.getCell(1, 1));
+		board.move(board.getCell(2, 1));
+		assertTrue(board.getCell(2, 2).getDistrict() == board.getActiveDistrict());
+	}
+	
 }
