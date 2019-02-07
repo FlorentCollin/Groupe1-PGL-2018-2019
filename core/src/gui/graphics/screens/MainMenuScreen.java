@@ -7,11 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
 import gui.utils.RectangleActor;
 
@@ -34,7 +32,6 @@ public class MainMenuScreen extends MenuScreen {
     public MainMenuScreen(Slay parent) {
         super(parent);
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
-        Skin uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFont;
         playOfflineButton = new TextButton("Play Offline", textButtonStyle);
@@ -46,13 +43,15 @@ public class MainMenuScreen extends MenuScreen {
         bouttonsGroup = new VerticalGroup();
         bouttonsGroup.space(20);
         bouttonsGroup.center();
-        bouttonsGroup.setX(-playOnlineButton.getWidth());
         bouttonsGroup.setY(Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 10);
         bouttonsGroup.addActor(playOfflineButton);
         bouttonsGroup.addActor(playOnlineButton);
         bouttonsGroup.addActor(shorcutsButton);
         bouttonsGroup.addActor(settingsButton);
         bouttonsGroup.addActor(exitButton);
+
+        stage.addActor(bouttonsGroup);
+
         //Création du rectangle qui apparait en dessous des bouttons lors que
         // la souris de l'utilisateur se trouve sur un boutton
         underlineActor = new RectangleActor();
@@ -64,6 +63,7 @@ public class MainMenuScreen extends MenuScreen {
 
         //Création du logo Slay qui apparait en haut dans le menu principal
         slayLogo = new Group();
+
         textButtonStyle = uiSkin.get("logo", TextButton.TextButtonStyle.class);
         textButtonStyle.font = logoFont;
         whiteSlay = new TextButton("SLAY", textButtonStyle);
@@ -72,14 +72,12 @@ public class MainMenuScreen extends MenuScreen {
         shadowSlay = new TextButton("SLAY", textButtonStyle);
         shadowSlay.setX(-7); //Décalage de l'ombre pour créer une ombre portée
         shadowSlay.setY(-5);
-        slayLogo.setX(-whiteSlay.getWidth());
-        slayLogo.setY(Gdx.graphics.getHeight() /2 + Gdx.graphics.getHeight() / 5);
+        slayLogo.setY(Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 5);
 
         slayLogo.addActor(shadowSlay);
         slayLogo.addActor(whiteSlay);
 
         stage.addActor(slayLogo);
-        stage.addActor(bouttonsGroup);
 
         //Ajout des animations de soulignage du boutton sélectionné
         //Ainsi que des différents listeners pour changer de menu ou quitter le jeu

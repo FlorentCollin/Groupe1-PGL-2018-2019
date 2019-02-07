@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import gui.app.Slay;
 
@@ -17,14 +18,18 @@ public abstract class MenuScreen implements Screen {
     protected Slay parent;
     protected BitmapFont defaultFont;
     protected BitmapFont logoFont;
+    protected Skin uiSkin;
+    protected FreeTypeFontGenerator generator;
+    protected FreeTypeFontGenerator.FreeTypeFontParameter parameter;
 
     public MenuScreen(Slay parent) {
         this.parent = parent;
+        uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 64;
+        parameter.size = 64 * Gdx.graphics.getWidth() / 1920;
         defaultFont = generator.generateFont(parameter);
-        parameter.size = 128;
+        parameter.size = 128 * Gdx.graphics.getWidth() / 1920;
         logoFont = generator.generateFont(parameter);
         generator.dispose();
         stage = new Stage(new ScreenViewport());
@@ -35,11 +40,13 @@ public abstract class MenuScreen implements Screen {
 
     public MenuScreen(Slay parent, Stage stage) {
         this.parent = parent;
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 64;
+        uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 64 * Gdx.graphics.getWidth() / 1920;
+        System.out.println(1920 / Gdx.graphics.getWidth());
         defaultFont = generator.generateFont(parameter);
-        parameter.size = 128;
+        parameter.size = 128 * Gdx.graphics.getWidth() / 1920;
         logoFont = generator.generateFont(parameter);
         generator.dispose();
         this.stage = stage;
@@ -58,7 +65,14 @@ public abstract class MenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        stage.getViewport().setScreenSize(width, height);
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 64 * width / 1920;
+        defaultFont = generator.generateFont(parameter);
+        parameter.size = 128 * width / 1920;
+        logoFont = generator.generateFont(parameter);
+        generator.dispose();
     }
 
 }

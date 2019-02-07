@@ -24,8 +24,8 @@ public class Slay extends Game {
 	public void render() {
 		Gdx.gl.glClearColor(16/255,16/255f,16/255f,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		this.getScreen().render(Gdx.graphics.getDeltaTime());
-//		super.render();
+//		this.getScreen().render(Gdx.graphics.getDeltaTime());
+		super.render();
 	}
 
 	@Override
