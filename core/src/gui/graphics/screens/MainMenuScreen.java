@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
+import gui.utils.Constants;
 import gui.utils.RectangleActor;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
@@ -43,7 +44,7 @@ public class MainMenuScreen extends MenuScreen {
         bouttonsGroup = new VerticalGroup();
         bouttonsGroup.space(20);
         bouttonsGroup.center();
-        bouttonsGroup.setY(Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 10);
+        bouttonsGroup.setY(stage.getHeight() / 2 - stage.getHeight() / 10);
         bouttonsGroup.addActor(playOfflineButton);
         bouttonsGroup.addActor(playOnlineButton);
         bouttonsGroup.addActor(shorcutsButton);
@@ -55,9 +56,7 @@ public class MainMenuScreen extends MenuScreen {
         //Création du rectangle qui apparait en dessous des bouttons lors que
         // la souris de l'utilisateur se trouve sur un boutton
         underlineActor = new RectangleActor();
-        underlineActor.setX(Gdx.graphics.getWidth() / 2);
-        underlineActor.setY(Gdx.graphics.getHeight() / 2);
-        underlineActor.setSize(0, 10);
+        underlineActor.setSize(0, 10 * Constants.getRatio(stage.getWidth()));
         underlineActor.setColor(Color.WHITE);
         stage.addActor(underlineActor);
 
@@ -72,7 +71,7 @@ public class MainMenuScreen extends MenuScreen {
         shadowSlay = new TextButton("SLAY", textButtonStyle);
         shadowSlay.setX(-7); //Décalage de l'ombre pour créer une ombre portée
         shadowSlay.setY(-5);
-        slayLogo.setY(Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 5);
+        slayLogo.setY(stage.getHeight() / 2 + stage.getHeight() / 5);
 
         slayLogo.addActor(shadowSlay);
         slayLogo.addActor(whiteSlay);
@@ -107,8 +106,8 @@ public class MainMenuScreen extends MenuScreen {
     @Override
     public void show() {
         //Animation d'entrée
-        bouttonsGroup.addAction(slideFromLeft(bouttonsGroup, Gdx.graphics.getWidth() / 2, bouttonsGroup.getY()));
-        slayLogo.addAction(slideFromLeft(slayLogo, Gdx.graphics.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY()));
+        bouttonsGroup.addAction(slideFromLeft(bouttonsGroup, stage.getWidth() / 2, bouttonsGroup.getY()));
+        slayLogo.addAction(slideFromLeft(slayLogo, stage.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY()));
     }
     @Override
     public void pause() {

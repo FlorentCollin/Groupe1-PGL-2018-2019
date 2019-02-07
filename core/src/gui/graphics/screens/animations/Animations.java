@@ -10,7 +10,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  * Cette classe est utilisé pour resencer les différentes animations qui peuvent être aplliqués à un groupe d'acteurs
  */
 public class Animations {
-    public static final float ANIMATION_DURATION = 0.6f;
+    public static final float ANIMATION_DURATION = 0.4f;
     public static final Interpolation ANIMATION_INTERPOLATION = Interpolation.pow5;
 
     public static Action slideFromLeft(Actor actor, float x, float y) {

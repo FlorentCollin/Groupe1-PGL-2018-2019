@@ -9,4 +9,12 @@
     logo: { fontColor: white},
     logoShadow: { fontColor: black}
   }
+
+  LabelStyle: {
+    default: { fontColor: white}
+  }
+
+  ImageButtonStyle: {
+    arrow: { imageDown: "arrow", imageUp: "arrow"}
+  }
 }

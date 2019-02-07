@@ -29,7 +29,7 @@ public class RectangleActor extends Actor {
         }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(getColor());
-        shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+        shapeRenderer.rect(getParent().getX() + getX(), getParent().getY() + getY(), getWidth(), getHeight());
         shapeRenderer.end();
         batch.begin();
 
