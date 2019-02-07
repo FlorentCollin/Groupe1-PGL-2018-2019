@@ -21,11 +21,25 @@ public class District {
 	}
 	
 	public void addCell(Cell cell) {
-		cells.add(cell);
+		if(cells.indexOf(cell) == -1) {
+			cells.add(cell);
+		}
+	}
+	
+	/**
+	 * Permet d'ajouter au district toutes les cellules d'un autre district
+	 * @param district le district dont on souhaite obtenir les cellules
+	 * */
+	public void addAllCell(District district) {
+		cells.addAll(district.getCells());
 	}
 	
 	public void removeCell(Cell cell) {
 		cells.remove(cells.indexOf(cell));
+	}
+	
+	public void remove() {
+		cells.clear();
 	}
 	
 	public void setCapital(Capital capital) {
@@ -34,6 +48,10 @@ public class District {
 	
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+	
+	public Player getPlayer() {
+		return this.player;
 	}
 	
 	/**
