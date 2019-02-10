@@ -81,8 +81,26 @@ public class MainMenuScreen extends MenuScreen {
         //Ajout des animations de soulignage du boutton sélectionné
         //Ainsi que des différents listeners pour changer de menu ou quitter le jeu
         playOfflineButton.addListener(this.underlineAnimation(playOfflineButton));
+        playOfflineButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                parent.changeScreen(CreateRoomMenuScreen.class);
+            }
+        });
         playOnlineButton.addListener(this.underlineAnimation(playOnlineButton));
+        playOnlineButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    parent.changeScreen(OnlineMenuScreen.class);
+                }
+            });
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));
+        shorcutsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                parent.changeScreen(ShortcutsMenuScreen.class);
+            }
+        });
         settingsButton.addListener(this.underlineAnimation(settingsButton));
         settingsButton.addListener(new ClickListener() {
             @Override
