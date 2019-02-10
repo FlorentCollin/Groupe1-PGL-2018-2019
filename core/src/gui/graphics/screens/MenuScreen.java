@@ -26,7 +26,9 @@ import static gui.utils.Constants.MAX_RES;
 public abstract class MenuScreen implements Screen {
     protected Stage stage;
     protected Slay parent;
+    protected BitmapFont defaultFontTitle;
     protected BitmapFont defaultFont;
+    protected BitmapFont defaultFontItalic;
     protected BitmapFont logoFont;
     protected Skin uiSkin;
     protected FreeTypeFontGenerator generator;
@@ -86,10 +88,18 @@ public abstract class MenuScreen implements Screen {
     protected void generateFont(float stageWidth) {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 64 * (int) stageWidth / MAX_RES;
+        parameter.size = 42 * (int) stageWidth / MAX_RES;
         defaultFont = generator.generateFont(parameter);
+        parameter.size = 64 * (int) stageWidth / MAX_RES;
+        defaultFontTitle = generator.generateFont(parameter);
         parameter.size = 128 * (int) stageWidth / MAX_RES;
         logoFont = generator.generateFont(parameter);
+
+        generator.dispose();
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilkItalicLight.otf"));
+        parameter.size = 42 * (int) stageWidth / MAX_RES;
+        defaultFontItalic = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     protected HorizontalGroup generateMenuNameGroup(String name) {

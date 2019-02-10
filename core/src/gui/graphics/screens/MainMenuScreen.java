@@ -7,6 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -32,9 +34,16 @@ public class MainMenuScreen extends MenuScreen {
 
     public MainMenuScreen(Slay parent) {
         super(parent);
+//        TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
+//        textButtonStyle.font = defaultFontItalic;
+//        TextButton button = new TextButton("fullscreen", textButtonStyle);
+//        button.setTransform(true);
+//        button.setScale(ratio);
+//        button.setX(stage.getWidth() / 2); button.setY(stage.getHeight() / 2);
+//        stage.addActor(button);
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
-        textButtonStyle.font = defaultFont;
+        textButtonStyle.font = defaultFontTitle;
         playOfflineButton = new TextButton("Play Offline", textButtonStyle);
         playOnlineButton = new TextButton("Play Online", textButtonStyle);
         shorcutsButton = new TextButton("Shortcuts", textButtonStyle);
