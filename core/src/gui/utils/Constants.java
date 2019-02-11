@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 public class Constants {
     /** Résolution maximum **/
     public static int MAX_RES = 1920;
+    public static int PAD = 20;
 
     public static float getRatio(float width) {
         return width / MAX_RES;

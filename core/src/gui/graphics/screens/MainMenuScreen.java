@@ -2,15 +2,13 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
 import gui.utils.Constants;
@@ -34,13 +32,7 @@ public class MainMenuScreen extends MenuScreen {
 
     public MainMenuScreen(Slay parent) {
         super(parent);
-//        TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
-//        textButtonStyle.font = defaultFontItalic;
-//        TextButton button = new TextButton("fullscreen", textButtonStyle);
-//        button.setTransform(true);
-//        button.setScale(ratio);
-//        button.setX(stage.getWidth() / 2); button.setY(stage.getHeight() / 2);
-//        stage.addActor(button);
+
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontTitle;

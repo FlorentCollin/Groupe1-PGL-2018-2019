@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -99,6 +100,10 @@ public abstract class MenuScreen implements Screen {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilkItalicLight.otf"));
         parameter.size = 42 * (int) stageWidth / MAX_RES;
         defaultFontItalic = generator.generateFont(parameter);
+
+        defaultFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        defaultFontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         generator.dispose();
     }
 

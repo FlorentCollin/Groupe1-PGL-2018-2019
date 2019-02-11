@@ -1,15 +1,22 @@
 package gui.graphics.screens;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
+import static gui.utils.Constants.PAD;
 
 public class SettingsMenuScreen extends SubMenuScreen {
     private Label windowMode;
     private Label screenResolution;
     private Label musicLevel;
     private Label soundLevel;
+    private Slider musicSlider;
+    private Slider soundSlider;
+    private Label musicSliderPourcent;
+    private Label soundSliderPourcent;
 
 
     public SettingsMenuScreen(Slay parent, Stage stage) {
@@ -34,24 +41,49 @@ public class SettingsMenuScreen extends SubMenuScreen {
         buttonGroup.setMaxCheckCount(1);
         buttonGroup.setMinCheckCount(1);
         buttonGroup.setUncheckLast(true);
+
+        musicSlider = new Slider(0, 100, 1, false, uiSkin);
+        musicSlider.setValue(100);
+        musicSlider.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                musicSliderPourcent.setText((int)musicSlider.getValue() + "%");
+            }
+        });
+        soundSlider = new Slider(0, 100, 1, false, uiSkin);
+        soundSlider.setValue(100);
+        soundSlider.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                soundSliderPourcent.setText((int)soundSlider.getValue() + "%");
+
+            }
+        });
+        musicSliderPourcent = new Label("100%", labelStyle);
+        soundSliderPourcent = new Label("100%", labelStyle);
+
+
         Table scrollTable = new Table();
         scrollTable.add(windowMode).expandX().fillY().align(Align.left);
-        scrollTable.add(fullScreen).fillY().align(Align.left);
-        scrollTable.add(windowed).expandX().fillY().align(Align.left).padRight(10);
+        scrollTable.add(fullScreen).padLeft(PAD).padRight(PAD).fillY().align(Align.right);
+        scrollTable.add(windowed).padRight(PAD);
         scrollTable.row();
         scrollTable.add(screenResolution).fillY().align(Align.left);
         scrollTable.row();
-        scrollTable.add(musicLevel).fillY().align(Align.left);
+        scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
+        scrollTable.add(musicSlider).padRight(PAD).padLeft(PAD).minWidth(100 * ratio).colspan(2);
+        scrollTable.add(musicSliderPourcent).minWidth(musicSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
         scrollTable.add(soundLevel).fillY().align(Align.left);
+        scrollTable.add(soundSlider).minWidth(100*ratio).padLeft(PAD).padRight(PAD).fillX().colspan(2);
+        scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
 
         ScrollPane scroller = new ScrollPane(scrollTable);
+        scroller.setScrollingDisabled(true, false);
         Table table = new Table();
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
         table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
         table.setX(stage.getWidth() / 5);
-        table.add(scroller).fill().expand();
+        table.add(scroller).fill().expand().align(Align.topLeft);
         table.setDebug(true);
 
         stage.addActor(table);
