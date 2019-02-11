@@ -12,6 +12,9 @@ import gui.graphics.screens.animations.Animations;
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
 
+/**
+ * Classe qui représente le menu des paramètres
+ */
 public class SettingsMenuScreen extends SubMenuScreen {
     private Table table;
     private Label windowMode;
@@ -26,8 +29,11 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
     public SettingsMenuScreen(Slay parent, Stage stage) {
         super(parent, stage, "SETTINGS");
+        //Style des Label
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
+
+        //Création des différents labels
         windowMode = new Label("Window Mode", labelStyle);
         windowMode.setAlignment(Align.left);
         screenResolution = new Label("Screen Resolution", labelStyle);
@@ -35,6 +41,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         soundLevel = new Label("Sound", labelStyle);
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
+        //Création des différents boutons.
         TextButton fullScreen = new TextButton("fullscreen", textButtonStyle);
         fullScreen.setTransform(true);
         fullScreen.setScale(ratio);
@@ -66,6 +73,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
         musicSlider = new Slider(0, 100, 1, false, uiSkin);
         musicSlider.setValue(100);
+        //Update du pourcentage affiché à l'écran
         musicSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 musicSliderPourcent.setText((int)musicSlider.getValue() + "%");
@@ -73,16 +81,18 @@ public class SettingsMenuScreen extends SubMenuScreen {
         });
         soundSlider = new Slider(0, 100, 1, false, uiSkin);
         soundSlider.setValue(100);
+        //Update du pourcentage affiché à l'écran
         soundSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 soundSliderPourcent.setText((int)soundSlider.getValue() + "%");
 
             }
         });
+        //Création des pourcentage correspondant au slider
         musicSliderPourcent = new Label("100%", labelStyle);
         soundSliderPourcent = new Label("100%", labelStyle);
 
-
+        //Création de la table contenant l'ensemble des éléments définis plus haut
         Table scrollTable = new Table();
         scrollTable.add(windowMode).expandX().fillY().align(Align.left);
         scrollTable.add(fullScreen).pad(PAD).fillY().align(Align.right);
@@ -99,7 +109,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(soundSlider).minWidth(100*ratio).padLeft(PAD).padRight(PAD).fillX().colspan(2);
         scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
-
+        //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
         table = new Table();
