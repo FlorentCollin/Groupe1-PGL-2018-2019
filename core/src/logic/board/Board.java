@@ -127,10 +127,8 @@ public class Board{
 				if(toCell.getItem() instanceof Capital) {
 					generateCapital(toCell.getDistrict());
 				}
-				if(toCell.getDistrict().getPlayer() == players[activePlayer]) {
-					if(toCell.getItem().getClass().isInstance(selectedCell.getItem())) {
-						SoldierFusion(toCell);						
-					}
+				if(isOnOwnTerritory(toCell) && isSameItem(toCell, false)) {
+					fusion(toCell);
 				}
 				toCell.setDistrict(activeDistrict);
 				activeDistrict.addCell(toCell);
@@ -145,25 +143,40 @@ public class Board{
 	 * Permet de fusionner des items
 	 * @param cell la cellule surlaquelle la fusion doit être faîte
 	 * */
-	private void SoldierFusion(Cell cell) {
+	private void fusion(Cell cell) {
 		cell.getItem().improve();
 	}
 	
 	/**
 	 * Permet de savoir si une cellule appartient à un joueur
 	 * @param cell la cellule à tester
+	 * @return true si la cellule appartient au joueuru qui est entrain de jouer le tour
+	 * 			false sinon
 	 * */
 	private boolean isOnOwnTerritory(Cell cell) {
-		if(cell.getDistrict() == null) {
-			return false;
-		}
-		else if(cell.getDistrict().getPlayer() == null) {
+		if(isNeutral(cell)) {
 			return false;
 		}
 		else if(cell.getDistrict().getPlayer() != players[activePlayer]) {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Permet de savoir si une cellule n'appartient à aucune joueur
+	 * @param cell la cellule à tester
+	 * @return true si la cellule n'appartient à personne
+	 * 			false sinon
+	 * */
+	private boolean isNeutral(Cell cell) {
+		if(cell.getDistrict() == null) {
+			return true;
+		}
+		if(cell.getDistrict().getPlayer() == null) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -518,9 +531,24 @@ public class Board{
 		
 	}
 	
-	public static void main(String[] args) {
-		Player[] p = new Player[1];
-		p[0] = new Player();
-		Board board = new Board(5, 5, p, new NaturalDisastersController(), new Shop());
+	/**
+	 * Gère le placement d'un item sur les cellules
+	 * @param la cell à mettre à jour
+	 * */
+	// revoir la documentation
+	private void updateCell(Cell cell) {
+		cell.setItem(selectedCell.getItem());
+		selectedCell.removeItem();
+		selectedCell = null; //peut être faire une méthode forgotSelection ?
+	}
+	
+	/**
+	 * Gère la conquête d'une nouvelle cellule
+	 * @param cell la cellule conquise
+	 * */
+	private void conquer(Cell cell) {
+		cell.setDistrict(selectedCell.getDistrict());
+		selectedCell.getDistrict().addCell(cell);
+		updateCell(cell);
 	}
 }
