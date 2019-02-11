@@ -80,7 +80,7 @@ public abstract class MenuScreen implements Screen {
 
     protected void generateStage() {
         OrthographicCamera camera = new OrthographicCamera();
-        ScalingViewport viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        ScalingViewport viewport = new ScalingViewport(Scaling.stretch, 1920, 1080, camera);
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
@@ -89,16 +89,16 @@ public abstract class MenuScreen implements Screen {
     protected void generateFont(float stageWidth) {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 42 * (int) stageWidth / MAX_RES;
+        parameter.size = 42;
         defaultFont = generator.generateFont(parameter);
-        parameter.size = 64 * (int) stageWidth / MAX_RES;
+        parameter.size = 64;
         defaultFontTitle = generator.generateFont(parameter);
-        parameter.size = 128 * (int) stageWidth / MAX_RES;
+        parameter.size = 128;
         logoFont = generator.generateFont(parameter);
 
         generator.dispose();
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilkItalicLight.otf"));
-        parameter.size = 42 * (int) stageWidth / MAX_RES;
+        parameter.size = 42;
         defaultFontItalic = generator.generateFont(parameter);
 
         defaultFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

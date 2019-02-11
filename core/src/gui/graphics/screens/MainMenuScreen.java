@@ -161,15 +161,15 @@ public class MainMenuScreen extends MenuScreen {
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 //On évite d'activer l'animation de soulignage si le parent est en train lui aussi d'effectuer une action
                 if(!actor.getParent().hasActions()) {
-                underlineActor.clearActions();
-                underlineActor.setSize(0, underlineActor.getHeight());
-                //Récupération des coordonnés pas rapport au stage et non au group
-                Vector2 coords = new Vector2(0,0);
-                actor.localToStageCoordinates(coords);
-                underlineActor.setX(coords.x);
-                underlineActor.setY(coords.y);
-                //Animation de soulignage
-                underlineActor.addAction(sizeTo(actor.getWidth(), underlineActor.getHeight(), 0.5f, ANIMATION_INTERPOLATION));
+                    underlineActor.clearActions();
+                    underlineActor.setSize(0, underlineActor.getHeight());
+                    //Récupération des coordonnés pas rapport au stage et non au group
+                    Vector2 coords = new Vector2(0,0);
+                    actor.localToStageCoordinates(coords);
+                    underlineActor.setX(coords.x);
+                    underlineActor.setY(coords.y);
+                    //Animation de soulignage
+                    underlineActor.addAction(sizeTo(actor.getWidth(), underlineActor.getHeight(), 0.5f, ANIMATION_INTERPOLATION));
                 }
             }
 

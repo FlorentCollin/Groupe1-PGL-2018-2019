@@ -1,14 +1,19 @@
 package gui.graphics.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
+import gui.graphics.screens.animations.Animations;
+
+import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
 
 public class SettingsMenuScreen extends SubMenuScreen {
+    private Table table;
     private Label windowMode;
     private Label screenResolution;
     private Label musicLevel;
@@ -42,6 +47,23 @@ public class SettingsMenuScreen extends SubMenuScreen {
         buttonGroup.setMinCheckCount(1);
         buttonGroup.setUncheckLast(true);
 
+        Skin skin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
+        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
+        selectBoxStyle.font = defaultFontItalic;
+        selectBoxStyle.listStyle.font = defaultFontItalic;
+        final SelectBox selectBox = new SelectBox(selectBoxStyle);
+        selectBox.setAlignment(Align.center);
+        selectBox.getList().setAlignment(Align.right);
+        selectBox.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                System.out.println(selectBox.getSelected());
+            }
+        });
+        selectBox.setItems("Android1", "Windows1 long text in item", "Linux1", "OSX1", "Android2", "Windows2", "Linux2", "OSX2",
+                "Android3", "Windows3", "Linux3", "OSX3", "Android4", "Windows4", "Linux4", "OSX4", "Android5", "Windows5", "Linux5",
+                "OSX5", "Android6", "Windows6", "Linux6", "OSX6", "Android7", "Windows7", "Linux7", "OSX7");
+        selectBox.setSelected("Linux6");
+
         musicSlider = new Slider(0, 100, 1, false, uiSkin);
         musicSlider.setValue(100);
         musicSlider.addListener(new ChangeListener() {
@@ -63,13 +85,14 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
         Table scrollTable = new Table();
         scrollTable.add(windowMode).expandX().fillY().align(Align.left);
-        scrollTable.add(fullScreen).padLeft(PAD).padRight(PAD).fillY().align(Align.right);
+        scrollTable.add(fullScreen).pad(PAD).fillY().align(Align.right);
         scrollTable.add(windowed).padRight(PAD);
         scrollTable.row();
         scrollTable.add(screenResolution).fillY().align(Align.left);
+        scrollTable.add(selectBox).maxWidth(fullScreen.getWidth()).padLeft(PAD).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
         scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
-        scrollTable.add(musicSlider).padRight(PAD).padLeft(PAD).minWidth(100 * ratio).colspan(2);
+        scrollTable.add(musicSlider).padRight(PAD).padLeft(PAD).minWidth(100 * ratio).fillX().colspan(2);
         scrollTable.add(musicSliderPourcent).minWidth(musicSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
         scrollTable.add(soundLevel).fillY().align(Align.left);
@@ -79,15 +102,26 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
-        Table table = new Table();
+        table = new Table();
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
         table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
-        table.setX(stage.getWidth() / 5);
-        table.add(scroller).fill().expand().align(Align.topLeft);
-        table.setDebug(true);
+        table.add(scroller).fillX().expand().align(Align.topLeft);
 
         stage.addActor(table);
 
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        table.addAction(slideFromRight(table, stage.getWidth() / 5, table.getY(), ANIMATION_DURATION / 4));
+
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        table.addAction(slideToRight(table));
     }
 
     @Override

@@ -26,4 +26,17 @@
   SliderStyle: {
     default-horizontal: { parent: default-horizontal}
   }
+
+  ScrollPaneStyle: {
+//    default: { vScroll: default-scroll, hScrollKnob: default-round-large, background: default-rect, hScroll: default-scroll, vScrollKnob: default-round-large }
+    default: { background: selectBox-background}
+  },
+
+  SelectBoxStyle: {
+    default: {
+      background: selectBox,
+      scrollStyle: default,
+      listStyle: { selection: selectBox-selection}
+    }
+  },
 }
