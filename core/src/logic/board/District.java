@@ -86,4 +86,8 @@ public class District {
 		this.gold = gold;
 	}
 	
+	public void addGold(int gold) {
+		this.gold += gold;
+	}
+	
 }
