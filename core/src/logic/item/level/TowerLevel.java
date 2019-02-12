@@ -27,4 +27,20 @@ public enum TowerLevel implements Level{
 		return false;
 	}
 
+	@Override
+	public int compareTo(Item item) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getIndex() {
+		for(int i = 0; i<TowerLevel.values().length; i++) {
+			if(TowerLevel.values()[i] == this) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 }
