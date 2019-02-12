@@ -5,6 +5,7 @@ import java.util.Random;
 
 import logic.board.cell.Cell;
 import logic.item.Capital;
+import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.Tree;
 import logic.item.level.SoldierLevel;
@@ -17,7 +18,6 @@ public class Board{
 	private int columns, rows, activePlayer;
 	private Player[] players;
 	private ArrayList<District> districts;
-	private District activeDistrict;
 	private Shop shop;
 	private NaturalDisastersController naturalDisastersController;
 	private Cell selectedCell;
@@ -51,70 +51,7 @@ public class Board{
 	 * @param j la position en y que doit prendre l'item
 	 * */
 	public void placeNewItem(int i, int j){
-		if(i >= 0 && i < rows && j >= 0 && j < columns) {
-			Cell cell = board[i][j];
-			//On vérifie qu'un item à été sélectionné dans le shop
-			if(shop.getSelectedItem() != null && activeDistrict.getPlayer() == players[activePlayer]) {
-				//On vérifie que la case où souhaite se placer le joueur est un choix possible
-				if(isInPossibleMove(possibleMove(activeDistrict), cell)) {
-					//Cas où le joueur place l'item sur son district
-					if(cell.getDistrict() == activeDistrict) {
-						//la cellule ne contient pas d'item
-						if(cell.getItem() == null) {
-							cell.setItem(shop.getSelectedItem());
-							shop.buy(activeDistrict);
-						}
-						else if(cell.getItem().getClass().isInstance(shop.getSelectedItem())) {
-							if(cell.getItem().getMode().isImprovable()) {
-								cell.getItem().improve();
-								shop.buy(activeDistrict);
-							}
-						}
-						//la cellule contient un arbre
-						else if(cell.getItem() instanceof Tree) {
-							activeDistrict.setGold(activeDistrict.getGold()+3);
-							cell.setItem(shop.getSelectedItem());
-							shop.buy(activeDistrict);
-						}
-					}
-					else {
-						// la cellule n'appartient à personne
-						if(cell.getDistrict() == null) {
-							cell.setItem(shop.getSelectedItem());
-							shop.buy(activeDistrict);
-							activeDistrict.addCell(cell);
-							cell.setDistrict(activeDistrict);
-						}
-						//la cellule appartient à un joueur enemi
-						else {
-							//Il y a un soldat sur la cellule
-							if(cell.getItem() instanceof Soldier) {
-								//On vérifie que le soldat qu'on veut ajouter est de niveau égual ou supérieur
-								if(((Soldier)shop.getSelectedItem()).getLevel().compareTo((SoldierLevel) cell.getItem().getLevel()) >= 0) {
-									cell.setItem(shop.getSelectedItem());
-									shop.buy(activeDistrict);
-									activeDistrict.addCell(cell);
-									cell.setDistrict(activeDistrict);
-								}
-							}
-							else if(cell.getItem() instanceof Capital) {
-								generateCapital(cell.getDistrict());
-								cell.setItem(shop.getSelectedItem());
-								//TO DO
-							}
-							//Il a tout autre chose sur la cellule
-							else {
-								cell.setItem(shop.getSelectedItem());
-								shop.buy(activeDistrict);
-								activeDistrict.addCell(cell);
-								cell.setDistrict(activeDistrict);
-							}
-							//Ajouter le fait d'attérir sur une tour par exemple
-						}
-					}
-				}
-			}
-		}
+		
 	}
 	
 	/**
@@ -124,17 +61,35 @@ public class Board{
 	public void move(Cell toCell) {
 		if(selectedCell != null && selectedCell.getItem() != null && selectedCell.getItem().getMode().isMovable()) {
 			if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
-				if(toCell.getItem() instanceof Capital) {
-					generateCapital(toCell.getDistrict());
+				if(isNeutral(toCell)) {
+					conquer(toCell);
 				}
-				if(isOnOwnTerritory(toCell) && isSameItem(toCell, false)) {
-					fusion(toCell);
+				else if(isOnOwnTerritory(toCell)) {
+					if(toCell.getItem() == null) {
+						updateCell(toCell);
+					}
+					else if(isSameItem(toCell, selectedCell.getItem())) {
+						if(hasSameLevel(toCell, selectedCell.getItem()) && toCell.getItem().getLevel().isNotMax()) {
+							fusion(toCell);
+						}
+					}
+					else if(toCell.getItem() instanceof Tree) { // à modifier si on veut ajouter d'autre item procurant de l'argent
+						updateCell(toCell);
+						toCell.getDistrict().addGold(3);
+					}
 				}
-				toCell.setDistrict(activeDistrict);
-				activeDistrict.addCell(toCell);
-				toCell.setItem(selectedCell.getItem());
-				selectedCell.removeItem();
-				checkMerge(toCell);
+				else {
+					if(toCell.getItem() == null) {
+						conquer(toCell);
+					}
+					else if(toCell.getItem() instanceof Capital) {
+						generateCapital(toCell.getDistrict());
+						conquer(toCell);
+					}
+					else if(toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
+						conquer(toCell);
+					}
+				}
 			}
 		}
 	}
@@ -145,6 +100,7 @@ public class Board{
 	 * */
 	private void fusion(Cell cell) {
 		cell.getItem().improve();
+		selectedCell.removeItem();
 	}
 	
 	/**
@@ -180,24 +136,27 @@ public class Board{
 	}
 	
 	/**
-	 * Permet de savoir si la cellule sur lqauelle on souhaite se placer possède un item identique
+	 * Permet de savoir si la cellule sur laquelle on souhaite se placer possède un item identique
 	 * @param cell la cellule à tester
 	 * @param isNewItem détermine si l'item qu'on souhaite ajouter sur la cellule provient du shop
 	 * @return true si les items sont identiques
 	 * 			false sinon
 	 * */
-	private boolean isSameItem(Cell cell, boolean isNewItem) {
-		if(isNewItem) {
-			if(cell.getItem().getClass().isInstance(shop.getSelectedItem())) {
-				return true;
-			}
-		}
-		else {
-			if(cell.getItem().getClass().isInstance(selectedCell.getItem())) {
-				return true;
-			}
+	private boolean isSameItem(Cell cell, Item item) {
+		if(cell.getItem().getClass().isInstance(item)) {
+			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Permet de savoir si deux items ont le même niveau
+	 * @param cell la cellule sur laquelle on souhaite se placer
+	 * @param item l'item de la cellule de départ
+	 * @return true si le niveau est identique
+	 * 			false sinon*/
+	private boolean hasSameLevel(Cell cell, Item item) {
+		return cell.getItem().getLevel() == item.getLevel();
 	}
 	
 	/**
@@ -208,7 +167,7 @@ public class Board{
 	public ArrayList<Cell> possibleMove(Cell cell) {
 		ArrayList<Cell> possible = new ArrayList<Cell>();
 		possible.add(cell);
-		for(Cell c : getAround(cell, false)) {
+		for(Cell c : getAround(cell)) {
 			if(possible.indexOf(c) == -1) {
 				possible.add(c);
 			}
@@ -222,26 +181,26 @@ public class Board{
 	 * @param cell la cellule cible
 	 * @param isDistrict permet de savoir si on cherche pour une cellule ou pour un district
 	 * @return les cellules autour*/
-	private ArrayList<Cell> getAround(Cell cell, boolean isDistrict){
+	private ArrayList<Cell> getAround(Cell cell){
 		ArrayList<Cell> around = new ArrayList<Cell>();
 		int i = getPosition(cell)[0];
 		int j = getPosition(cell)[1];
-		if(getTop(i,j) != null && canDoIt(cell, getTop(i,j), isDistrict)) {
+		if(getTop(i,j) != null && canDoIt(cell, getTop(i,j))) {
 			around.add(getTop(i,j));
 		}
-		if(getBottom(i,j) != null && canDoIt(cell, getBottom(i,j), isDistrict)) {
+		if(getBottom(i,j) != null && canDoIt(cell, getBottom(i,j))) {
 			around.add(getBottom(i,j));
 		}
-		if(getRight(i,j) != null && canDoIt(cell, getRight(i,j), isDistrict)) {
+		if(getRight(i,j) != null && canDoIt(cell, getRight(i,j))) {
 			around.add(getRight(i,j));
 		}
-		if(getLeft(i,j) != null && canDoIt(cell, getLeft(i,j), isDistrict)) {
+		if(getLeft(i,j) != null && canDoIt(cell, getLeft(i,j))) {
 			around.add(getLeft(i,j));
 		}
-		if(getTopRight(i,j) != null && canDoIt(cell, getTopRight(i,j), isDistrict)) {
+		if(getTopRight(i,j) != null && canDoIt(cell, getTopRight(i,j))) {
 			around.add(getTopRight(i,j));
 		}
-		if(getTopLeft(i,j) != null && canDoIt(cell, getTopLeft(i,j), isDistrict)) {
+		if(getTopLeft(i,j) != null && canDoIt(cell, getTopLeft(i,j))) {
 			around.add(getTopLeft(i,j));
 		}
 //		if(getBottomRight(i,j) != null && canDoIt(cell, getBottomRight(i,j), district)) {
@@ -253,26 +212,27 @@ public class Board{
 		return around;
 	}
 	
+	private ArrayList<Cell> getAround(District district, Item item){
+		
+		return null;
+	}
+	
 	/**
 	 * Permet de savoir si le mouvement est possible 
 	 * au niveau des items présents sur les cellules
 	 * @param c1 la cellule de départ
 	 * @param c2 la cellule de destination
-	 * @param isDistrict permet de savoir si on cherche pour un district ou une cellule
 	 * @return true si il est possible de se placer sur la cellule c2
-	 * 			false sinon*/
-	private boolean canDoIt(Cell c1, Cell c2, boolean isDistrict) {
-		if(isDistrict) {
+	 * 			false sinon
+	 * */
+	private boolean canDoIt(Cell c1, Cell c2) {
+		if(c2.getItem() == null) {
 			return true;
 		}
-		else {
-			if(c2.getItem() instanceof Soldier) {
-				if(((Soldier)c2.getItem()).getLevel().compareTo(((Soldier)c1.getItem()).getLevel()) > 0) {
-					return false;
-				}
-			}
+		else if(c1.getItem().getLevel().compareTo(c2.getItem())>=0) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	/**
@@ -283,12 +243,6 @@ public class Board{
 	 *sinon false
 	 **/
 	private boolean isInPossibleMove(ArrayList<Cell> possibleMoves, Cell cell) {
-		/*for(Cell c : possibleMoves) {
-			if(c == cell) {
-				return true;
-			}
-		}
-		return false;*/
 		return possibleMoves.indexOf(cell) > -1;
 	}
 	
@@ -301,7 +255,7 @@ public class Board{
 		ArrayList<Cell> possible = district.getCells();
 		ArrayList<Cell> toAdd = new ArrayList<Cell>();
 		for(Cell c : possible) {
-			toAdd.addAll(getAround(c, true));
+			toAdd.addAll(getAround(c));
 		}
 		//Permet d'éviter les doublons
 		for(Cell c : toAdd) {
@@ -318,16 +272,6 @@ public class Board{
 	public void nextPlayer() {
 		activePlayer = (activePlayer + 1)%(players.length);
 		generateTree();
-	}
-
-	public District getActiveDistrict() {
-		return activeDistrict;
-	}
-
-	public void setActiveDistrict(District activeDistrict) {
-		if(activeDistrict.getPlayer() == players[activePlayer]) {
-			this.activeDistrict = activeDistrict;
-		}
 	}
 	
 	public Cell getCell(int i, int j) {
@@ -457,7 +401,6 @@ public class Board{
 	public void setSelectedCell(Cell selectedCell) {
 		if(selectedCell.getDistrict().getPlayer() == players[activePlayer]) {
 			this.selectedCell = selectedCell;
-			setActiveDistrict(selectedCell.getDistrict());
 		}
 	}
 	
@@ -470,7 +413,7 @@ public class Board{
 	 * @param cell la cellule venant d'être ajoutée à un district pouvant provoquer une fusion
 	 * */
 	private void checkMerge(Cell cell) {
-		ArrayList<Cell> cells = getAround(cell, true); //On considère que la cellule est un district pour obtenir toutes les cellules se trouvant au tour
+		ArrayList<Cell> cells = getAround(cell); //On considère que la cellule est un district pour obtenir toutes les cellules se trouvant au tour
 		for(Cell c : cells) {
 			if(c.getDistrict() != cell.getDistrict() && c.getDistrict() != null) {
 				if(c.getDistrict().getPlayer() == cell.getDistrict().getPlayer()) {
@@ -498,7 +441,7 @@ public class Board{
 			for(int j = 0; j<columns; j++) {
 				nTrees = 0;
 				if(board[i][j].getItem() == null) {
-					for(Cell c : getAround(board[i][j],true)) { // on considère que la cellule est un district pour obtenir toutes les cellules l'entourant
+					for(Cell c : getAround(board[i][j])) { // on considère que la cellule est un district pour obtenir toutes les cellules l'entourant
 						if(c.getItem() instanceof Tree) {
 							nTrees += 1;
 						}
@@ -537,6 +480,7 @@ public class Board{
 	 * */
 	// revoir la documentation
 	private void updateCell(Cell cell) {
+		selectedCell.getItem().setHasMoved(true);
 		cell.setItem(selectedCell.getItem());
 		selectedCell.removeItem();
 		selectedCell = null; //peut être faire une méthode forgotSelection ?
@@ -550,5 +494,6 @@ public class Board{
 		cell.setDistrict(selectedCell.getDistrict());
 		selectedCell.getDistrict().addCell(cell);
 		updateCell(cell);
+		checkMerge(cell);
 	}
 }
