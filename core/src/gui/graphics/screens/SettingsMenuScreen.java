@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
-import gui.graphics.screens.animations.Animations;
 
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
@@ -44,11 +43,10 @@ public class SettingsMenuScreen extends SubMenuScreen {
         //Création des différents boutons.
         TextButton fullScreen = new TextButton("fullscreen", textButtonStyle);
         fullScreen.setTransform(true);
-        fullScreen.setScale(ratio);
         TextButton windowed = new TextButton("windowed", textButtonStyle);
         windowed.setTransform(true);
-        windowed.setScale(ratio);
         windowed.setChecked(true);
+
         ButtonGroup buttonGroup = new ButtonGroup(fullScreen, windowed);
         buttonGroup.setMaxCheckCount(1);
         buttonGroup.setMinCheckCount(1);
@@ -70,7 +68,6 @@ public class SettingsMenuScreen extends SubMenuScreen {
                 "Android3", "Windows3", "Linux3", "OSX3", "Android4", "Windows4", "Linux4", "OSX4", "Android5", "Windows5", "Linux5",
                 "OSX5", "Android6", "Windows6", "Linux6", "OSX6", "Android7", "Windows7", "Linux7", "OSX7");
         selectBox.setSelected("Linux6");
-
         musicSlider = new Slider(0, 100, 1, false, uiSkin);
         musicSlider.setValue(100);
         //Update du pourcentage affiché à l'écran
@@ -94,12 +91,13 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
         //Création de la table contenant l'ensemble des éléments définis plus haut
         Table scrollTable = new Table();
-        scrollTable.add(windowMode).expandX().fillY().align(Align.left);
-        scrollTable.add(fullScreen).pad(PAD).fillY().align(Align.right);
-        scrollTable.add(windowed).padRight(PAD);
+        scrollTable.add(windowMode).expandX().align(Align.left);
+        scrollTable.add(fullScreen).pad(PAD).align(Align.right);
+        scrollTable.add(windowed).pad(PAD);
         scrollTable.row();
-        scrollTable.add(screenResolution).fillY().align(Align.left);
-        scrollTable.add(selectBox).maxWidth(fullScreen.getWidth()).padLeft(PAD).padRight(PAD).fillY().align(Align.right);
+
+        scrollTable.add(screenResolution).align(Align.left);
+        scrollTable.add(selectBox).pad(PAD).width(fullScreen.getWidth()).align(Align.right);
         scrollTable.row();
         scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
         scrollTable.add(musicSlider).padRight(PAD).padLeft(PAD).minWidth(100 * ratio).fillX().colspan(2);
@@ -109,6 +107,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(soundSlider).minWidth(100*ratio).padLeft(PAD).padRight(PAD).fillX().colspan(2);
         scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
+        scrollTable.setDebug(true);
         //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);

@@ -34,7 +34,7 @@
 
   SelectBoxStyle: {
     default: {
-      background: selectBox,
+      background: default-button-checked,
       scrollStyle: default,
       listStyle: { selection: selectBox-selection}
     }
