@@ -50,4 +50,21 @@ public enum SoldierLevel implements Level{
 	public boolean isUpperOrEquals(Item item) {
 		return this.price >= ((Soldier)item).getLevel().price;
 	}
+
+	@Override
+	public int compareTo(Item item) {
+		return this.getIndex() - item.getLevel().getIndex();
+	}
+
+	@Override
+	public int getIndex() {
+		for(int i = 0; i<SoldierLevel.values().length; i++) {
+			if(this == SoldierLevel.values()[i]) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	
 }
