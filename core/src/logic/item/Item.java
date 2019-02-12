@@ -34,4 +34,8 @@ public abstract class Item {
 	public Level getLevel() {
 		return null;
 	}
+	
+	public void setHasMoved(boolean hasMoved) {
+		
+	}
 }
