@@ -19,7 +19,6 @@ public abstract class SubMenuScreen extends MenuScreen {
 
     public SubMenuScreen(Slay parent, Stage stage, String menuName) {
         super(parent, stage);
-
         menuNameGroup = generateMenuNameGroup(menuName);
         stage.addActor(menuNameGroup);
         arrowButton = generateArrowButton();

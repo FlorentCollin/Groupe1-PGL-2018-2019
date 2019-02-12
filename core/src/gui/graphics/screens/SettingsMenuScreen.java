@@ -47,12 +47,11 @@ public class SettingsMenuScreen extends SubMenuScreen {
         windowed.setTransform(true);
         windowed.setChecked(true);
 
-        ButtonGroup buttonGroup = new ButtonGroup(fullScreen, windowed);
+        ButtonGroup<TextButton> buttonGroup = new ButtonGroup<>(fullScreen, windowed);
         buttonGroup.setMaxCheckCount(1);
         buttonGroup.setMinCheckCount(1);
         buttonGroup.setUncheckLast(true);
 
-        Skin skin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
         SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
         selectBoxStyle.font = defaultFontItalic;
         selectBoxStyle.listStyle.font = defaultFontItalic;
@@ -97,7 +96,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.row();
 
         scrollTable.add(screenResolution).align(Align.left);
-        scrollTable.add(selectBox).pad(PAD).width(fullScreen.getWidth()).align(Align.right);
+        scrollTable.add(selectBox).grow().pad(PAD).width(fullScreen.getWidth()).align(Align.right);
         scrollTable.row();
         scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
         scrollTable.add(musicSlider).padRight(PAD).padLeft(PAD).minWidth(100 * ratio).fillX().colspan(2);
@@ -107,7 +106,6 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(soundSlider).minWidth(100*ratio).padLeft(PAD).padRight(PAD).fillX().colspan(2);
         scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
-        scrollTable.setDebug(true);
         //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);

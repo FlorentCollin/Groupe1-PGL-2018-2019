@@ -1,61 +1,75 @@
 
 uiskin.png
-size: 1024,128
+size: 2048,128
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 arrow
   rotate: false
-  xy: 787, 46
+  xy: 332, 39
   size: 75, 75
   orig: 75, 75
   offset: 0, 0
   index: -1
+cursor
+  rotate: false
+  xy: 332, 17
+  size: 4, 20
+  orig: 4, 20
+  offset: 0, 0
+  index: -1
 default-button-checked
   rotate: false
-  xy: 456, 67
+  xy: 456, 70
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-uncheck
   rotate: false
-  xy: 1, 57
+  xy: 1, 60
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox
   rotate: false
-  xy: 332, 11
+  xy: 1118, 70
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-background
   rotate: false
-  xy: 1, 1
+  xy: 1, 4
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-selection
   rotate: false
-  xy: 864, 101
-  size: 20, 20
-  orig: 20, 20
+  xy: 787, 70
+  size: 329, 54
+  orig: 329, 54
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
   offset: 0, 0
   index: -1
 slider
   rotate: false
-  xy: 1, 113
+  xy: 1, 116
   size: 453, 8
   orig: 453, 8
   offset: 0, 0
   index: -1
 slider-button
   rotate: false
-  xy: 332, 87
+  xy: 1449, 100
   size: 24, 24
   orig: 24, 24
   offset: 0, 0

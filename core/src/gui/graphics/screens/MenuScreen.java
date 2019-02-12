@@ -31,6 +31,7 @@ public abstract class MenuScreen implements Screen {
     protected BitmapFont defaultFont;
     protected BitmapFont defaultFontItalic;
     protected BitmapFont logoFont;
+    protected BitmapFont textFont;
     protected Skin uiSkin;
     protected FreeTypeFontGenerator generator;
     protected FreeTypeFontGenerator.FreeTypeFontParameter parameter;
@@ -98,12 +99,18 @@ public abstract class MenuScreen implements Screen {
 
         generator.dispose();
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilkItalicLight.otf"));
-        parameter.size = 42;
+        parameter.size = 36;
         defaultFontItalic = generator.generateFont(parameter);
+
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Light.ttf"));
+        parameter.size = 28;
+        textFont = generator.generateFont(parameter);
+
 
         defaultFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        textFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         generator.dispose();
     }
 
