@@ -1,6 +1,5 @@
 package gui.graphics.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -8,14 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
 
-import javax.xml.soap.Text;
-
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
 
 public class CreateRoomMenuScreen extends SubMenuScreen{
 
     private final Table table;
+    private final TextButton createRoomButton;
 
     public CreateRoomMenuScreen(Slay parent, Stage stage) {
         super(parent, stage, "CREATE ROOM");
@@ -65,40 +63,38 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
+        TextButton naturalOff = new TextButton("OFF", textButtonStyle);
         TextButton naturalOn = new TextButton("ON", textButtonStyle);
         naturalOn.setChecked(true);
-        naturalOn.setWidth(naturalOn.getHeight() * 1.5f);
-        TextButton naturalOff = new TextButton("OFF", textButtonStyle);
-        naturalOff.setWidth(naturalOff.getHeight() * 1.5f);
-        //TODO
-        Table naturalTable = new Table();
-        naturalTable.add(naturalOn).fill().maxWidth(naturalOn.getWidth()).align(Align.left);
-        naturalTable.add(naturalOff).fill().maxWidth(naturalOff.getWidth());
 
-        naturalTable.setDebug(true);
-
-        ButtonGroup<TextButton> naturalGroup = new ButtonGroup<>(naturalOn, naturalOn);
+        ButtonGroup<TextButton> naturalGroup = new ButtonGroup<>(naturalOn, naturalOff);
         naturalGroup.setMaxCheckCount(1);
         naturalGroup.setMinCheckCount(1);
         naturalGroup.setUncheckLast(true);
 
+        createRoomButton = new TextButton("Create Room", textButtonStyle);
+        createRoomButton.setX(stage.getWidth() - createRoomButton.getWidth());
+        createRoomButton.setY(stage.getHeight() / 10);
+        stage.addActor(createRoomButton);
+
         Table scrollTable = new Table();
         scrollTable.add(new Label("Name", labelStyle)).align(Align.left);
-        scrollTable.add(mapName).minWidth(350*ratio).pad(PAD).align(Align.left);
+        scrollTable.add(mapName).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
         scrollTable.add(new Label("Map", labelStyle)).align(Align.left);
-        scrollTable.add(mapSelectBox).minWidth(350*ratio).pad(PAD).align(Align.left);
+        scrollTable.add(mapSelectBox).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
         scrollTable.add(new Label("Numbers of Players", labelStyle)).align(Align.left);
-        scrollTable.add(playersSlider).minWidth(350*ratio).pad(PAD).align(Align.left);
-        scrollTable.add(playersSliderNumber).expandX().pad(PAD).align(Align.left);
+        scrollTable.add(playersSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
+        scrollTable.add(playersSliderNumber).pad(PAD).align(Align.left);
         scrollTable.row();
         scrollTable.add(new Label("Numbers of AI", labelStyle)).align(Align.left);
-        scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left);
-        scrollTable.add(aiSliderNumber).expandX().pad(PAD).align(Align.left);
+        scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
+        scrollTable.add(aiSliderNumber).pad(PAD).align(Align.left);
         scrollTable.row();
         scrollTable.add(new Label("Naturals Disasters", labelStyle)).align(Align.left);
-//        scrollTable.add(naturalTable);
+        scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
+        scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
 //        scrollTable.setDebug(true);
 
         //TODO
@@ -117,12 +113,14 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     public void show() {
         super.show();
         table.addAction(slideFromRight(table, stage.getWidth() / 5, table.getY(), ANIMATION_DURATION / 4));
+        createRoomButton.addAction(slideFromRight(createRoomButton, stage.getWidth() - createRoomButton.getWidth() - stage.getWidth() / 10, createRoomButton.getY(), ANIMATION_DURATION / 4));
     }
 
     @Override
     public void hide() {
         super.hide();
         table.addAction(slideToRight(table));
+        createRoomButton.addAction(slideToRight(createRoomButton));
     }
     @Override
     public void pause() {

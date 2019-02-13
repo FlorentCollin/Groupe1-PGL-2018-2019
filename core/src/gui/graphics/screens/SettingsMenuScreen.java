@@ -53,9 +53,9 @@ public class SettingsMenuScreen extends SubMenuScreen {
         buttonGroup.setUncheckLast(true);
 
         SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
-        selectBoxStyle.font = defaultFontItalic;
-        selectBoxStyle.listStyle.font = defaultFontItalic;
-        final SelectBox selectBox = new SelectBox(selectBoxStyle);
+        selectBoxStyle.font = textFont;
+        selectBoxStyle.listStyle.font = textFont;
+        SelectBox selectBox = new SelectBox(selectBoxStyle);
         selectBox.setAlignment(Align.center);
         selectBox.getList().setAlignment(Align.right);
         selectBox.addListener(new ChangeListener() {
@@ -99,11 +99,13 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(selectBox).grow().pad(PAD).width(fullScreen.getWidth()).align(Align.right);
         scrollTable.row();
         scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
-        scrollTable.add(musicSlider).padRight(PAD).padLeft(PAD).minWidth(100 * ratio).fillX().colspan(2);
+        scrollTable.add(musicSlider).pad(PAD)
+                .minWidth(100 * ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2).fillX().align(Align.right).colspan(2);
         scrollTable.add(musicSliderPourcent).minWidth(musicSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
         scrollTable.add(soundLevel).fillY().align(Align.left);
-        scrollTable.add(soundSlider).minWidth(100*ratio).padLeft(PAD).padRight(PAD).fillX().colspan(2);
+        scrollTable.add(soundSlider).padRight(PAD).minWidth(100*ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2)
+                .pad(PAD).fillX().align(Align.right).colspan(2);
         scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
         //TODO
