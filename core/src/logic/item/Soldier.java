@@ -37,9 +37,25 @@ public class Soldier extends Item{
 	}
 	
 	public void improve() {
-		level.improve(this);
+		switch(level) {
+		case level1:
+			level = SoldierLevel.level2;
+			break;
+		case level2:
+			level = SoldierLevel.level3;
+			break;
+		case level3:
+			level = SoldierLevel.level4;
+			break;
+		default:
+			break;
+		}
 		hasMoved = false;
 	}
 	
+	@Override
+	public boolean canMove() {
+		return !hasMoved;
+	}
 	
 }

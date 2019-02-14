@@ -27,26 +27,6 @@ public enum SoldierLevel implements Level{
 	}
 
 	@Override
-	public void improve(Item item) {
-		SoldierLevel newLevel = null;
-		switch(((Soldier)item).getLevel()) {
-		case level1:
-			newLevel = level2;
-			break;
-		case level2:
-			newLevel = level3;
-			break;
-		case level3:
-			newLevel = level4;
-			break;
-		default:
-			break;
-		}
-		((Soldier)item).setLevel(newLevel);
-		
-	}
-
-	@Override
 	public boolean isUpperOrEquals(Item item) {
 		return this.price >= ((Soldier)item).getLevel().price;
 	}

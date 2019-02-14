@@ -38,4 +38,8 @@ public abstract class Item {
 	public void setHasMoved(boolean hasMoved) {
 		
 	}
+	
+	public boolean canMove() {
+		return false;
+	}
 }

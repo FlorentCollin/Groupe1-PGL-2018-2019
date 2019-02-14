@@ -10,12 +10,6 @@ public enum TowerLevel implements Level{
 	}
 
 	@Override
-	public void improve(Item item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public boolean isNotMax() {
 		// TODO Auto-generated method stub
 		return false;
