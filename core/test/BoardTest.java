@@ -1,4 +1,3 @@
-package unitTests;
 
 import logic.board.Board;
 import logic.board.District;
