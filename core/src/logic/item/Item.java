@@ -1,5 +1,6 @@
 package logic.item;
 
+import logic.item.level.Level;
 import logic.player.Player;
 
 public abstract class Item {
@@ -14,7 +15,7 @@ public abstract class Item {
 		
 	}
 	
-	/*
+	/**
 	 * Permet de savoir si un item peut être achetable, déplaçable ou améliorable
 	 * @return le mode dans lequel se trouve l'item
 	 * */
@@ -24,5 +25,21 @@ public abstract class Item {
 	
 	public Player getPlayer() {
 		return this.player;
+	}
+	
+	public void improve() {
+		
+	}
+	
+	public Level getLevel() {
+		return null;
+	}
+	
+	public void setHasMoved(boolean hasMoved) {
+		
+	}
+	
+	public boolean canMove() {
+		return false;
 	}
 }
