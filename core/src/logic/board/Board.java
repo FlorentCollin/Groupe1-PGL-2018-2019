@@ -1,19 +1,15 @@
 package logic.board;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import com.badlogic.gdx.Gdx;
-
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
-import logic.item.Soldier;
 import logic.item.Tree;
-import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Board{
 	private Cell[][] board;

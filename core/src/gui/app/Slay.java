@@ -14,6 +14,7 @@ public class Slay extends Game {
 	private ShortcutsMenuScreen shortcutsMenuScreen;
     private OnlineMenuScreen onlineMenuScreen;
     private CreateRoomMenuScreen createRoomMenuScreen;
+    private InGameScreen inGameScreen;
 
     @Override
 	public void create () {
@@ -39,7 +40,7 @@ public class Slay extends Game {
 	 * @param screen Le menu ou l'interface de jeu qui va s'afficher pour l'utilisateur
 	 */
 	public void changeScreen(Class<?> screen) {
-	    MenuScreen nextScreen = null;
+	    BasicScreen nextScreen = null;
 		if(screen == MainMenuScreen.class) {
 			if(mainMenuScreen == null) {
 				mainMenuScreen = new MainMenuScreen(this);
@@ -65,7 +66,12 @@ public class Slay extends Game {
                 createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage());
             }
             nextScreen = createRoomMenuScreen; 
-		}
+		} else if(screen == InGameScreen.class) {
+		    if(inGameScreen == null) {
+		        inGameScreen = new InGameScreen(this, "testMap.tmx");
+            }
+            nextScreen = inGameScreen;
+        }
 		this.setScreen(nextScreen);
 
 	}
