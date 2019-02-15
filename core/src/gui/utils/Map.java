@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import logic.board.Board;
 import logic.board.District;
+import logic.item.Capital;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
@@ -31,6 +32,7 @@ public class Map {
         players[0] = p1;
         players[1] = p2;
         Board board = new Board(cells.getWidth(), cells.getHeight(), players, new NaturalDisastersController(), new Shop());
+        board.getBoard()[1][1].setItem(new Capital());
         return board;
     }
 

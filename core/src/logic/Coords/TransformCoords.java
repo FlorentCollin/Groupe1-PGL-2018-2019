@@ -1,5 +1,7 @@
 package logic.Coords;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class TransformCoords {
 
     /**
@@ -36,8 +38,9 @@ public class TransformCoords {
         return cubeToOffset(new CubeCoords(col, -col-row, row));
     }
 
-    public static void main(String[] args) {
-        OffsetCoords coords = pixelToOffset(204, 18, 23);
-        System.out.println(coords);
+    public static Vector2 hexToPixel(int col, int row, int size) {
+        int x = (int)(size * (3./2 * col));
+        int y = (int)(size * (Math.sqrt(3)/2 * col  +  Math.sqrt(3) * row));
+        return new Vector2(x,y);
     }
 }

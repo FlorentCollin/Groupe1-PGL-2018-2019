@@ -462,4 +462,16 @@ public class Board{
 	public ArrayList<District> getDistricts() {
 		return districts;
 	}
+
+	public Cell[][] getBoard() {
+		return board;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public int getRows() {
+		return rows;
+	}
 }

@@ -3,7 +3,10 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -13,6 +16,7 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.item.Capital;
 
 import java.util.ArrayList;
 
@@ -25,15 +29,14 @@ public class InGameScreen extends BasicScreen {
     private TiledMapTileLayer cells;
     private Board board;
 
-
-
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
         map = new Map();
-        board = map.load("testMap.tmx");
+        board = map.load(mapName);
         cells = map.getCells();
 
         camera.setToOrtho(true);
+        //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
         viewport = new FillViewport(worldWith, worldHeight, camera);
@@ -46,10 +49,11 @@ public class InGameScreen extends BasicScreen {
         super.render(delta);
         camera.update();
         map.getTiledMapRenderer().setView(camera);
-        map.getTiledMapRenderer().render();
+        map.getTiledMapRenderer().render(); //Rendering des cellules
+        renderItems();
         mouseLoc.x = Gdx.input.getX();
         mouseLoc.y = Gdx.input.getY();
-        camera.unproject(mouseLoc);
+        camera.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
         if(Gdx.input.isButtonPressed(102)) {
             OffsetCoords coords = getCoordsFromMousePosition(mouseLoc);
             if(cells.getCell(coords.col,coords.row) != null) {
@@ -75,7 +79,29 @@ public class InGameScreen extends BasicScreen {
         if(Gdx.input.isKeyPressed(32)) {
             camera.translate(+10,0);
         }
+        if(Gdx.input.isKeyPressed(131)) {
+            parent.setScreen(new MainMenuScreen(parent));
+        }
+    }
 
+    private void renderItems() {
+//        Texture capitalTexture = new Texture(Gdx.files.internal("maps/hex_orange.png"));
+//        Sprite sprite = new Sprite(capitalTexture);
+//        sprite.flip(false, true);
+        Cell[][] tab = board.getBoard();
+        for (int i = 0; i < board.getColumns(); i++) {
+            for (int j = 0; j < board.getRows(); j++) {
+                if(tab[j][i].getItem() != null) {
+                    //TODO
+                }
+//                    stage.getBatch().begin();
+//                    Vector2 pos = TransformCoords.hexToPixel(j,i, (int)cells.getTileWidth() / 2);
+//                    stage.getBatch().draw(sprite, pos.x, pos.y);
+//                    stage.getBatch().end();
+
+            }
+
+        }
     }
 
     protected void generateStage() {
@@ -121,4 +147,7 @@ public class InGameScreen extends BasicScreen {
 
     }
 
+    public Board getBoard() {
+        return board;
+    }
 }
