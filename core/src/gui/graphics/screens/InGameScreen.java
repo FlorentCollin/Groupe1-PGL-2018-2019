@@ -8,13 +8,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import gui.app.Slay;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
@@ -35,11 +31,12 @@ public class InGameScreen extends BasicScreen {
         tiledMapRenderer = new HexagonalTiledMapRenderer(map);
         board = (TiledMapTileLayer) map.getLayers().get("background"); //cellules
         tileSet = map.getTileSets().getTileSet("hex");
-        System.out.println(tileSet.getTile(1));
-
-        viewport = new FillViewport((board.getWidth()/2) * board.getTileWidth() + (board.getWidth() / 2) * (board.getTileWidth() / 2) + board.getTileWidth()/4,
-                board.getHeight() * board.getTileHeight() + board.getTileHeight() / 2, camera);
+        //TODO créer des variables
+        float worldWith = (board.getWidth()/2) * board.getTileWidth() + (board.getWidth() / 2) * (board.getTileWidth() / 2) + board.getTileWidth()/4;
+        float worldHeight = board.getHeight() * board.getTileHeight() + board.getTileHeight() / 2;
+        viewport = new FillViewport(worldWith, worldHeight, camera);
         camera.update();
+
     }
 
     @Override
