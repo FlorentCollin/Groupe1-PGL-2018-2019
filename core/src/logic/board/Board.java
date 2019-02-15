@@ -458,4 +458,8 @@ public class Board{
 	public void addDistrict(District district) {
 		districts.add(district);
 	}
+
+	public ArrayList<District> getDistricts() {
+		return districts;
+	}
 }

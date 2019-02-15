@@ -1,10 +1,9 @@
 package logic.board.cell;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import logic.board.District;
 import logic.item.Item;
 
-public class Cell extends TiledMapTileLayer.Cell {
+public class Cell {
 	private Item item; // si null alors il n'y a pas d'item actuellement sur la cellule
 	private transient District district; // si null alors n'appartient actuellement à aucun district
 	private int numberOfAdjacentWaterCell; //?
