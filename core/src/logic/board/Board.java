@@ -3,14 +3,10 @@ package logic.board;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
-
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
-import logic.item.Soldier;
 import logic.item.Tree;
-import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
@@ -26,7 +22,7 @@ public class Board{
 	private final int PROBA;
 	//utiliser dictionnaire {cell : district} pour connaître plus vite le district d'une cellule
 	
-	public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
+	public Board(int rows, int columns, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
 		this.rows = rows;
 		board = new Cell[rows][columns];
@@ -461,5 +457,17 @@ public class Board{
 	
 	public void addDistrict(District district) {
 		districts.add(district);
+	}
+	
+	public static void main(String[] args) {
+		int rows = 6;
+		int columns = 7;
+		Board board = new Board(rows, columns, null, null, null);
+		for(int i=0; i<rows; i++) {
+			for(int j=0; j<columns; j++) {
+				System.out.print(board.getCell(i, j)+" ");
+			}
+			System.out.println("-----");
+		}
 	}
 }
