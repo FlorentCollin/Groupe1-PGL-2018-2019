@@ -1,5 +1,8 @@
 package logic.board;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
@@ -22,7 +25,7 @@ public class Board{
 	private final int PROBA;
 	//utiliser dictionnaire {cell : district} pour connaître plus vite le district d'une cellule
 	
-	public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
+	public Board(int rows, int columns, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
 		this.rows = rows;
 		board = new Cell[rows][columns];
