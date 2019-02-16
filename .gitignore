@@ -4,3 +4,4 @@ out
 .idea
 *.class
 .gradle/
+.gradle/4.6/fileHashes/fileHashes.lock
