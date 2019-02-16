@@ -7,67 +7,47 @@ import logic.board.cell.Cell;
 import logic.item.Soldier;
 import logic.player.Player;
 
-public abstract class Strategy {
+public interface Strategy {
 
-	public Strategy() {
-
-	}
-
-	/*
-	 * Permet de déplacer un soldat sur la carte
-	 * @param soldier le soldat à déplacer
+	/**
+	 * Permet de d�placer un soldat sur la carte
+	 * @param soldier le soldat � d�placer
 	 * */
-	public void move(Soldier soldier) {
-		/* TO DO */
-	}
+	public void move(Soldier soldier);
 
-	/*
+	/**
 	 * Permet d'acheter un soldat
 	 * @return un nouveau soldat
 	 * */
-	public Soldier buy() {
-		/* TO DO */
-		return null;
-	}
+	public Soldier buy();
 
-	/*
+	/**
 	 * Permet de placer un soldat nouvellement acheter sur le plateau de jeu
-	 * @param soldier le soldat à placer
+	 * @param soldier le soldat �placer
 	 * */
-	public void placeNewSoldier(Soldier soldier) {
-		/* TO DO */
-	}
+	public void placeNewSoldier(Soldier soldier);
 
-	/*
-	 * Permet d'attaquer un enemi ciblé
+	/**
+	 * Permet d'attaquer un enemi cibl�
 	 * @param soldier le soldat avec lequel attaquer
-	 * @param enemy le joueur à attaquer
+	 * @param enemy le joueur � attaquer
 	 * */
-	public void attack(Soldier soldier, Player enemy) {
-		/* to do */
-	}
+	public void attack(Soldier soldier, Player enemy);
 
-	/*
+	/**
 	 * Permet de se défendre
 	 * @param soldier le soldat avec lequel défendre*/
-	public void defend(Soldier soldier) {
-		/* to do */
-	}
+	public void defend(Soldier soldier);
 
-	/*
+	/**
 	 * Permet de séléctionner l'enemy à attaquer
 	 * @return le joueur à attaquer
 	 * */
-	public Player selectEnemy() {
-		/* to do */
-		return null;
-	}
+	public Player selectEnemy();
 
-	/*
+	/**
 	 * Permet de jouer le tour
 	 * */
-	public void play(Board board, ArrayList<Cell> cells, ArrayList<Soldier> soldiers) {
-		/* to do */
-	}
+	public void play(Board board, ArrayList<Cell> cells, ArrayList<Soldier> soldiers);
 
 }

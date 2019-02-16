@@ -21,6 +21,6 @@ public class AI extends Player{
 	 * Permet à l'ia de jouer son tour en fonction de la stratégie qu'elle utilise
 	 * */
 	public void play() {
-		this.strategy.play(board, ownCells, soldiers);
+		strategy.play(board, ownCells, soldiers);
 	}
 }
