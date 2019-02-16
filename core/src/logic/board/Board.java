@@ -1,8 +1,5 @@
 package logic.board;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
@@ -23,12 +20,16 @@ public class Board{
 	private NaturalDisastersController naturalDisastersController;
 	private Cell selectedCell;
 	private final int PROBA;
-	//utiliser dictionnaire {cell : district} pour connaître plus vite le district d'une cellule
-	
-	public Board(int rows, int columns, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
+	//Variable qui est utilisé dans la méthode getNeighbors
+	//Elle contient toutes les directions possibles pour les cellules adjacentes
+	private final int[][][] directions = {
+			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
+			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
+
+	public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
 		this.rows = rows;
-		board = new Cell[rows][columns];
+		board = new Cell[columns][rows];
 		this.players = players;
 		this.naturalDisastersController = naturalDisastersController;
 		this.districts = new ArrayList<District>();
@@ -39,8 +40,8 @@ public class Board{
 	}
 	
 	private void fullIn() {
-		for(int i = 0; i<rows; i++) {
-			for(int j = 0; j<columns; j++) {
+		for(int i = 0; i<columns; i++) {
+			for(int j = 0; j<rows; j++) {
 				board[i][j] = new Cell();
 			}
 		}
@@ -206,7 +207,7 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(Cell cell) {
 		ArrayList<Cell> possible = new ArrayList<Cell>();
-		for(Cell c : getAround(cell)) {
+		for(Cell c : getNeighbors(cell)) {
 			if(possible.indexOf(c) == -1) {
 				if(canGoOn(c, cell.getItem())) {
 					possible.add(c);
@@ -223,11 +224,12 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<Cell>();
+		System.out.println(district.getCells() == null);
 		for(Cell c : district.getCells()) {
 			if(possible.indexOf(c) == -1) {
 				possible.add(c);
 			}
-			for(Cell c1 : getAround(c)) {
+			for(Cell c1 : getNeighbors(c)) {
 				if(canGoOn(c1, shop.getSelectedItem()) && possible.indexOf(c1) == -1) {
 					possible.add(c1);
 				}
@@ -242,34 +244,23 @@ public class Board{
 	 * @param item l'item que l'on souhaite placer
 	 * @return la liste des cellules autour de cell pour lesquels c'est possible
 	 * */
-	private ArrayList<Cell> getAround(Cell cell){
+	private ArrayList<Cell> getNeighbors(Cell cell){
 		ArrayList<Cell> around = new ArrayList<Cell>();
 		int x = getPosition(cell)[0];
 		int y = getPosition(cell)[1];
-		for(int i=x-1; i<x+2; i++) {
-			for(int j=y-1; j<y+2; j++) {
-				if(i>=0 && i<rows && j>=0 && j<columns) {
-					if(board[i][j] != cell) { // On ne veut que les cellules autours
-						if(i==x-1 && j != y) {
-							if(y%2 == 0) {								
-								around.add(board[i][j]);
-							}
-						}
-						else if(i == x+1 && j != y) {
-							if(y%2 != 0) {								
-								around.add(board[i][j]);
-							}
-						}
-						else {
-							around.add(board[i][j]);
-						}
-					}
-				}
+		int parity = x & 1;
+		for (int direction = 0; direction < 6; direction++) { //6 car un  hexagone possède 6 voisins
+			int[] dir = directions[parity][direction];
+			int neighborX = x + dir[0];
+			int neighborY = y + dir[1];
+			if(neighborX>0 && neighborX<columns && neighborY>0 && neighborY<rows) {
+				around.add(board[neighborX][neighborY]);
 			}
+
 		}
 		return around;
 	}
-	
+
 	/**
 	 * Permet de vérifier s'il est possible de placer un item acheté sur une certaine case
 	 * @param cell la cellule à tester
@@ -342,8 +333,8 @@ public class Board{
 	 * */
 	public int[] getPosition(Cell c) {
 		int[] position = new int[2];
-		for(int i = 0; i<rows; i++) {
-			for(int j = 0; j<columns; j++) {
+		for(int i = 0; i<columns; i++) {
+			for(int j = 0; j<rows; j++) {
 				if(board[i][j] == c) {
 					position[0] = i;
 					position[1] = j;
@@ -371,8 +362,8 @@ public class Board{
 	 * Vérifie si deux district doivent fusionner
 	 * @param cell la cellule venant d'être ajoutée à un district pouvant provoquer une fusion
 	 * */
-	private void checkMerge(Cell cell) {
-		ArrayList<Cell> cells = getAround(cell); //On considère que la cellule est un district pour obtenir toutes les cellules se trouvant au tour
+	public void checkMerge(Cell cell) {
+		ArrayList<Cell> cells = getNeighbors(cell); //On considère que la cellule est un district pour obtenir toutes les cellules se trouvant au tour
 		for(Cell c : cells) {
 			if(c.getDistrict() != cell.getDistrict() && c.getDistrict() != null) {
 				if(c.getDistrict().getPlayer() == cell.getDistrict().getPlayer()) {
@@ -397,11 +388,11 @@ public class Board{
 	private void generateTree() {
 		Random rand = new Random();
 		int nTrees;
-		for(int i=0; i<rows; i++) {
-			for(int j = 0; j<columns; j++) {
+		for(int i=0; i<columns; i++) {
+			for(int j = 0; j<rows; j++) {
 				nTrees = 0;
 				if(board[i][j].getItem() == null) {
-					for(Cell c : getAround(board[i][j])) { // on considère que la cellule est un district pour obtenir toutes les cellules l'entourant
+					for(Cell c : getNeighbors(board[i][j])) { // on considère que la cellule est un district pour obtenir toutes les cellules l'entourant
 						if(c.getItem() instanceof Tree) {
 							nTrees += 1;
 						}
@@ -476,5 +467,9 @@ public class Board{
 
 	public int getRows() {
 		return rows;
+	}
+
+	public Player[] getPlayers() {
+		return players;
 	}
 }

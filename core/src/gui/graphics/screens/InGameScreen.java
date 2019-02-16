@@ -19,6 +19,8 @@ import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
 
+import java.util.ArrayList;
+
 public class InGameScreen extends BasicScreen {
 
     private Map map;
@@ -52,7 +54,12 @@ public class InGameScreen extends BasicScreen {
         if(Gdx.input.isButtonPressed(102)) {
             OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
             if(cells.getCell(coords.col,coords.row) != null) {
-                cells.getCell(coords.col, coords.row).setTile(map.getTileSet().getTile(1));
+                ArrayList<Cell> moves = board.possibleMove(board.getCell(9,7));
+                for(Cell c : moves) {
+                    int [] position = board.getPosition(c);
+                    TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
+                    cell.setTile(map.getTileSet().getTile(2));
+                }
             }
         }
         if(Gdx.input.isKeyPressed(19)) {
@@ -84,7 +91,7 @@ public class InGameScreen extends BasicScreen {
         Texture texture = null;
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {
-                if (tab[j][i].getItem() != null) {
+                if (tab[i][j].getItem() != null) {
                     Item item = tab[j][i].getItem();
                     if(item instanceof Soldier) {
                         switch(((Soldier) item).getLevel()) {

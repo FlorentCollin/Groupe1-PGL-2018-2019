@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
 import logic.board.Board;
+import logic.board.District;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
@@ -29,6 +30,7 @@ public class Map {
         XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
         generateTmxMap(xml_element);
         generateBoard(xml_element);
+        generateDistricts();
         return board;
     }
     private void generateTmxMap(XmlReader.Element xmlElement) {
@@ -51,17 +53,18 @@ public class Map {
     private void generateDistricts() {
         //TODO Méthode qui génère les district dans board
         for (int i = 0; i < cells.getWidth(); i++) {
-            for (int j = 0; j < cells.getHeight() ; j++) {
-                TiledMapTileLayer.Cell cell = cells.getCell(i,j);
+            for (int j = 0; j < cells.getHeight(); j++) {
+                TiledMapTileLayer.Cell cell = cells.getCell(i, Math.abs(cells.getHeight()-1 - j));
                 MapProperties properties = cell.getTile().getProperties();
-                int nPlayer = (int)properties.get("player");
-                switch (nPlayer) {
-                    case 1:
-                        
-                        break;
+                int nPlayer = (int) properties.get("player");
+                if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre
+                    District district = new District(board.getPlayers()[nPlayer - 1]);
+                    district.addCell(board.getCell(i,j));
+                    board.addDistrict(district);
+                    board.getCell(i, j).setDistrict(district);
+                    board.checkMerge(board.getCell(i, j));
                 }
             }
-
         }
     }
 
