@@ -240,8 +240,6 @@ public class Board{
 	
 	/**
 	 * Permet de récupérer les cellules autour d'une autre cellule sur lesquelles il est possible de placer un nouvel item
-	 * Cette méthode provient de : https://www.redblobgames.com/grids/hexagons/#neighbors
-	 * Elle a été adapter pour correspondre au language java ainsi qu'au jeu Slay
 	 * @param cell la cellule de base
 	 * @param item l'item que l'on souhaite placer
 	 * @return la liste des cellules autour de cell pour lesquels c'est possible
