@@ -7,3 +7,4 @@ out
 
 *.iml
 core/assets/items/desktop.ini
+.gradle/4.6/fileHashes/fileHashes.lock
