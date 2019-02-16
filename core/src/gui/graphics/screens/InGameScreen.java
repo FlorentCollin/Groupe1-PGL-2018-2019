@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -29,9 +30,11 @@ public class InGameScreen extends BasicScreen {
     private float worldHeight;
     private TiledMapTileLayer cells;
     private Board board;
+    private TextureAtlas itemsSkin;
 
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
+        itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
         board = map.load(mapName);
         cells = map.getCells();
@@ -53,12 +56,16 @@ public class InGameScreen extends BasicScreen {
 
         if(Gdx.input.isButtonPressed(102)) {
             OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
+            System.out.println(coords);
             if(cells.getCell(coords.col,coords.row) != null) {
-                ArrayList<Cell> moves = board.possibleMove(board.getCell(9,7));
-                for(Cell c : moves) {
-                    int [] position = board.getPosition(c);
-                    TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
-                    cell.setTile(map.getTileSet().getTile(2));
+                if(board.getCell(coords.col, coords.row).getDistrict() != null) {
+                    ArrayList<Cell> moves = board.getCell(coords.col,coords.row).getDistrict().getCells();
+                    for(Cell c : moves) {
+                        int [] position = board.getPosition(c);
+                        TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
+                        cell.setTile(map.getTileSet().getTile(2));
+                    }
+
                 }
             }
         }
@@ -87,35 +94,35 @@ public class InGameScreen extends BasicScreen {
     }
 
     private void renderItems() {
+        //TODO ne pas recréer le sprite à chaque render car cela est lourd il  vaut mieux le stocker en mémoire
         Cell[][] tab = board.getBoard();
-        Texture texture = null;
+        Sprite sprite = null;
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {
                 if (tab[i][j].getItem() != null) {
-                    Item item = tab[j][i].getItem();
+                    Item item = tab[i][j].getItem();
                     if(item instanceof Soldier) {
                         switch(((Soldier) item).getLevel()) {
                             case level1:
-                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl1.png"));
+                                sprite = itemsSkin.createSprite(item.getClass().getSimpleName() + "_lvl1");
                                 break;
                             case level2:
-                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl2.png"));
+                                sprite = itemsSkin.createSprite(item.getClass().getSimpleName() + "_lvl2");
                                 break;
                             case level3:
-                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl3.png"));
+                                sprite = itemsSkin.createSprite(item.getClass().getSimpleName() + "_lvl3");
                                 break;
                             case level4:
-                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl4.png"));
+                                sprite = itemsSkin.createSprite(item.getClass().getSimpleName() + "_lvl4");
                                 break;
                         }
                     } else {
-                        texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + ".png"));
+                        sprite = itemsSkin.createSprite(item.getClass().getSimpleName());
                     }
-                        if(texture != null) {
-                            Sprite sprite = new Sprite(texture);
-                            sprite.flip(false, true);
+                        if(sprite != null) {
                             stage.getBatch().begin();
-                            Vector2 pos = TransformCoords.hexToPixel(j, i, (int) cells.getTileWidth() / 2);
+                            Vector2 pos = TransformCoords.hexToPixel(i, j+1, (int) cells.getTileWidth() / 2);
+                            pos.y = Math.abs(worldHeight - pos.y); // inversion de l'axe y
                             stage.getBatch().draw(sprite, pos.x, pos.y);
                             stage.getBatch().end();
                         }
@@ -152,11 +159,8 @@ public class InGameScreen extends BasicScreen {
         // Ce qui permet de retrouver les bonnes coordonnés
         // le (int)cells.getTileWidth() /2 correspond à la taille de l'hexagone (ie la longueur de la droite qui va du
         // centre vers une des pointes de l'hexagone
-        OffsetCoords coords = TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
+        return TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
                 (int)(mouseLoc.y - cells.getTileHeight() / 2), (int)cells.getTileWidth() /2);
-        coords.row = Math.abs(cells.getHeight()-1 - coords.row); //On inverse l'axe des ordonnées
-        //Cela permet d'avoir le repère placé en haut à gauche avec les y allant vers le bas et les x vers la droite
-        return coords;
     }
 
 

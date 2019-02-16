@@ -10,9 +10,15 @@ import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
 import logic.board.Board;
 import logic.board.District;
+import logic.board.cell.Cell;
+import logic.item.Capital;
+import logic.item.Item;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /** Classe utilisé pour charger et convertir une map TMX en Board **/
 
@@ -31,6 +37,7 @@ public class Map {
         generateTmxMap(xml_element);
         generateBoard(xml_element);
         generateDistricts();
+        generateItems(xml_element);
         return board;
     }
     private void generateTmxMap(XmlReader.Element xmlElement) {
@@ -72,7 +79,22 @@ public class Map {
         XmlReader.Element items = xmlElement.getChildByName("items");
         for (int i = 0; i < items.getChildCount(); i++) {
             XmlReader.Element item = items.getChild(i);
-
+            Class<?> itemClass = getClassFromString(item.getAttribute("type"));
+            Constructor<?> constructor = itemClass.getConstructors()[0];
+            Cell cell = board.getCell(Integer.parseInt(item.getAttribute("x")),
+                    Integer.parseInt(item.getAttribute("y")));
+            try {
+                cell.setItem((Item) constructor.newInstance());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            if(itemClass.equals(Capital.class)) {
+                cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
+            }
         }
     }
 

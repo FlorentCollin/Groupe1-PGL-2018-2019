@@ -224,7 +224,6 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<Cell>();
-		System.out.println(district.getCells() == null);
 		for(Cell c : district.getCells()) {
 			if(possible.indexOf(c) == -1) {
 				possible.add(c);
@@ -253,7 +252,7 @@ public class Board{
 			int[] dir = directions[parity][direction];
 			int neighborX = x + dir[0];
 			int neighborY = y + dir[1];
-			if(neighborX>0 && neighborX<columns && neighborY>0 && neighborY<rows) {
+			if(neighborX>=0 && neighborX<columns && neighborY>=0 && neighborY<rows) {
 				around.add(board[neighborX][neighborY]);
 			}
 
@@ -372,7 +371,7 @@ public class Board{
 						c1.setDistrict(cell.getDistrict());
 					}
 					districts.remove(c.getDistrict());
-					c.getDistrict().remove();
+//					c.getDistrict().remove();
 				}
 			}
 		}
