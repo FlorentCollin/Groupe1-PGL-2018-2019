@@ -16,9 +16,6 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
-import logic.item.Capital;
-
-import java.util.ArrayList;
 
 public class InGameScreen extends BasicScreen {
 
@@ -85,9 +82,10 @@ public class InGameScreen extends BasicScreen {
     }
 
     private void renderItems() {
-//        Texture capitalTexture = new Texture(Gdx.files.internal("maps/hex_orange.png"));
-//        Sprite sprite = new Sprite(capitalTexture);
-//        sprite.flip(false, true);
+        System.out.println(Gdx.graphics.getFramesPerSecond());
+        Texture capitalTexture = new Texture(Gdx.files.internal("maps/hex_orange.png"));
+        Sprite sprite = new Sprite(capitalTexture);
+        sprite.flip(false, true);
         Cell[][] tab = board.getBoard();
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {

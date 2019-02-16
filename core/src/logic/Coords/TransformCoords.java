@@ -39,8 +39,8 @@ public class TransformCoords {
     }
 
     public static Vector2 hexToPixel(int col, int row, int size) {
-        int x = (int)(size * (3./2 * col));
-        int y = (int)(size * (Math.sqrt(3)/2 * col  +  Math.sqrt(3) * row));
+        int x = size * 3/2 * row;
+        int y = (int)(size * Math.sqrt(3) * (col + 0.5 * (row&1)));
         return new Vector2(x,y);
     }
 }
