@@ -14,9 +14,7 @@
       <item type="Tree" x="5" y="0" />
       <item type="Tree" x="12" y="14" />
       <item type="Tree" x="18" y="9" />
+      <item type="Soldier" level="1" x="2" y="3" />
+      <item type="Soldier" level="2" x="16" y="12" />
     </items>
-    <units>
-      <unit type="Soldier" level="0" x="2" y="2" />
-      <unit type="Soldier" level="2" x="16" y="12" />
-    </units>
 </world>

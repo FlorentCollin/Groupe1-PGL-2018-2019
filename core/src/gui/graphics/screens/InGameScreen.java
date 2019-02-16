@@ -2,6 +2,7 @@ package gui.graphics.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,7 +23,7 @@ import logic.item.Soldier;
 
 import java.util.ArrayList;
 
-public class InGameScreen extends BasicScreen {
+public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private Map map;
     private Vector3 mouseLoc = new Vector3();
@@ -53,28 +54,6 @@ public class InGameScreen extends BasicScreen {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
-
-        if(Gdx.input.isButtonPressed(102)) {
-            OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
-            System.out.println(coords);
-            if(cells.getCell(coords.col,coords.row) != null) {
-                if(board.getCell(coords.col, coords.row).getDistrict() != null) {
-                    ArrayList<Cell> moves = board.getCell(coords.col,coords.row).getDistrict().getCells();
-                    for(Cell c : moves) {
-                        int [] position = board.getPosition(c);
-                        TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
-                        cell.setTile(map.getTileSet().getTile(2));
-                    }
-
-                }
-            }
-        }
-        if(Gdx.input.isKeyPressed(19)) {
-            camera.zoom -= 0.05;
-        }
-        if(Gdx.input.isKeyPressed(20)) {
-            camera.zoom += 0.05;
-        }
 
         if(Gdx.input.isKeyPressed(51)) {
             camera.translate(0,10);
@@ -138,7 +117,7 @@ public class InGameScreen extends BasicScreen {
         viewport = new FillViewport(1920, 1080, camera);
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(this);
     }
 
     private Vector3 getMouseLoc() {
@@ -184,6 +163,66 @@ public class InGameScreen extends BasicScreen {
 
     }
 
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        System.out.println("TouchDown");
+        OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
+        if(cells.getCell(coords.col,coords.row) != null) {
+            if(board.getCell(coords.col, coords.row).getDistrict() != null) {
+                ArrayList<Cell> moves = board.getCell(coords.col,coords.row).getDistrict().getCells();
+                for(Cell c : moves) {
+                    int [] position = board.getPosition(c);
+                    TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
+                    cell.setTile(map.getTileSet().getTile(2));
+                }
+
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+
+        camera.translate(-Gdx.input.getDeltaX()*camera.zoom, Gdx.input.getDeltaY()*camera.zoom);
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        if(amount == -1) {
+            camera.zoom -= 0.1;
+        } else {
+            camera.zoom += 0.1;
+        }
+        return true;
+    }
     public Board getBoard() {
         return board;
     }

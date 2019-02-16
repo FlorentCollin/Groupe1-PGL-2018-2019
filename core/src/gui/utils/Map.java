@@ -13,6 +13,8 @@ import logic.board.District;
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
+import logic.item.Soldier;
+import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
@@ -80,16 +82,40 @@ public class Map {
         for (int i = 0; i < items.getChildCount(); i++) {
             XmlReader.Element item = items.getChild(i);
             Class<?> itemClass = getClassFromString(item.getAttribute("type"));
-            Constructor<?> constructor = itemClass.getConstructors()[0];
             Cell cell = board.getCell(Integer.parseInt(item.getAttribute("x")),
                     Integer.parseInt(item.getAttribute("y")));
             try {
-                cell.setItem((Item) constructor.newInstance());
+                if(itemClass.equals(Soldier.class)) {
+                    Constructor<?> constructor = itemClass.getConstructor(Player.class, SoldierLevel.class);
+                    int soldierLevel = Integer.parseInt(item.getAttribute("level"));
+                    Item newItem = null;
+                    switch (soldierLevel) {
+                        case 1:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level1);
+                            break;
+                        case 2:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level2);
+                            break;
+                        case 3:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level3);
+                            break;
+                        case 4:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level4);
+                            break;
+                    }
+                    cell.setItem(newItem);
+                } else {
+                    Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
+                    cell.setItem((Item) constructor.newInstance());
+                }
+                //TODO
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
             if(itemClass.equals(Capital.class)) {
