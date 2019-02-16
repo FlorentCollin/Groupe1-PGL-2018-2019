@@ -181,7 +181,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("TouchDown");
         OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
         if(cells.getCell(coords.col,coords.row) != null) {
             if(board.getCell(coords.col, coords.row).getDistrict() != null) {
