@@ -103,7 +103,7 @@ public class MainMenuScreen extends MenuScreen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
 //                    parent.changeScreen(OnlineMenuScreen.class);
-                    parent.setScreen(new InGameScreen(parent, "testMap.tmx"));
+                    parent.setScreen(new InGameScreen(parent, "g1_World1"));
                 }
             });
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));

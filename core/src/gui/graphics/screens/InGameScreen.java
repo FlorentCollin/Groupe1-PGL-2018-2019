@@ -16,6 +16,8 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.item.Item;
+import logic.item.Soldier;
 
 public class InGameScreen extends BasicScreen {
 
@@ -31,8 +33,6 @@ public class InGameScreen extends BasicScreen {
         map = new Map();
         board = map.load(mapName);
         cells = map.getCells();
-
-        camera.setToOrtho(true);
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
@@ -48,11 +48,9 @@ public class InGameScreen extends BasicScreen {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
-        mouseLoc.x = Gdx.input.getX();
-        mouseLoc.y = Gdx.input.getY();
-        camera.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
+
         if(Gdx.input.isButtonPressed(102)) {
-            OffsetCoords coords = getCoordsFromMousePosition(mouseLoc);
+            OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
             if(cells.getCell(coords.col,coords.row) != null) {
                 cells.getCell(coords.col, coords.row).setTile(map.getTileSet().getTile(1));
             }
@@ -65,10 +63,10 @@ public class InGameScreen extends BasicScreen {
         }
 
         if(Gdx.input.isKeyPressed(51)) {
-            camera.translate(0,-10);
+            camera.translate(0,10);
         }
         if(Gdx.input.isKeyPressed(47)) {
-            camera.translate(0,10);
+            camera.translate(0,-10);
         }
         if(Gdx.input.isKeyPressed(29)) {
             camera.translate(-10,0);
@@ -82,20 +80,39 @@ public class InGameScreen extends BasicScreen {
     }
 
     private void renderItems() {
-        System.out.println(Gdx.graphics.getFramesPerSecond());
-        Texture capitalTexture = new Texture(Gdx.files.internal("maps/hex_orange.png"));
-        Sprite sprite = new Sprite(capitalTexture);
-        sprite.flip(false, true);
         Cell[][] tab = board.getBoard();
+        Texture texture = null;
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {
-                if(tab[j][i].getItem() != null) {
-                    //TODO
+                if (tab[j][i].getItem() != null) {
+                    Item item = tab[j][i].getItem();
+                    if(item instanceof Soldier) {
+                        switch(((Soldier) item).getLevel()) {
+                            case level1:
+                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl1.png"));
+                                break;
+                            case level2:
+                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl2.png"));
+                                break;
+                            case level3:
+                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl3.png"));
+                                break;
+                            case level4:
+                                texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + "_lvl4.png"));
+                                break;
+                        }
+                    } else {
+                        texture = new Texture(Gdx.files.internal("items/" + item.getClass().getSimpleName() + ".png"));
+                    }
+                        if(texture != null) {
+                            Sprite sprite = new Sprite(texture);
+                            sprite.flip(false, true);
+                            stage.getBatch().begin();
+                            Vector2 pos = TransformCoords.hexToPixel(j, i, (int) cells.getTileWidth() / 2);
+                            stage.getBatch().draw(sprite, pos.x, pos.y);
+                            stage.getBatch().end();
+                        }
                 }
-//                    stage.getBatch().begin();
-//                    Vector2 pos = TransformCoords.hexToPixel(j,i, (int)cells.getTileWidth() / 2);
-//                    stage.getBatch().draw(sprite, pos.x, pos.y);
-//                    stage.getBatch().end();
 
             }
 
@@ -110,6 +127,14 @@ public class InGameScreen extends BasicScreen {
         Gdx.input.setInputProcessor(stage);
     }
 
+    private Vector3 getMouseLoc() {
+        mouseLoc.x = Gdx.input.getX();
+        mouseLoc.y = Gdx.input.getY();
+        camera.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
+        mouseLoc.y = Math.abs(worldHeight -mouseLoc.y); //On inverse l'axe des ordonnées
+        //Cela permet d'avoir le repère placé en haut à gauche avec les y allant vers le bas et les x vers la droite
+        return mouseLoc;
+    }
     /**
      * Retourne les coordonnées de la cellule qui se trouve à la position de la souris
      * @param mouseLoc position de la souris
@@ -120,8 +145,11 @@ public class InGameScreen extends BasicScreen {
         // Ce qui permet de retrouver les bonnes coordonnés
         // le (int)cells.getTileWidth() /2 correspond à la taille de l'hexagone (ie la longueur de la droite qui va du
         // centre vers une des pointes de l'hexagone
-        return TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
+        OffsetCoords coords = TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
                 (int)(mouseLoc.y - cells.getTileHeight() / 2), (int)cells.getTileWidth() /2);
+        coords.row = Math.abs(cells.getHeight()-1 - coords.row); //On inverse l'axe des ordonnées
+        //Cela permet d'avoir le repère placé en haut à gauche avec les y allant vers le bas et les x vers la droite
+        return coords;
     }
 
 
