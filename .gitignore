@@ -4,3 +4,6 @@ out
 .idea
 *.class
 .gradle/
+
+*.iml
+core/assets/items/desktop.ini
