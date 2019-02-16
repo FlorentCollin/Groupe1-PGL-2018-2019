@@ -32,6 +32,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private TiledMapTileLayer cells;
     private Board board;
     private TextureAtlas itemsSkin;
+    private Vector2 selectedCellPos = null;
 
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
@@ -166,7 +167,10 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        if(keycode == 66) { //ENTER
+            board.nextPlayer();
+        }
+        return true;
     }
 
     @Override
@@ -181,18 +185,29 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("TouchDown");
         OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
         if(cells.getCell(coords.col,coords.row) != null) {
-            if(board.getCell(coords.col, coords.row).getDistrict() != null) {
-                ArrayList<Cell> moves = board.getCell(coords.col,coords.row).getDistrict().getCells();
-                for(Cell c : moves) {
-                    int [] position = board.getPosition(c);
-                    TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
-                    cell.setTile(map.getTileSet().getTile(2));
+            if(board.getSelectedCell() != null) {
+                ArrayList<Cell> possibleMoves = board.possibleMove(board.getSelectedCell().getDistrict());
+                for (Cell cell: possibleMoves) {
+                    if(board.getCell(coords.col, coords.row) == cell) {
+                        board.move(board.getCell(coords.col, coords.row));
+                        board.resetSelectedCell();
+                    }
                 }
-
+                    board.resetSelectedCell();
+            } else {
+                if(board.getCell(coords.col, coords.row).getDistrict() != null && board.getCell(coords.col, coords.row).getDistrict().getPlayer() == board.getActivePlayer())
+                    board.setSelectedCell(board.getCell(coords.col, coords.row));
             }
+
+//                ArrayList<Cell> moves = board.getCell(coords.col,coords.row).getDistrict().getCells();
+//                for(Cell c : moves) {
+//                    int [] position = board.getPosition(c);
+//                    TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
+//                    cell.setTile(map.getTileSet().getTile(2));
+//                }
+
         }
         return true;
     }

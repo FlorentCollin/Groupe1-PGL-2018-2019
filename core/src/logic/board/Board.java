@@ -352,8 +352,12 @@ public class Board{
 			this.selectedCell = selectedCell;
 		}
 	}
+
+	public void resetSelectedCell() {
+		this.selectedCell = null;
+	}
 	
-	private Player getActivePlayer() {
+	public Player getActivePlayer() {
 		return players[activePlayer];
 	}
 	
