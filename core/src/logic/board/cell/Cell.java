@@ -1,7 +1,7 @@
 package logic.board.cell;
 
-import logic.board.District;
-import logic.item.Item;
+import board.District;
+import item.Item;
 
 public class Cell {
 	private Item item; // si null alors il n'y a pas d'item actuellement sur la cellule
