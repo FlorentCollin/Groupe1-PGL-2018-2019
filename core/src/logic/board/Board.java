@@ -121,8 +121,7 @@ public class Board{
 					if(toCell.getItem() instanceof Capital) {
 						generateCapital(toCell.getDistrict());
 						conquer(toCell);
-					}
-					else if(toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
+					} else if(toCell.getItem() instanceof Tree || toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
 						conquer(toCell);
 					}
 				}
@@ -299,6 +298,8 @@ public class Board{
 		else if(isOnOwnTerritory(cell)) {
 			if(isSameItem(cell, item) && item.getMode().isImprovable() && item.getLevel().isNotMax()) {
 				return true;
+			} else if(cell.getItem() instanceof Tree) {
+				return true;
 			}
 		}
 		else {
@@ -386,7 +387,7 @@ public class Board{
 	 * Vérifie si deux district doivent fusionner
 	 * @param cell la cellule venant d'être ajoutée à un district pouvant provoquer une fusion
 	 * */
-	private void checkMerge(Cell cell) {
+	public void checkMerge(Cell cell) {
 		ArrayList<Cell> cells = getNeighbors(cell); //On considère que la cellule est un district pour obtenir toutes les cellules se trouvant au tour
 		for(Cell c : cells) {
 			if(c.getDistrict() != cell.getDistrict() && c.getDistrict() != null) {
@@ -508,6 +509,10 @@ public class Board{
 	public Player[] getPlayers() {
 		return players;
 	}
+
+	public Shop getShop() {
+		return shop;
+	}
 	
 	public void name(Cell cell) {
 		if(selectedCell != null) {
@@ -519,7 +524,7 @@ public class Board{
 			}
 			selectedCell = null;
 		}
-		else if(cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
+		else if(cell.getDistrict() != null &&cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
 			selectedCell = cell;
 		}
 	}

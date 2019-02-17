@@ -5,14 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -22,6 +21,8 @@ import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
+import logic.item.level.SoldierLevel;
+import logic.player.Player;
 
 import java.util.ArrayList;
 
@@ -56,6 +57,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public void render(float delta) {
         super.render(delta);
         camera.update();
+        changeModifiedCells();
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
@@ -207,7 +209,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
                 Cell cell = board.getCell(boardCoords.col, boardCoords.row);
                 if(board.getCell(boardCoords.col, boardCoords.row) != null) {
-                    if(cell.getDistrict() != null) {
+                    if(cell.getDistrict() != null ) {
                         selectCells(cell.getDistrict().getCells());
                     } else {
                         unselectCells();
@@ -258,6 +260,31 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() - N_TILES));
         }
         selectedCells = new ArrayList<>();
+    }
+    //Mdr c'est le code le plus dégeux que j'ai jamais fais de toute ma vie, mais c'est juste pour tester le jeu
+    private void changeModifiedCells() {
+        for (int i = 0; i < board.getColumns(); i++) {
+            for (int j = 0; j < board.getRows(); j++) {
+                Cell cell = board.getCell(i,j);
+                if(cell.getDistrict() != null) {
+                    int playerNumber;
+                    Player player = cell.getDistrict().getPlayer();
+                    for (int k = 0; k < board.getPlayers().length; k++) {
+                        if(player == board.getPlayers()[k]) {
+                            playerNumber = k;
+                            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
+                            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+                            if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
+                                unselectCells();
+                                tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     public OffsetCoords tmxToBoardCoords(OffsetCoords tmxCoords) {
