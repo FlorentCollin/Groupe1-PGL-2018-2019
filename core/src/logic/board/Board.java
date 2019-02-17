@@ -1,15 +1,15 @@
 package logic.board;
 
-import logic.board.cell.Cell;
-import logic.item.Capital;
-import logic.item.Item;
-import logic.item.Tree;
-import logic.naturalDisasters.NaturalDisastersController;
-import logic.player.Player;
-import logic.shop.Shop;
-
 import java.util.ArrayList;
 import java.util.Random;
+
+import board.cell.Cell;
+import item.Capital;
+import item.Item;
+import item.Tree;
+import naturalDisasters.NaturalDisastersController;
+import player.Player;
+import shop.Shop;
 
 public class Board{
 	private Cell[][] board;
@@ -214,7 +214,32 @@ public class Board{
 				}
 			}
 		}
+		for(int i = 0; i<4; i++) { // Car un soldat peut se déplacer de max 4cases et la première ligne permet déjà le déplacement de 1 case
+			for(Cell c : possible) {
+				if(! c.getItem() instanceof Tree) {
+					for(Cell c : getNeighbors(c)) {
+						if(possible.getIndex(c) == -1) {
+							if(canGoOn(c, cell.getItem())) {
+								possible.add(c);
+							}
+						}
+					}
+				}
+			}
+		}
 		return possible;
+	}
+	
+	/**
+	 * Permet de connaître la distance séparant deux cellules
+	 * @param from la cellule de départ
+	 * @param to la cellule de destination
+	 * @return la distance entre from et to
+	 * */
+	private int getDistance(Cell from, Cell to) {
+		int[] fromPosition = getPosition(from);
+		int[] toPosition = getPosition(to);
+		return 0;
 	}
 	
 	/**
@@ -361,20 +386,30 @@ public class Board{
 	 * VÃ©rifie si deux district doivent fusionner
 	 * @param cell la cellule venant d'Ãªtre ajoutÃ©e Ã  un district pouvant provoquer une fusion
 	 * */
-	public void checkMerge(Cell cell) {
+	private void checkMerge(Cell cell) {
 		ArrayList<Cell> cells = getNeighbors(cell); //On considÃ¨re que la cellule est un district pour obtenir toutes les cellules se trouvant au tour
 		for(Cell c : cells) {
 			if(c.getDistrict() != cell.getDistrict() && c.getDistrict() != null) {
 				if(c.getDistrict().getPlayer() == cell.getDistrict().getPlayer()) {
-					cell.getDistrict().addAllCell(c.getDistrict());
-					for(Cell c1 : c.getDistrict().getCells()) {
-						c1.setDistrict(cell.getDistrict());
+					if(cell.getDistrict().getCells().size() >= c.getDistrict().getCells().size()) {						
+						merge(cell.getDistrict(), c.getDistrict());
 					}
-					districts.remove(c.getDistrict());
-//					c.getDistrict().remove();
+					else {
+						merge(c.getDistrict(), cell.getDistrict());
+					}
 				}
 			}
 		}
+	}
+	
+	private void merge(District greather, District smaller) {
+		greather.addGold(smaller.getGold());
+		smaller.removeCapital();
+		greather.getDistrict().addAllCell(smaller);
+		for(Cell c : smaller.getCells()) {
+			c.setDistrict(greather);
+		}
+		districts.remove(smaller);
 	}
 	
 	private void checkSplit() {
@@ -470,5 +505,19 @@ public class Board{
 
 	public Player[] getPlayers() {
 		return players;
+	}
+	
+	public void name(Cell cell) {
+		if(selectedCell != null) {
+			if(shop.getSelectedItem != null) {
+				placeNewItem(cell);
+			}
+			else {
+				move(cell);
+			}
+		}
+		else if(cell.getItem() != null && cell.getItem().getMode().isMovable()){
+			selectedCell = cell;
+		}
 	}
 }
