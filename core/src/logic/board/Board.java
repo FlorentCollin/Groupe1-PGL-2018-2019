@@ -457,7 +457,9 @@ public class Board{
 	 * */
 	private void generateCapital(District district) {
 		Random rand = new Random();
-		district.getCells().get(rand.nextInt(district.getCells().size())).setItem(new Capital());
+		//On récupère une cellule du district aléatoirement
+		Cell cell = district.getCells().get(rand.nextInt(district.getCells().size()));
+		district.addCapital(cell);
 	}
 	
 	/**
