@@ -480,6 +480,9 @@ public class Board{
 	 * @param cell la cellule conquise
 	 * */
 	private void conquer(Cell cell) {
+		if(cell.getDistrict() != null) {
+			cell.getDistrict().removeCell(cell);
+		}
 		cell.setDistrict(selectedCell.getDistrict());
 		selectedCell.getDistrict().addCell(cell);
 		updateCell(cell);
