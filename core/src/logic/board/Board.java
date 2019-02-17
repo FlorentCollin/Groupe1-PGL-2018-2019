@@ -3,13 +3,13 @@ package logic.board;
 import java.util.ArrayList;
 import java.util.Random;
 
-import board.cell.Cell;
-import item.Capital;
-import item.Item;
-import item.Tree;
-import naturalDisasters.NaturalDisastersController;
-import player.Player;
-import shop.Shop;
+import logic.board.cell.Cell;
+import logic.item.Capital;
+import logic.item.Item;
+import logic.item.Tree;
+import logic.naturalDisasters.NaturalDisastersController;
+import logic.player.Player;
+import logic.shop.Shop;
 
 public class Board{
 	private Cell[][] board;
@@ -214,25 +214,25 @@ public class Board{
 				}
 			}
 		}
-		for(int i = 0; i<4; i++) { // Car un soldat peut se déplacer de max 4cases et la première ligne permet déjà le déplacement de 1 case
-			for(Cell c : possible) {
-				if(! c.getItem() instanceof Tree) {
-					for(Cell c : getNeighbors(c)) {
-						if(possible.getIndex(c) == -1) {
-							if(canGoOn(c, cell.getItem())) {
-								possible.add(c);
-							}
-						}
-					}
-				}
-			}
-		}
+//		for(int i = 0; i<4; i++) { // Car un soldat peut se dï¿½placer de max 4cases et la premiï¿½re ligne permet dï¿½jï¿½ le dï¿½placement de 1 case
+//			for(Cell c : possible) {
+//				if(!(c.getItem() instanceof Tree)) {
+//					for(Cell c : getNeighbors(c)) {
+//						if(possible.getIndex(c) == -1) {
+//							if(canGoOn(c, cell.getItem())) {
+//								possible.add(c);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 		return possible;
 	}
 	
 	/**
-	 * Permet de connaître la distance séparant deux cellules
-	 * @param from la cellule de départ
+	 * Permet de connaï¿½tre la distance sï¿½parant deux cellules
+	 * @param from la cellule de dï¿½part
 	 * @param to la cellule de destination
 	 * @return la distance entre from et to
 	 * */
@@ -405,7 +405,7 @@ public class Board{
 	private void merge(District greather, District smaller) {
 		greather.addGold(smaller.getGold());
 		smaller.removeCapital();
-		greather.getDistrict().addAllCell(smaller);
+		greather.addAllCell(smaller);
 		for(Cell c : smaller.getCells()) {
 			c.setDistrict(greather);
 		}
@@ -457,7 +457,7 @@ public class Board{
 	 * */
 	private void generateCapital(District district) {
 		Random rand = new Random();
-		//On récupère une cellule du district aléatoirement
+		//On rï¿½cupï¿½re une cellule du district alï¿½atoirement
 		Cell cell = district.getCells().get(rand.nextInt(district.getCells().size()));
 		district.addCapital(cell);
 	}
@@ -511,14 +511,15 @@ public class Board{
 	
 	public void name(Cell cell) {
 		if(selectedCell != null) {
-			if(shop.getSelectedItem != null) {
+			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
 			}
 			else {
 				move(cell);
 			}
+			selectedCell = null;
 		}
-		else if(cell.getDistrict().getPlayer == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
+		else if(cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
 			selectedCell = cell;
 		}
 	}
