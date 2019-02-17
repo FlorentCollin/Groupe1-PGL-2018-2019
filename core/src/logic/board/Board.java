@@ -518,7 +518,7 @@ public class Board{
 				move(cell);
 			}
 		}
-		else if(cell.getItem() != null && cell.getItem().getMode().isMovable()){
+		else if(cell.getDistrict().getPlayer == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
 			selectedCell = cell;
 		}
 	}
