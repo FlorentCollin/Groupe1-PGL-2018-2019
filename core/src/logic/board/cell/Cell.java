@@ -1,6 +1,6 @@
 package logic.board.cell;
 
-import board.District;
+//import board.District;
 import item.Item;
 
 public class Cell {
@@ -16,8 +16,6 @@ public class Cell {
 	
 	public Cell(District district) {
 		this.district = district;
-		// Pour n'appeler qu'une seule méthode
-		district.addCell(this);
 	}
 	
 	public void setItem(Item item) {
