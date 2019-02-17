@@ -43,14 +43,16 @@ public class District {
 	}
 	
 	public void addCapital(Cell cell) {
-		if(cells.getIndex(cell) >= 0) { // On vérifie que la cellule appartient bien au district
+		if(cells.indexOf(cell) >= 0) { // On vï¿½rifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
 		}
 	}
 	
 	public void removeCapital() {
-		capital.removeItem(); 
+		if(capital != null) {
+			capital.removeItem();
+		}
 	}
 	
 	public void setPlayer(Player player) {

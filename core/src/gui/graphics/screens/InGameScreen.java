@@ -2,6 +2,7 @@ package gui.graphics.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -23,6 +25,8 @@ import logic.item.Soldier;
 
 import java.util.ArrayList;
 
+import static gui.utils.Constants.N_TILES;
+
 public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private Map map;
@@ -32,6 +36,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private TiledMapTileLayer cells;
     private Board board;
     private TextureAtlas itemsSkin;
+    private ArrayList<Cell> selectedCells = new ArrayList<>();
 
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
@@ -54,22 +59,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
-
-        if(Gdx.input.isKeyPressed(51)) {
-            camera.translate(0,10);
-        }
-        if(Gdx.input.isKeyPressed(47)) {
-            camera.translate(0,-10);
-        }
-        if(Gdx.input.isKeyPressed(29)) {
-            camera.translate(-10,0);
-        }
-        if(Gdx.input.isKeyPressed(32)) {
-            camera.translate(+10,0);
-        }
-        if(Gdx.input.isKeyPressed(131)) {
-            parent.setScreen(new MainMenuScreen(parent));
-        }
     }
 
     private void renderItems() {
@@ -166,6 +155,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.ENTER) {
+            board.nextPlayer();
+        }
         return false;
     }
 
@@ -181,17 +173,14 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        OffsetCoords coords = getCoordsFromMousePosition(getMouseLoc());
-        if(cells.getCell(coords.col,coords.row) != null) {
-            if(board.getCell(coords.col, coords.row).getDistrict() != null) {
-                ArrayList<Cell> moves = board.getCell(coords.col,coords.row).getDistrict().getCells();
-                for(Cell c : moves) {
-                    int [] position = board.getPosition(c);
-                    TiledMapTileLayer.Cell cell = cells.getCell(position[0], Math.abs(cells.getHeight()-1 - position[1]));
-                    cell.setTile(map.getTileSet().getTile(2));
-                }
-
-            }
+        OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
+        if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
+                && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
+            Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
+            board.name(selectedCell);
+             if(board.getSelectedCell() != null) {
+                selectCells(board.possibleMove(selectedCell));
+             }
         }
         return true;
     }
@@ -203,26 +192,79 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-
         camera.translate(-Gdx.input.getDeltaX()*camera.zoom, Gdx.input.getDeltaY()*camera.zoom);
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        return false;
+        //Cette méthode va lorsqu'on passe la souris sur un district montrer ce district
+        if(board.getSelectedCell() == null) { // On vérifie qu'aucune cellule n'a été sélectionnée pour une action dans le board
+            // car sinon on ne doit pas montrer le district
+            OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
+            //On vérifie que les coordonnées sont bien dans les limites de la cartes
+            if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
+                    && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
+                Cell cell = board.getCell(boardCoords.col, boardCoords.row);
+                if(board.getCell(boardCoords.col, boardCoords.row) != null) {
+                    if(cell.getDistrict() != null) {
+                        selectCells(cell.getDistrict().getCells());
+                    } else {
+                        unselectCells();
+                    }
+                }
+            }
+
+        }
+        return true;
     }
 
     @Override
     public boolean scrolled(int amount) {
         if(amount == -1) {
-            camera.zoom -= 0.1;
+            camera.zoom -= 0.2;
         } else {
-            camera.zoom += 0.1;
+            camera.zoom += 0.2;
         }
         return true;
     }
     public Board getBoard() {
         return board;
+    }
+
+    //TODO Reformater le code pour ne faire plus qu'une seule méthode
+    private void selectCells(ArrayList<Cell> cellsArray) {
+        unselectCells();
+        selectedCells = cellsArray;
+        for(Cell cell : selectedCells) {
+            int[] pos = board.getPosition(cell);
+            // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
+            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
+            // Récupération de la cellule dans la mapTmx
+            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+            // On change la tile (l'image) de la cellule à sélectionner.
+            tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() + N_TILES));
+        }
+    }
+
+    private void unselectCells() {
+        for (Cell selectedCell : selectedCells) {
+            int[] pos = board.getPosition(selectedCell);
+            // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
+            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
+            // Récupération de la cellule dans la mapTmx
+            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+            // On change la tile (l'image) de la cellule à désélectionner.
+            tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() - N_TILES));
+        }
+        selectedCells = new ArrayList<>();
+    }
+
+    public OffsetCoords tmxToBoardCoords(OffsetCoords tmxCoords) {
+        return new OffsetCoords(tmxCoords.col, Math.abs(cells.getHeight()-1 - tmxCoords.row));
+    }
+
+    public OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {
+        return new OffsetCoords(boardCoords.col, Math.abs(cells.getHeight()-1 - boardCoords.row));
     }
 }
