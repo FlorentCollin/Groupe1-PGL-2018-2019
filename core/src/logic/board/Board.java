@@ -215,7 +215,7 @@ public class Board{
 		for(int i=0; i < cell.getItem().getMode().getMaxDep()-1; i++) {
 			subAround.clear();
 			for(Cell c : around) {
-				if(c.getDistrict() == cell.getDistrict() && (c.getItem() == null || c.getItem().getClass().isInstance(cell.getClass()))) {
+				if(c.getDistrict() == cell.getDistrict() && (c.getItem() == null || (c.getItem().getClass().isInstance(cell.getClass()) && c.getItem().getLevel() == cell.getItem().getLevel()))) {
 					subAround.addAll(getNeighbors(c));
 				}
 			}
