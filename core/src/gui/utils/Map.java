@@ -103,20 +103,7 @@ public class Map {
                     Constructor<?> constructor = itemClass.getConstructor(Player.class, SoldierLevel.class);
                     int soldierLevel = Integer.parseInt(item.getAttribute("level"));
                     Item newItem = null;
-                    switch (soldierLevel) {
-                        case 1:
-                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level1);
-                            break;
-                        case 2:
-                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level2);
-                            break;
-                        case 3:
-                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level3);
-                            break;
-                        case 4:
-                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level4);
-                            break;
-                    }
+                    newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.values()[soldierLevel-1]);
                     cell.setItem(newItem);
                 } else {
                     Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
