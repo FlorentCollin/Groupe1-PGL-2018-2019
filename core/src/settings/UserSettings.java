@@ -6,8 +6,17 @@ package settings;
  */
 public class UserSettings {
 
+    private boolean fullScreen;
+    private int width;
+    private int height;
+    private int musicLevel;
+    private int soundLevel;
 
     public UserSettings() {
-
+        fullScreen = false;
+        width = 1280;
+        height = 720;
+        musicLevel = 100;
+        soundLevel = 100;
     }
 }
