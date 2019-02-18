@@ -18,6 +18,7 @@ public class Soldier extends Item{
 		this.level = level;
 		this.mode = Mode.all;
 		mode.setPrice(level.getPrice());
+		mode.setMaxDep(4);
 	}
 	
 	public SoldierLevel getLevel() {
