@@ -18,6 +18,7 @@ public enum Mode {
 	
 	private boolean buyable, movable, improvable;
 	private int price = 0;
+	private int maxDep = 0;
 	
 	Mode(boolean buyable, boolean movable, boolean improvable){
 		this.buyable = buyable;
@@ -43,5 +44,13 @@ public enum Mode {
 	
 	public int getPrice() {
 		return this.price;
+	}
+
+	public int getMaxDep() {
+		return maxDep;
+	}
+
+	public void setMaxDep(int maxDep) {
+		this.maxDep = maxDep;
 	}
 }
