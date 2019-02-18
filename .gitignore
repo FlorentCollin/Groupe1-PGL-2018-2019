@@ -9,3 +9,9 @@ out
 core/assets/items/desktop.ini
 .gradle/4.6/fileHashes/fileHashes.lock
 .gradle/4.6/fileHashes/fileHashes.lock
+core/bin/
+
+desktop/bin
+
+core/.project
+desktop/.project
