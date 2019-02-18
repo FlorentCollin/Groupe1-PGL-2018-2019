@@ -379,7 +379,7 @@ public class Board{
 		}
 	}
 	
-	private Player getActivePlayer() {
+	public Player getActivePlayer() {
 		return players[activePlayer];
 	}
 	
@@ -528,7 +528,9 @@ public class Board{
 			selectedCell = null;
 		}
 		else if(cell.getDistrict() != null &&cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
-			selectedCell = cell;
+			if(cell.getItem().canMove()) {				
+				selectedCell = cell;
+			}
 		}
 	}
 }
