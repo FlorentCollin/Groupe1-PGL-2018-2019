@@ -40,6 +40,7 @@ public class Map {
         generateBoard(xml_element);
         generateDistricts();
         generateItems(xml_element);
+        checkCapitals();
         return board;
     }
     private void generateTmxMap(XmlReader.Element xmlElement) {
@@ -75,6 +76,19 @@ public class Map {
                 }
             }
         }
+    }
+    
+    /**
+     * Ajout aux districts leurs capitals respectives
+     * */
+    private void checkCapitals() {
+    	for(int i=0; i<board.getColumns(); i++) {
+    		for(int j=0; j<board.getRows(); j++) {
+    			if(board.getCell(i, j).getItem() instanceof Capital) {
+    				board.getCell(i, j).getDistrict().addCapital(board.getCell(i, j));
+    			}
+    		}
+    	}
     }
 
     private void generateItems(XmlReader.Element xmlElement) {
