@@ -160,7 +160,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         if(keycode == Input.Keys.ENTER) {
             board.nextPlayer();
         }
-        return false;
+        return false; // pq un boolean?
     }
 
     @Override
@@ -180,9 +180,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
             board.name(selectedCell);
-             if(board.getSelectedCell() != null) {
-                selectCells(board.possibleMove(selectedCell));
-             }
+            if(board.getSelectedCell() != null) {
+            	selectCells(board.possibleMove(selectedCell));
+            }
         }
         return true;
     }
@@ -209,7 +209,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
                 Cell cell = board.getCell(boardCoords.col, boardCoords.row);
                 if(board.getCell(boardCoords.col, boardCoords.row) != null) {
-                    if(cell.getDistrict() != null ) {
+                	// Ne s'applique que si la case appartient au joueur
+                	// Ainsi il voit directement avec quelles cases il peut interagir
+                    if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == board.getActivePlayer()) {
                         selectCells(cell.getDistrict().getCells());
                     } else {
                         unselectCells();
@@ -224,12 +226,15 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         if(amount == -1) {
-            camera.zoom -= 0.2;
+        	if(camera.zoom - 0.2 >= 0) {
+        		camera.zoom -= 0.2;        		
+        	}
         } else {
             camera.zoom += 0.2;
         }
         return true;
     }
+    
     public Board getBoard() {
         return board;
     }
