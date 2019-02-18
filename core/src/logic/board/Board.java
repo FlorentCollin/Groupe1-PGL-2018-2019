@@ -1,7 +1,7 @@
 package logic.board;
 
 import java.util.ArrayList;
-import java.util.Random;
+//import java.util.Random;
 
 import logic.board.cell.Cell;
 import logic.item.Capital;
