@@ -378,6 +378,10 @@ public class Board{
 			this.selectedCell = selectedCell;
 		}
 	}
+
+	public void resetSelectedCell() {
+		this.selectedCell = null;
+	}
 	
 	public Player getActivePlayer() {
 		return players[activePlayer];
