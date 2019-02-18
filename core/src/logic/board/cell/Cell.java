@@ -16,8 +16,6 @@ public class Cell {
 	
 	public Cell(District district) {
 		this.district = district;
-		// Pour n'appeler qu'une seule méthode
-		district.addCell(this);
 	}
 	
 	public void setItem(Item item) {

@@ -12,7 +12,7 @@ import logic.player.Player;
 public class District {
 	private Player player;
 	private int gold;
-	private Capital capital;
+	private Cell capital;
 	private ArrayList<Cell> cells;
 	
 	public District(Player player) {
@@ -42,8 +42,17 @@ public class District {
 		cells.clear();
 	}
 	
-	public void setCapital(Capital capital) {
-		this.capital = capital;
+	public void addCapital(Cell cell) {
+		if(cells.indexOf(cell) >= 0) { // On v�rifie que la cellule appartient bien au district
+			cell.setItem(new Capital());
+			capital = cell;
+		}
+	}
+	
+	public void removeCapital() {
+		if(capital != null) {
+			capital.removeItem();
+		}
 	}
 	
 	public void setPlayer(Player player) {

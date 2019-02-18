@@ -10,9 +10,17 @@ import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
 import logic.board.Board;
 import logic.board.District;
+import logic.board.cell.Cell;
+import logic.item.Capital;
+import logic.item.Item;
+import logic.item.Soldier;
+import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /** Classe utilisé pour charger et convertir une map TMX en Board **/
 
@@ -31,6 +39,8 @@ public class Map {
         generateTmxMap(xml_element);
         generateBoard(xml_element);
         generateDistricts();
+        generateItems(xml_element);
+        checkCapitals();
         return board;
     }
     private void generateTmxMap(XmlReader.Element xmlElement) {
@@ -67,12 +77,64 @@ public class Map {
             }
         }
     }
+    
+    /**
+     * Ajout aux districts leurs capitals respectives
+     * */
+    private void checkCapitals() {
+    	for(int i=0; i<board.getColumns(); i++) {
+    		for(int j=0; j<board.getRows(); j++) {
+    			if(board.getCell(i, j).getItem() instanceof Capital) {
+    				board.getCell(i, j).getDistrict().addCapital(board.getCell(i, j));
+    			}
+    		}
+    	}
+    }
 
     private void generateItems(XmlReader.Element xmlElement) {
         XmlReader.Element items = xmlElement.getChildByName("items");
         for (int i = 0; i < items.getChildCount(); i++) {
             XmlReader.Element item = items.getChild(i);
-
+            Class<?> itemClass = getClassFromString(item.getAttribute("type"));
+            Cell cell = board.getCell(Integer.parseInt(item.getAttribute("x")),
+                    Integer.parseInt(item.getAttribute("y")));
+            try {
+                if(itemClass.equals(Soldier.class)) {
+                    Constructor<?> constructor = itemClass.getConstructor(Player.class, SoldierLevel.class);
+                    int soldierLevel = Integer.parseInt(item.getAttribute("level"));
+                    Item newItem = null;
+                    switch (soldierLevel) {
+                        case 1:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level1);
+                            break;
+                        case 2:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level2);
+                            break;
+                        case 3:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level3);
+                            break;
+                        case 4:
+                            newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.level4);
+                            break;
+                    }
+                    cell.setItem(newItem);
+                } else {
+                    Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
+                    cell.setItem((Item) constructor.newInstance());
+                }
+                //TODO
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            if(itemClass.equals(Capital.class)) {
+                cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
+            }
         }
     }
 

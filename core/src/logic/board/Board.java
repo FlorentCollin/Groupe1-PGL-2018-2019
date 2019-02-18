@@ -1,5 +1,8 @@
 package logic.board;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
@@ -7,9 +10,6 @@ import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 public class Board{
 	private Cell[][] board;
@@ -121,8 +121,7 @@ public class Board{
 					if(toCell.getItem() instanceof Capital) {
 						generateCapital(toCell.getDistrict());
 						conquer(toCell);
-					}
-					else if(toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
+					} else if(toCell.getItem() instanceof Tree || toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
 						conquer(toCell);
 					}
 				}
@@ -214,7 +213,32 @@ public class Board{
 				}
 			}
 		}
+//		for(int i = 0; i<4; i++) { // Car un soldat peut se d�placer de max 4cases et la premi�re ligne permet d�j� le d�placement de 1 case
+//			for(Cell c : possible) {
+//				if(!(c.getItem() instanceof Tree)) {
+//					for(Cell c : getNeighbors(c)) {
+//						if(possible.getIndex(c) == -1) {
+//							if(canGoOn(c, cell.getItem())) {
+//								possible.add(c);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 		return possible;
+	}
+	
+	/**
+	 * Permet de conna�tre la distance s�parant deux cellules
+	 * @param from la cellule de d�part
+	 * @param to la cellule de destination
+	 * @return la distance entre from et to
+	 * */
+	private int getDistance(Cell from, Cell to) {
+		int[] fromPosition = getPosition(from);
+		int[] toPosition = getPosition(to);
+		return 0;
 	}
 	
 	/**
@@ -224,7 +248,6 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<Cell>();
-		System.out.println(district.getCells() == null);
 		for(Cell c : district.getCells()) {
 			if(possible.indexOf(c) == -1) {
 				possible.add(c);
@@ -253,7 +276,7 @@ public class Board{
 			int[] dir = directions[parity][direction];
 			int neighborX = x + dir[0];
 			int neighborY = y + dir[1];
-			if(neighborX>0 && neighborX<columns && neighborY>0 && neighborY<rows) {
+			if(neighborX>=0 && neighborX<columns && neighborY>=0 && neighborY<rows) {
 				around.add(board[neighborX][neighborY]);
 			}
 
@@ -274,6 +297,8 @@ public class Board{
 		}
 		else if(isOnOwnTerritory(cell)) {
 			if(isSameItem(cell, item) && item.getMode().isImprovable() && item.getLevel().isNotMax()) {
+				return true;
+			} else if(cell.getItem() instanceof Tree) {
 				return true;
 			}
 		}
@@ -354,7 +379,7 @@ public class Board{
 		}
 	}
 	
-	private Player getActivePlayer() {
+	public Player getActivePlayer() {
 		return players[activePlayer];
 	}
 	
@@ -367,15 +392,25 @@ public class Board{
 		for(Cell c : cells) {
 			if(c.getDistrict() != cell.getDistrict() && c.getDistrict() != null) {
 				if(c.getDistrict().getPlayer() == cell.getDistrict().getPlayer()) {
-					cell.getDistrict().addAllCell(c.getDistrict());
-					for(Cell c1 : c.getDistrict().getCells()) {
-						c1.setDistrict(cell.getDistrict());
+					if(cell.getDistrict().getCells().size() >= c.getDistrict().getCells().size()) {						
+						merge(cell.getDistrict(), c.getDistrict());
 					}
-					districts.remove(c.getDistrict());
-					c.getDistrict().remove();
+					else {
+						merge(c.getDistrict(), cell.getDistrict());
+					}
 				}
 			}
 		}
+	}
+	
+	private void merge(District greather, District smaller) {
+		greather.addGold(smaller.getGold());
+		smaller.removeCapital();
+		greather.addAllCell(smaller);
+		for(Cell c : smaller.getCells()) {
+			c.setDistrict(greather);
+		}
+		districts.remove(smaller);
 	}
 	
 	private void checkSplit() {
@@ -423,7 +458,9 @@ public class Board{
 	 * */
 	private void generateCapital(District district) {
 		Random rand = new Random();
-		district.getCells().get(rand.nextInt(district.getCells().size())).setItem(new Capital());
+		//On r�cup�re une cellule du district al�atoirement
+		Cell cell = district.getCells().get(rand.nextInt(district.getCells().size()));
+		district.addCapital(cell);
 	}
 	
 	/**
@@ -443,6 +480,9 @@ public class Board{
 	 * @param cell la cellule conquise
 	 * */
 	private void conquer(Cell cell) {
+		if(cell.getDistrict() != null) {
+			cell.getDistrict().removeCell(cell);
+		}
 		cell.setDistrict(selectedCell.getDistrict());
 		selectedCell.getDistrict().addCell(cell);
 		updateCell(cell);
@@ -471,5 +511,26 @@ public class Board{
 
 	public Player[] getPlayers() {
 		return players;
+	}
+
+	public Shop getShop() {
+		return shop;
+	}
+	
+	public void play(Cell cell) {
+		if(selectedCell != null) {
+			if(shop.getSelectedItem() != null) {
+				placeNewItem(cell);
+			}
+			else {
+				move(cell);
+			}
+			selectedCell = null;
+		}
+		else if(cell.getDistrict() != null &&cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
+			if(cell.getItem().canMove()) {				
+				selectedCell = cell;
+			}
+		}
 	}
 }
