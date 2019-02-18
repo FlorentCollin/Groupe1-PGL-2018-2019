@@ -517,7 +517,7 @@ public class Board{
 		return shop;
 	}
 	
-	public void name(Cell cell) {
+	public void play(Cell cell) {
 		if(selectedCell != null) {
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
