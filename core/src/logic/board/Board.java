@@ -469,7 +469,7 @@ public class Board{
 	
 	/**
 	 * Gère le placement d'un item sur les cellules
-	 * @param la cell à mettre à jour
+	 * @param cell cell à mettre à jour
 	 * */
 	// revoir la documentation
 	private void updateCell(Cell cell) {
