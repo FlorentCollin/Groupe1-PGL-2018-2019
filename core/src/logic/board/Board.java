@@ -3,6 +3,8 @@ package logic.board;
 import java.util.ArrayList;
 import java.util.Random;
 
+import logic.Coords.CubeCoords;
+import static logic.Coords.TransformCoords.*;
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
@@ -10,6 +12,8 @@ import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+
+
 
 public class Board{
 	private Cell[][] board;
@@ -206,26 +210,24 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(Cell cell) {
 		ArrayList<Cell> possible = new ArrayList<Cell>();
-		for(Cell c : getNeighbors(cell)) {
-			if(possible.indexOf(c) == -1) {
+		ArrayList<Cell> around = getNeighbors(cell);
+		ArrayList<Cell> subAround = new ArrayList<Cell>();
+		for(int i=0; i < cell.getItem().getMode().getMaxDep()-1; i++) {
+			subAround.clear();
+			for(Cell c : around) {
+				if(c.getDistrict() == cell.getDistrict() && (c.getItem() == null || c.getItem().getClass().isInstance(cell.getClass()))) {
+					subAround.addAll(getNeighbors(c));
+				}
+			}
+			around.addAll(subAround);
+		}
+		for(Cell c : around) {
+			if(c != cell && possible.indexOf(c) == -1) {
 				if(canGoOn(c, cell.getItem())) {
 					possible.add(c);
 				}
 			}
 		}
-//		for(int i = 0; i<4; i++) { // Car un soldat peut se d�placer de max 4cases et la premi�re ligne permet d�j� le d�placement de 1 case
-//			for(Cell c : possible) {
-//				if(!(c.getItem() instanceof Tree)) {
-//					for(Cell c : getNeighbors(c)) {
-//						if(possible.getIndex(c) == -1) {
-//							if(canGoOn(c, cell.getItem())) {
-//								possible.add(c);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
 		return possible;
 	}
 	
@@ -238,7 +240,9 @@ public class Board{
 	private int getDistance(Cell from, Cell to) {
 		int[] fromPosition = getPosition(from);
 		int[] toPosition = getPosition(to);
-		return 0;
+		CubeCoords fromCube = offsetToCube(fromPosition[0], fromPosition[1]);
+		CubeCoords toCube = offsetToCube(toPosition[0], toPosition[1]);
+		return Math.max(Math.abs(fromCube.x-toCube.x), Math.max(fromCube.y-toCube.y, fromCube.z-toCube.y));
 	}
 	
 	/**
@@ -533,5 +537,4 @@ public class Board{
 			}
 		}
 	}
-	// Ceci est un commentaire ééééèèèè!!!!!é"'(§è!çà
 }
