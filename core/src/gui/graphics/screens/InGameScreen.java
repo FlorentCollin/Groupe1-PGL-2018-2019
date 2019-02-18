@@ -179,7 +179,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
-            board.name(selectedCell);
+            board.play(selectedCell);
             if(board.getSelectedCell() != null) {
             	selectCells(board.possibleMove(selectedCell));
             }
