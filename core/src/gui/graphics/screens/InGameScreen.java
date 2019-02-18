@@ -11,7 +11,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -21,7 +20,6 @@ import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
-import logic.item.level.SoldierLevel;
 import logic.player.Player;
 
 import java.util.ArrayList;

@@ -537,5 +537,4 @@ public class Board{
 			}
 		}
 	}
-	// Ceci est un commentaire ééééèèèè!!!!!é"'(§è!çà
 }
