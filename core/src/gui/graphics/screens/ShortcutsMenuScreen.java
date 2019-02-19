@@ -1,11 +1,14 @@
 package gui.graphics.screens;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
+import gui.settings.UserShortcuts;
+import gui.utils.ShortcutsButton;
 
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
@@ -14,12 +17,13 @@ import static gui.utils.Constants.PAD;
 public class ShortcutsMenuScreen extends SubMenuScreen {
 
     private final Table table;
-    private ButtonGroup<TextButton> keyBindGroup;
+    private final Label.LabelStyle labelStyle;
+    private ButtonGroup<ShortcutsButton> keyBindGroup;
     private Table scrollTable;
 
     public ShortcutsMenuScreen(Slay parent, Stage stage) {
         super(parent, stage, "SHORTCUTS");
-        Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
 
         //Groupe qui contient l'ensemble des raccourcis
@@ -32,15 +36,24 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         //Listener que l'utilisateur déclenche lorsqu'il veut changer un raccourci
         stage.addListener(new InputListener() {
           @Override
-          public boolean keyTyped(InputEvent event, char character) {
+          public boolean keyDown(InputEvent event, int keycode) {
               if(keyBindGroup.getChecked() != null) {
-                  //Si le raccourci est déjà assigné alors celui-ci est automatiquent retiré
-                  for (TextButton button : keyBindGroup.getButtons()) {
-                      if(button.getText().toString().equals(Character.toString(character))) {
+                  UserShortcuts userShortcuts = parent.getUserShortcuts();
+                  //Si le raccourci est déjà assigné alors celui-ci est automatiquement retiré
+                  for (ShortcutsButton button : keyBindGroup.getButtons()) {
+                      if(button.getText().toString().equals(Input.Keys.toString(keycode))) {
+                          Integer [] value = userShortcuts.getShortcuts().get(button.getShortcutName());
+                          value[button.getNumber()] = null;
+                          userShortcuts.changeShortcut(button.getShortcutName(), value);
                           button.setText("");
                       }
+                      ShortcutsButton checkedButton = keyBindGroup.getChecked();
+                      Integer[] value = userShortcuts.getShortcuts().get(checkedButton.getShortcutName());
+                      System.out.println(value.length);
+                      value[checkedButton.getNumber()] = keycode;
+                      userShortcuts.changeShortcut(checkedButton.getShortcutName(), value);
+                      checkedButton.setText(Input.Keys.toString(keycode));
                   }
-                  keyBindGroup.getChecked().setText(Character.toString(character));
                   keyBindGroup.uncheckAll();
               }
               return true;
@@ -53,27 +66,14 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         scrollTable.add(new Label("Key 1", labelStyle)).align(Align.center);
         scrollTable.add(new Label("Key 2", labelStyle)).align(Align.center);
         scrollTable.row();
-        scrollTable.add(new Label("Move camera up", labelStyle)).align(Align.left);
-        createKeybindButton();
-        scrollTable.row();
-        scrollTable.add(new Label("Move camera down", labelStyle)).align(Align.left);
-        createKeybindButton();
-        scrollTable.row();
-        scrollTable.add(new Label("Move camera left", labelStyle)).align(Align.left);
-        createKeybindButton();
-        scrollTable.row();
-        scrollTable.add(new Label("Move camera right", labelStyle)).align(Align.left);
-        createKeybindButton();
-        scrollTable.row();
-        scrollTable.add(new Label("End turn", labelStyle)).align(Align.left);
-        createKeybindButton();
-        scrollTable.row();
-        scrollTable.add(new Label("Menu", labelStyle)).align(Align.left);
-        createKeybindButton();
+        for(String shortcutName : parent.getUserShortcuts().getShortcutsName()) {
+            createShortcut(shortcutName);
+            scrollTable.row();
+        }
         //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
-
         scroller.setScrollingDisabled(true, false);
+
         table = new Table();
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
         table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
@@ -104,13 +104,19 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
 
     }
 
-    private void createKeybindButton() {
+    private void createKeybindButton(String text) {
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
         for(int i=0; i<2; i++) {
-            TextButton button = new TextButton("", textButtonStyle);
+            ShortcutsButton button = new ShortcutsButton(text , i,"", textButtonStyle);
             keyBindGroup.add(button);
             scrollTable.add(button).pad(PAD).align(Align.center);
         }
+    }
+
+    private void createShortcut(String text) {
+        scrollTable.add(new Label(text, labelStyle)).align(Align.left);
+        createKeybindButton(text);
+
     }
 }

@@ -1,8 +1,8 @@
 package gui.settings;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,15 +12,17 @@ import java.util.HashMap;
 public class UserShortcuts {
 
     private HashMap<String, Integer[]> shortcuts;
+    private String[] shortcutsName = new String[] {"Move cam up", "Move cam down", "Move came left", "Move came right",
+                                                    "Menu", "End turn"};
 
     public UserShortcuts() {
         shortcuts = new HashMap<>();
-        shortcuts.put("MoveCamUp", new Integer[]{Input.Keys.W, Input.Keys.Z});
-        shortcuts.put("MoveCamDown", new Integer[]{Input.Keys.S, null});
-        shortcuts.put("MoveCamLeft", new Integer[]{Input.Keys.Q, Input.Keys.A});
-        shortcuts.put("MoveCamRight", new Integer[]{Input.Keys.D, null});
-        shortcuts.put("Menu", new Integer[]{Input.Keys.ESCAPE, null});
-        shortcuts.put("EndTurn", new Integer[]{Input.Keys.ENTER, null});
+        shortcuts.put(shortcutsName[0], new Integer[]{Input.Keys.W, Input.Keys.Z});
+        shortcuts.put(shortcutsName[1], new Integer[]{Input.Keys.S, null});
+        shortcuts.put(shortcutsName[2], new Integer[]{Input.Keys.Q, Input.Keys.A});
+        shortcuts.put(shortcutsName[3], new Integer[]{Input.Keys.D, null});
+        shortcuts.put(shortcutsName[4], new Integer[]{Input.Keys.ESCAPE, null});
+        shortcuts.put(shortcutsName[5], new Integer[]{Input.Keys.ENTER, null});
     }
 
 
@@ -28,13 +30,11 @@ public class UserShortcuts {
         return shortcuts;
     }
 
-    public boolean changeShortcut(String key, Integer[] values) {
-        if (shortcuts.get(values) != null) {
-            return false; //Signifie que le raccourci est déjà utilisé
+    public void changeShortcut(String key, Integer[] values) {
+        shortcuts.replace(key, values);
+    }
 
-        } else {
-            shortcuts.replace(key, values);
-            return true;
-        }
+    public String[] getShortcutsName() {
+        return shortcutsName;
     }
 }
