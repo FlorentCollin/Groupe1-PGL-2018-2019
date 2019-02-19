@@ -22,8 +22,9 @@ public class Board{
 	private ArrayList<District> districts;
 	private Shop shop;
 	private NaturalDisastersController naturalDisastersController;
-	private Cell selectedCell;
+	private Cell selectedCell, firstCell;
 	private final int PROBA;
+	private ArrayList<Cell> visited = new ArrayList<Cell>(); // Eviter de boucler indéfiniment pour canJoinCapital
 	//Variable qui est utilisé dans la méthode getNeighbors
 	//Elle contient toutes les directions possibles pour les cellules adjacentes
 	private final int[][][] directions = {
@@ -91,6 +92,7 @@ public class Board{
 		selectedCell.getDistrict().addCell(cell);
 		updateCellForNewItem(cell);
 		checkMerge(cell);
+		checkSplit(cell);
 	}
 	
 	private void updateCellForNewItem(Cell cell) {
@@ -417,8 +419,67 @@ public class Board{
 		districts.remove(smaller);
 	}
 	
-	private void checkSplit() {
+	private void split(Cell cell) {
+		District oldDistrict = cell.getDistrict();
+		District newDistrict = new District(oldDistrict.getPlayer());
+		System.out.println("split old : "+oldDistrict.getCells().size()+", new : "+newDistrict.getCells().size());
+		districts.add(newDistrict);
+		for(Cell c : oldDistrict.getCells()) {
+			visited.clear();
+			firstCell = c;
+			if(canJoinCapital(c)==0) {
+				newDistrict.addCell(c);
+				c.setDistrict(newDistrict);
+			}
+		}
+		System.out.println("split old : "+oldDistrict.getCells().size()+", new : "+newDistrict.getCells().size());
+		for(Cell c : newDistrict.getCells()) {
+			oldDistrict.removeCell(c);
+		}
+		System.out.println("split old : "+oldDistrict.getCells().size()+", new : "+newDistrict.getCells().size());
+		generateCapital(newDistrict);
+	}
+	
+	private void checkSplit(Cell cell) {
 		// TO DO
+		for(Cell c : getNeighbors(cell)) {
+			if(c.getDistrict() != null && c.getDistrict().getPlayer() != getActivePlayer()) {
+				visited.clear();
+				firstCell = c;
+				if(canJoinCapital(c) == 0) {
+					split(c);
+				}
+			}
+		}
+	}
+	
+	private int canJoinCapital(Cell cell) {
+		if(visited.indexOf(cell) == -1) {
+			visited.add(cell);
+			if(cell == firstCell.getDistrict().getCapital()) {
+				return 1;
+			}
+			if(cell.getDistrict() != firstCell.getDistrict()) {
+				return 0;
+			}
+			else {
+				int value = 0;
+				for(Cell c : getNeighbors(cell)) {
+					value += canJoinCapital(c);
+				}
+				return value;
+			}
+		}
+		return 0;
+	}
+	
+	private boolean anyNeighborInSameDistrict(Cell cell) {
+		for(Cell c : getNeighbors(cell)) {
+			if(c.getDistrict() == cell.getDistrict()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -436,7 +497,7 @@ public class Board{
 							nTrees += 1;
 						}
 					}
-					if(rand.nextInt(101) <= calculateProb(nTrees)*100) {
+					if(rand.nextInt(100) < calculateProb(nTrees)*100) {
 						board[i][j].setItem(new Tree());
 					}
 				}
@@ -491,6 +552,7 @@ public class Board{
 		selectedCell.getDistrict().addCell(cell);
 		updateCell(cell);
 		checkMerge(cell);
+		checkSplit(cell);
 	}
 	
 	public void addDistrict(District district) {
