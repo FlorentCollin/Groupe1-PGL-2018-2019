@@ -108,9 +108,16 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
         for(int i=0; i<2; i++) {
-            ShortcutsButton button = new ShortcutsButton(text , i,"", textButtonStyle);
-            keyBindGroup.add(button);
-            scrollTable.add(button).pad(PAD).align(Align.center);
+            ShortcutsButton button;
+            Integer keycode = parent.getUserShortcuts().getShortcuts().get(text)[i];
+            if(keycode != null) {
+                button = new ShortcutsButton(text , i, Input.Keys.toString(parent.getUserShortcuts().getShortcuts().get(text)[i]), textButtonStyle);
+            } else {
+                button = new ShortcutsButton(text , i, "", textButtonStyle);
+
+            }
+                keyBindGroup.add(button);
+                scrollTable.add(button).pad(PAD).align(Align.center);
         }
     }
 
