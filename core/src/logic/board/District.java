@@ -74,8 +74,6 @@ public class District {
 			setGold(getGold() + 1);
 			if(item instanceof Soldier) {
 				setGold(getGold() - ((Soldier) item).getLevel().getSalary());
-				// Remise à zéro des soldats déplacé au tour précédent
-				((Soldier) item).setHasMoved(false);
 			}
 			else if(item instanceof Tree) {
 				setGold(getGold() - 1);
