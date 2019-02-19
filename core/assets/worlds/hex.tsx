@@ -27,7 +27,7 @@
    <property name="available" type="bool" value="true"/>
    <property name="player" type="int" value="1"/>
   </properties>
-  <image width="256" height="222" source="hex_green.png"/>
+  <image width="256" height="222" source="hex_green_selected.png"/>
  </tile>
  <tile id="4">
   <properties>
