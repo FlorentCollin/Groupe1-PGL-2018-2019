@@ -99,4 +99,8 @@ public class District {
 		this.gold += gold;
 	}
 	
+	public Cell getCapital() {
+		return capital;
+	}
+	
 }
