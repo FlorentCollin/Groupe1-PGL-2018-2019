@@ -38,4 +38,8 @@ public class Cell {
 		item = null;
 	}
 	
+	public boolean isAccessible() {
+		return accessible;
+	}
+	
 }
