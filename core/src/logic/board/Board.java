@@ -396,6 +396,10 @@ public class Board{
 			this.selectedCell = selectedCell;
 		}
 	}
+
+	public void resetSelectedCell() {
+		this.selectedCell = null;
+	}
 	
 	public Player getActivePlayer() {
 		return players[activePlayer];
@@ -548,7 +552,7 @@ public class Board{
 	
 	/**
 	 * Gère le placement d'un item sur les cellules
-	 * @param la cell à mettre à jour
+	 * @param cell cell à mettre à jour
 	 * */
 	// revoir la documentation
 	private void updateCell(Cell cell) {

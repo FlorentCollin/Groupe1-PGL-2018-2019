@@ -9,7 +9,10 @@ out
 core/assets/items/desktop.ini
 .gradle/4.6/fileHashes/fileHashes.lock
 .gradle/4.6/fileHashes/fileHashes.lock
+<<<<<<< HEAD
 core/bin/
 
 desktop/bin
 
+=======
+>>>>>>> GUI
