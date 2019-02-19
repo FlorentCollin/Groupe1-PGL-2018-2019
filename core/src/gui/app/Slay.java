@@ -4,6 +4,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import gui.graphics.screens.*;
+import gui.settings.InitSettings;
+import gui.settings.UserSettings;
+import gui.settings.UserShortcuts;
+
+import static gui.utils.Constants.USER_SETTINGS_FILE;
+import static gui.utils.Constants.USER_SHORTCUTS_FILE;
 
 /**
  * Classe principale du jeu, c'est elle qui gère l'ensemble des menus, et la partie du joueur
@@ -15,9 +21,15 @@ public class Slay extends Game {
     private OnlineMenuScreen onlineMenuScreen;
     private CreateRoomMenuScreen createRoomMenuScreen;
 
+    private UserSettings userSettings;
+    private UserShortcuts userShortcuts;
+
     @Override
 	public void create () {
 		mainMenuScreen = new MainMenuScreen(this);
+		userSettings = InitSettings.init(USER_SETTINGS_FILE, UserSettings.class);
+		userSettings.init();
+		userShortcuts = InitSettings.init(USER_SHORTCUTS_FILE, UserShortcuts.class);
 		this.setScreen(mainMenuScreen);
 	}
 
@@ -30,8 +42,10 @@ public class Slay extends Game {
 
 	@Override
 	public void dispose () {
-			Gdx.app.exit();
-			System.exit(0);
+    	InitSettings.dispose(USER_SETTINGS_FILE, userSettings);
+    	InitSettings.dispose(USER_SHORTCUTS_FILE, userShortcuts);
+    	Gdx.app.exit();
+    	System.exit(0);
 	}
 
 	/**
@@ -68,5 +82,13 @@ public class Slay extends Game {
         }
 		this.setScreen(nextScreen);
 
+	}
+
+	public UserSettings getUserSettings() {
+		return userSettings;
+	}
+
+	public UserShortcuts getUserShortcuts() {
+		return userShortcuts;
 	}
 }

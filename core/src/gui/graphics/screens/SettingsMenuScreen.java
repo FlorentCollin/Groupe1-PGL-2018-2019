@@ -1,10 +1,11 @@
 package gui.graphics.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
 
@@ -17,7 +18,6 @@ import static gui.utils.Constants.PAD;
 public class SettingsMenuScreen extends SubMenuScreen {
     private Table table;
     private Label windowMode;
-    private Label screenResolution;
     private Label musicLevel;
     private Label soundLevel;
     private Slider musicSlider;
@@ -35,38 +35,40 @@ public class SettingsMenuScreen extends SubMenuScreen {
         //Création des différents labels
         windowMode = new Label("Window Mode", labelStyle);
         windowMode.setAlignment(Align.left);
-        screenResolution = new Label("Screen Resolution", labelStyle);
         musicLevel = new Label("Music", labelStyle);
         soundLevel = new Label("Sound", labelStyle);
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
         //Création des différents boutons.
         TextButton fullScreen = new TextButton("fullscreen", textButtonStyle);
-        fullScreen.setTransform(true);
+        fullScreen.setChecked(parent.getUserSettings().isFullScreen());
         TextButton windowed = new TextButton("windowed", textButtonStyle);
-        windowed.setTransform(true);
-        windowed.setChecked(true);
+        windowed.setChecked(!parent.getUserSettings().isFullScreen());
+
+        fullScreen.addListener(new ClickListener() {
+           @Override
+           public void clicked(InputEvent event, float x, float y) {
+               if(fullScreen.isChecked() && ! parent.getUserSettings().isFullScreen()) {
+                   parent.getUserSettings().setFullScreen(true);
+               }
+           }
+        });
+
+        windowed.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(windowed.isChecked() && parent.getUserSettings().isFullScreen()) {
+                    parent.getUserSettings().setFullScreen(false);
+                }
+            }
+        });
 
         ButtonGroup<TextButton> buttonGroup = new ButtonGroup<>(fullScreen, windowed);
         buttonGroup.setMaxCheckCount(1);
         buttonGroup.setMinCheckCount(1);
         buttonGroup.setUncheckLast(true);
 
-        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
-        selectBoxStyle.font = textFont;
-        selectBoxStyle.listStyle.font = textFont;
-        SelectBox selectBox = new SelectBox(selectBoxStyle);
-        selectBox.setAlignment(Align.center);
-        selectBox.getList().setAlignment(Align.right);
-        selectBox.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                System.out.println(selectBox.getSelected());
-            }
-        });
-        selectBox.setItems("Android1", "Windows1 long text in item", "Linux1", "OSX1", "Android2", "Windows2", "Linux2", "OSX2",
-                "Android3", "Windows3", "Linux3", "OSX3", "Android4", "Windows4", "Linux4", "OSX4", "Android5", "Windows5", "Linux5",
-                "OSX5", "Android6", "Windows6", "Linux6", "OSX6", "Android7", "Windows7", "Linux7", "OSX7");
-        selectBox.setSelected("Linux6");
+
         musicSlider = new Slider(0, 100, 1, false, uiSkin);
         musicSlider.setValue(100);
         //Update du pourcentage affiché à l'écran
@@ -95,19 +97,18 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(windowed).pad(PAD);
         scrollTable.row();
 
-        scrollTable.add(screenResolution).align(Align.left);
-        scrollTable.add(selectBox).grow().pad(PAD).width(fullScreen.getWidth()).align(Align.right);
-        scrollTable.row();
         scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
         scrollTable.add(musicSlider).pad(PAD)
                 .minWidth(100 * ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2).fillX().align(Align.right).colspan(2);
         scrollTable.add(musicSliderPourcent).minWidth(musicSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
+
         scrollTable.add(soundLevel).fillY().align(Align.left);
         scrollTable.add(soundSlider).padRight(PAD).minWidth(100*ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2)
                 .pad(PAD).fillX().align(Align.right).colspan(2);
         scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
+
         //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);

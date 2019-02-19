@@ -1,7 +1,5 @@
 package gui.utils;
 
-import com.badlogic.gdx.Gdx;
-
 /**
  * Classe contenant toutes les constantes utiles à l'interface graphique
  */
@@ -14,6 +12,7 @@ public class Constants {
     // Ce nombre est utilisé pour sélectionner et désélectionner des cellules
 
     public static final String USER_SETTINGS_FILE = "settings/userSettings.json";
+    public static final String USER_SHORTCUTS_FILE = "settings/userShortcuts.json";
 
     public static float getRatio(float width) {
         return width / MAX_RES;
