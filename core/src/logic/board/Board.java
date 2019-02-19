@@ -3,8 +3,6 @@ package logic.board;
 import java.util.ArrayList;
 import java.util.Random;
 
-import logic.Coords.CubeCoords;
-import static logic.Coords.TransformCoords.*;
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Item;
@@ -23,8 +21,8 @@ public class Board{
 	private Shop shop;
 	private NaturalDisastersController naturalDisastersController;
 	private Cell selectedCell, firstCell;
-	private final int PROBA;
-	private ArrayList<Cell> visited = new ArrayList<Cell>(); // Eviter de boucler indéfiniment pour canJoinCapital
+	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
+	private ArrayList<Cell> visited = new ArrayList<Cell>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
 	//Variable qui est utilisé dans la méthode getNeighbors
 	//Elle contient toutes les directions possibles pour les cellules adjacentes
 	private final int[][][] directions = {
@@ -41,9 +39,22 @@ public class Board{
 		this.shop = shop;
 		fullIn();
 		activePlayer = 0;
-		PROBA = 100;
 	}
 	
+	public Board(int columns, int rows, Player[] players, Shop shop) {
+		this.columns = columns;
+		this.rows = rows;
+		board = new Cell[columns][rows];
+		this.players = players;
+		this.districts = new ArrayList<District>();
+		this.shop = shop;
+		fullIn();
+		activePlayer = 0;
+	}
+	
+	/**
+	 * Remplit le tableau de jeu
+	 * */
 	private void fullIn() {
 		for(int i = 0; i<columns; i++) {
 			for(int j = 0; j<rows; j++) {
@@ -59,9 +70,9 @@ public class Board{
 	public void placeNewItem(Cell cell){
 		// Pour placer une nouvel item il faut d'abord séléctionner une cellule du district depuis lequel on souhaite acheter
 		// Ensuite il faut séléctionner la cellule sur laquelle on souhaite placer l'item
-		if(selectedCell != null && shop.getSelectedItem() != null) {
+//		if(selectedCell != null && shop.getSelectedItem() != null) {
 			if(isInPossibleMove(possibleMove(selectedCell.getDistrict()), cell)) {
-				if(cell.getItem() == null) { // Si cell ne contient aucun item on peut tjrs placer dessus
+				if(cell.getItem() == null) { // Si cell ne contient aucun item on peut toujours placer dessus
 					conquerForNewItem(cell);
 				}
 				else if(isOnOwnTerritory(cell)) { // Si la cellule appartient déjà au joueur
@@ -75,26 +86,36 @@ public class Board{
 				// Le joueur souhaite se placer sur une case ennemie non vide
 				// L'item de la case doit être de niveau inférieur ou égal à celui que l'on souhaite placer
 				else {
+					// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
 					if(cell.getItem() instanceof Capital) {
 						generateCapital(cell.getDistrict());
 						conquerForNewItem(cell);
 					}
-					else if(cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
+					// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
+					else if(cell.getItem() instanceof Tree || cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
 						conquerForNewItem(cell);
 					}
 				}
 			}
-		}
+//		}
 	}
 	
+	/**
+	 * Permet de conquérir une cellule lors de l'ajout d'un nouvel item
+	 * @param cell la cellule à conquérir
+	 * */	
 	private void conquerForNewItem(Cell cell) {
 		cell.setDistrict(selectedCell.getDistrict());
-		selectedCell.getDistrict().addCell(cell);
-		updateCellForNewItem(cell);
+		selectedCell.getDistrict().addCell(cell); //On ajoute la cellule conquise au district présélectionné
+		updateCellForNewItem(cell); 
 		checkMerge(cell);
 		checkSplit(cell);
 	}
 	
+	/**
+	 * Met à jour une cellule lors du placement d'un nouvel item
+	 * @param cell la cellule à mettre à jour
+	 * */
 	private void updateCellForNewItem(Cell cell) {
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
@@ -107,7 +128,8 @@ public class Board{
 	 * @param toCell la cellule de destination
 	 * */
 	public void move(Cell toCell) {
-		if(selectedCell != null && selectedCell.getItem() != null && selectedCell.getItem().getMode().isMovable() && selectedCell.getItem().canMove()) {
+//		if(selectedCell != null && selectedCell.getItem() != null && selectedCell.getItem().getMode().isMovable() && selectedCell.getItem().canMove()) {
+		if(selectedCell.getItem().getMode().isMovable() && selectedCell.getItem().canMove()) {//Il faut vérifier que l'item de la cellule est déplaçable et qu'il peut encore être déplacé
 			if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
 				if(toCell.getItem() == null) {
 					conquer(toCell);
@@ -144,6 +166,10 @@ public class Board{
 		selectedCell.removeItem();
 	}
 	
+	/**
+	 * Permet de fusinonner des items lors de l'ajout d'un nouvel item
+	 * @param cell la cellule sur laquelle se trouve un item et qu'un nouvel item vient d'être placé
+	 * */
 	private void fusionForNewItem(Cell cell) {
 		cell.getItem().improve();
 		shop.buy(cell.getDistrict());
@@ -231,20 +257,6 @@ public class Board{
 			}
 		}
 		return possible;
-	}
-	
-	/**
-	 * Permet de conna�tre la distance s�parant deux cellules
-	 * @param from la cellule de d�part
-	 * @param to la cellule de destination
-	 * @return la distance entre from et to
-	 * */
-	private int getDistance(Cell from, Cell to) {
-		int[] fromPosition = getPosition(from);
-		int[] toPosition = getPosition(to);
-		CubeCoords fromCube = offsetToCube(fromPosition[0], fromPosition[1]);
-		CubeCoords toCube = offsetToCube(toPosition[0], toPosition[1]);
-		return Math.max(Math.abs(fromCube.x-toCube.x), Math.max(fromCube.y-toCube.y, fromCube.z-toCube.y));
 	}
 	
 	/**
@@ -409,6 +421,11 @@ public class Board{
 		}
 	}
 	
+	/**
+	 * Permet de fusionner deux districts
+	 * @param greather le district le plus grand
+	 * @param samller le district le plus petit
+	 * */
 	private void merge(District greather, District smaller) {
 		greather.addGold(smaller.getGold());
 		smaller.removeCapital();
@@ -419,41 +436,51 @@ public class Board{
 		districts.remove(smaller);
 	}
 	
-	private void split(Cell cell) {
-		District oldDistrict = cell.getDistrict();
+	/**
+	 * Permet de diviser un district en deux sous districts
+	 * @param district le district à diviser
+	 * */
+	private void split(District district) {
+		District oldDistrict = district;
 		District newDistrict = new District(oldDistrict.getPlayer());
-		System.out.println("split old : "+oldDistrict.getCells().size()+", new : "+newDistrict.getCells().size());
 		districts.add(newDistrict);
 		for(Cell c : oldDistrict.getCells()) {
 			visited.clear();
 			firstCell = c;
-			if(canJoinCapital(c)==0) {
+			if(numberOfWayToCapital(c)==0) {
 				newDistrict.addCell(c);
 				c.setDistrict(newDistrict);
 			}
 		}
-		System.out.println("split old : "+oldDistrict.getCells().size()+", new : "+newDistrict.getCells().size());
 		for(Cell c : newDistrict.getCells()) {
 			oldDistrict.removeCell(c);
 		}
-		System.out.println("split old : "+oldDistrict.getCells().size()+", new : "+newDistrict.getCells().size());
 		generateCapital(newDistrict);
 	}
 	
+	/**
+	 * Permet de vérifier si il faut diviser un district
+	 * @param cell la cellule depuis làquelle on effectue la vérification
+	 * */
 	private void checkSplit(Cell cell) {
 		// TO DO
 		for(Cell c : getNeighbors(cell)) {
 			if(c.getDistrict() != null && c.getDistrict().getPlayer() != getActivePlayer()) {
 				visited.clear();
 				firstCell = c;
-				if(canJoinCapital(c) == 0) {
-					split(c);
+				if(numberOfWayToCapital(c) == 0) {
+					split(c.getDistrict());
 				}
 			}
 		}
 	}
 	
-	private int canJoinCapital(Cell cell) {
+	/**
+	 * Permet de connaître le nombre de chemin menant une cellule jusqu'à la capital de son district
+	 * @param cell la cellule qui est testée
+	 * @return le nombre de chemin menant jusqu'à la capital
+	 * */
+	private int numberOfWayToCapital(Cell cell) {
 		if(visited.indexOf(cell) == -1) {
 			visited.add(cell);
 			if(cell == firstCell.getDistrict().getCapital()) {
@@ -465,21 +492,12 @@ public class Board{
 			else {
 				int value = 0;
 				for(Cell c : getNeighbors(cell)) {
-					value += canJoinCapital(c);
+					value += numberOfWayToCapital(c);
 				}
 				return value;
 			}
 		}
 		return 0;
-	}
-	
-	private boolean anyNeighborInSameDistrict(Cell cell) {
-		for(Cell c : getNeighbors(cell)) {
-			if(c.getDistrict() == cell.getDistrict()) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
@@ -497,7 +515,7 @@ public class Board{
 							nTrees += 1;
 						}
 					}
-					if(rand.nextInt(100) < calculateProb(nTrees)*100) {
+					if(rand.nextInt(100)*PROBA < calculateProb(nTrees)*100) {
 						board[i][j].setItem(new Tree());
 					}
 				}
@@ -583,6 +601,10 @@ public class Board{
 		return shop;
 	}
 	
+	/**
+	 * Permet de jouer un tour
+	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
+	 * */
 	public void play(Cell cell) {
 		if(selectedCell != null) {
 			if(shop.getSelectedItem() != null) {
@@ -593,7 +615,7 @@ public class Board{
 			}
 			selectedCell = null;
 		}
-		else if(cell.getDistrict() != null &&cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
+		else if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
 			if(cell.getItem().canMove()) {				
 				selectedCell = cell;
 			}
