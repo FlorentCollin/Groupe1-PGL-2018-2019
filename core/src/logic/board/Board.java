@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import logic.board.cell.Cell;
+import logic.board.cell.LandCell;
+import logic.board.cell.WaterCell;
 import logic.item.Capital;
 import logic.item.Item;
 import logic.item.Tree;
@@ -58,9 +60,13 @@ public class Board{
 	private void fullIn() {
 		for(int i = 0; i<columns; i++) {
 			for(int j = 0; j<rows; j++) {
-				board[i][j] = new Cell();
+				board[i][j] = new LandCell();
 			}
 		}
+	}
+	
+	public void changeToWaterCell(int i, int j) {
+		board[i][j] = new WaterCell();
 	}
 	
 	/**
@@ -226,7 +232,8 @@ public class Board{
 	 * @param cell la cellule sur laquelle on souhaite se placer
 	 * @param item l'item de la cellule de départ
 	 * @return true si le niveau est identique
-	 * 			false sinon*/
+	 * 			false sinon
+	 * */
 	private boolean hasSameLevel(Cell cell, Item item) {
 		return cell.getItem().getLevel() == item.getLevel();
 	}
@@ -295,7 +302,9 @@ public class Board{
 			int neighborX = x + dir[0];
 			int neighborY = y + dir[1];
 			if(neighborX>=0 && neighborX<columns && neighborY>=0 && neighborY<rows) {
-				around.add(board[neighborX][neighborY]);
+				if(board[neighborX][neighborY].isAccessible()) {
+					around.add(board[neighborX][neighborY]);
+				}
 			}
 
 		}
@@ -513,7 +522,7 @@ public class Board{
 		for(int i=0; i<columns; i++) {
 			for(int j = 0; j<rows; j++) {
 				nTrees = 0;
-				if(board[i][j].getItem() == null) {
+				if(board[i][j].getItem() == null && board[i][j].isAccessible()) {
 					for(Cell c : getNeighbors(board[i][j])) { // on considère que la cellule est un district pour obtenir toutes les cellules l'entourant
 						if(c.getItem() instanceof Tree) {
 							nTrees += 1;
@@ -544,9 +553,22 @@ public class Board{
 	 * @param district le district ayant besoin d'une nouvelle capitale
 	 * */
 	private void generateCapital(District district) {
+		ArrayList<Cell> visited = new ArrayList<Cell>();
 		Random rand = new Random();
 		//On r�cup�re une cellule du district al�atoirement
-		Cell cell = district.getCells().get(rand.nextInt(district.getCells().size()));
+		int i = rand.nextInt(district.getCells().size());
+		while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
+			visited.add(district.getCells().get(i));
+			i = rand.nextInt(district.getCells().size());
+		}
+		if(visited.size() == district.getCells().size()) {
+			for(Cell c : district.getCells()) {
+				if(c.getItem() instanceof Tree) {
+					i = rand.nextInt(district.getCells().size());
+				}
+			}
+		}
+		Cell cell = district.getCells().get(i);
 		district.addCapital(cell);
 	}
 	
