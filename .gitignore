@@ -4,3 +4,17 @@ out
 .idea
 *.class
 .gradle/
+
+*.iml
+core/assets/items/desktop.ini
+.gradle/4.6/fileHashes/fileHashes.lock
+.gradle/4.6/fileHashes/fileHashes.lock
+<<<<<<< HEAD
+core/bin/
+
+desktop/bin
+
+=======
+>>>>>>> GUI
+core/assets/settings/userSettings.json
+core/assets/settings/userShortcuts.json

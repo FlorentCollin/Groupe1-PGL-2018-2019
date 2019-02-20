@@ -12,7 +12,8 @@ public class Player {
 	protected ArrayList<Soldier> soldiers;
 	
 	public Player() {
-		/*Dans le cas où le joueur ne stipule rien ou est une ia*/
+		/*Dans le cas où le joueur ne stipule rien 
+		 * ou est une ia*/
 		soldiers =  new ArrayList<Soldier>();
 	}
 	
