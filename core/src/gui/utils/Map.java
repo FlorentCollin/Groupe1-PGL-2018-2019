@@ -49,7 +49,6 @@ public class Map {
     	XmlReader.Element waterCells = xmlElement.getChildByName("waterCells");
     	for(int i = 0; i < waterCells.getChildCount(); i++) {
     		XmlReader.Element waterCell = waterCells.getChild(i);
-//    		Class<?> cellClass = getClassFromString(waterCell.getAttribute("type"));
     		int x = Integer.parseInt(waterCell.getAttribute("x"));
     		int y = Integer.parseInt(waterCell.getAttribute("y"));
     		board.changeToWaterCell(x, y);
