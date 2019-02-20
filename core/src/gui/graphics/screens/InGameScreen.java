@@ -47,9 +47,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
-        fillViewport = new FillViewport(worldWith, worldHeight, camera);
-        camera.update();
-
     }
 
     @Override
@@ -61,6 +58,11 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
 //        System.out.println(getCoordsFromMousePosition(getMouseLoc()));
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
     }
 
     private void renderItems() {
@@ -105,8 +107,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     protected void generateStage() {
         camera = new OrthographicCamera();
-        fillViewport = new FillViewport(1920, 1080, camera);
+        fillViewport = new FillViewport(1280, 720, camera);
         fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.update();
         stage = new Stage(fillViewport);
         Gdx.input.setInputProcessor(this);
     }
@@ -114,7 +117,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private Vector3 getMouseLoc() {
         mouseLoc.x = Gdx.input.getX();
         mouseLoc.y = Gdx.input.getY();
-        camera.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
+        fillViewport.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
         mouseLoc.y = Math.abs(worldHeight -mouseLoc.y); //On inverse l'axe des ordonnées
         //Cela permet d'avoir le repère placé en haut à gauche avec les y allant vers le bas et les x vers la droite
         return mouseLoc;
