@@ -57,6 +57,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
+//        System.out.println(getCoordsFromMousePosition(getMouseLoc()));
     }
 
     @Override
@@ -131,6 +132,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         // Ce qui permet de retrouver les bonnes coordonnés
         // le (int)cells.getTileWidth() /2 correspond à la taille de l'hexagone (ie la longueur de la droite qui va du
         // centre vers une des pointes de l'hexagon
+        System.out.println(mouseLoc);
         return TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
                 (int)(mouseLoc.y - cells.getTileHeight() / 2), (int)cells.getTileWidth() /2);
     }

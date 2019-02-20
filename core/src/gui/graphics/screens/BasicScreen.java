@@ -61,7 +61,8 @@ public abstract class BasicScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, false);
+        stage.getViewport().update(width, height, true);
+        stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
     }
 
     @Override
@@ -73,7 +74,7 @@ public abstract class BasicScreen implements Screen {
     protected void generateStage() {
         camera = new OrthographicCamera();
         viewport = new ScalingViewport(Scaling.stretch, 1920, 1080, camera);
-        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
     }
