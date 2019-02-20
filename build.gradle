@@ -47,6 +47,7 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
 }
 
@@ -58,6 +59,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         testCompile "junit:junit:4.+"
         testCompile "org.mockito:mockito-core:2.+"
         testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
@@ -76,6 +78,10 @@ tasks.eclipse.doLast {
 
 task cleanBuildDir(type: Delete) {
     delete "${projectDir}/out"
+    delete "${projectDir}/core/build"
+    delete "${projectDir}/core/bin"
     delete "${projectDir}/core/out"
     delete "${projectDir}/desktop/out"
+    delete "${projectDir}/desktop/build"
+    delete "${projectDir}/desktop/bin"
 }

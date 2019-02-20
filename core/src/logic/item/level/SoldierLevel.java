@@ -45,6 +45,4 @@ public enum SoldierLevel implements Level{
 		}
 		return -1;
 	}
-	
-	
 }
