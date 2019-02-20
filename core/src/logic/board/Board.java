@@ -65,6 +65,11 @@ public class Board{
 		}
 	}
 	
+	/**
+	 * Permet de placer de l'eau sur la carte
+	 * @param i la position en x
+	 * @param j la position en y
+	 * */
 	public void changeToWaterCell(int i, int j) {
 		board[i][j] = new WaterCell();
 	}
