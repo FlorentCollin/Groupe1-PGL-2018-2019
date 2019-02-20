@@ -33,10 +33,12 @@ public class Map {
     private Board board;
     private int numberOfPlayers;
 
-    public  Board load(String worldName) {
+    public  Board load(String worldName, boolean loadTmx) {
         XmlReader xml = new XmlReader();
         XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
-        generateTmxMap(xml_element);
+        if(loadTmx) {
+            generateTmxMap(xml_element);
+        }
         generateBoard(xml_element);
         generateDistricts();
         generateItems(xml_element);
@@ -69,7 +71,9 @@ public class Map {
         for (int i = 0; i < numberOfPlayers; i++) {
             players[i] = new Player();
         }
-        board = new Board(cells.getWidth(), cells.getHeight(), players, new NaturalDisastersController(), new Shop());
+        int width = Integer.parseInt(xmlElement.getAttribute("width"));
+        int height = Integer.parseInt(xmlElement.getAttribute("height"));
+        board = new Board(width, height, players, new NaturalDisastersController(), new Shop());
     }
 
     private void generateDistricts() {

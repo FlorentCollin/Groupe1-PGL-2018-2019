@@ -42,7 +42,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super(parent);
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
-        board = map.load(mapName);
+        board = map.load(mapName, true);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
