@@ -36,6 +36,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private Board board;
     private TextureAtlas itemsSkin;
     private ArrayList<Cell> selectedCells = new ArrayList<>();
+    private FillViewport fillViewport;
 
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
@@ -46,7 +47,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
-        viewport = new FillViewport(worldWith, worldHeight, camera);
+        fillViewport = new FillViewport(worldWith, worldHeight, camera);
         camera.update();
 
     }
@@ -59,6 +60,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
+//        System.out.println(getCoordsFromMousePosition(getMouseLoc()));
     }
 
     private void renderItems() {
@@ -103,9 +105,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     protected void generateStage() {
         camera = new OrthographicCamera();
-        viewport = new FillViewport(1920, 1080, camera);
-        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-        stage = new Stage(viewport);
+        fillViewport = new FillViewport(1920, 1080, camera);
+        fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage = new Stage(fillViewport);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -126,7 +128,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         //- cells.getTileWidth() / 2 et - cells.getTileHeight() / 2 sont là pour créer le décalage de l'origine.
         // Ce qui permet de retrouver les bonnes coordonnés
         // le (int)cells.getTileWidth() /2 correspond à la taille de l'hexagone (ie la longueur de la droite qui va du
-        // centre vers une des pointes de l'hexagone
+        // centre vers une des pointes de l'hexagon
+        System.out.println(mouseLoc);
         return TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
                 (int)(mouseLoc.y - cells.getTileHeight() / 2), (int)cells.getTileWidth() /2);
     }
