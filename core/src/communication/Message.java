@@ -9,7 +9,9 @@ import logic.board.Board;
 import logic.board.cell.Cell;
 import roomController.OfflineRoom;
 
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,13 +39,18 @@ public class Message {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>(), messagesTo = new LinkedBlockingQueue<>();
         OfflineRoom offlineRoom = new OfflineRoom("g1_World1", messagesFrom, messagesTo);
         Board board = new Map().load("g1_World1", false);
+        Gson gson = new Gson();
+        FileHandle fileHandle = Gdx.files.local("districts.json")` `;
+        fileHandle.writeString(gson.toJson(board.getDistricts()), false);
+
+
         Message message = new Message("board", "play", Arrays.asList((Cell)board.getCell(9, 8)));
         messagesFrom.put(message);
         System.out.println("send");
-        offlineRoom.run();
+//        offlineRoom.run();
     }
 }
