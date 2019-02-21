@@ -246,9 +246,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         unselectCells();
         selectedCells = cellsArray;
         for(Cell cell : selectedCells) {
-            int[] pos = board.getPosition(cell);
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
-            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
+            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
             // Récupération de la cellule dans la mapTmx
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à sélectionner.
@@ -258,9 +257,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private void unselectCells() {
         for (Cell selectedCell : selectedCells) {
-            int[] pos = board.getPosition(selectedCell);
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
-            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
+            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(selectedCell.getX(),selectedCell.getY()));
             // Récupération de la cellule dans la mapTmx
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à désélectionner.

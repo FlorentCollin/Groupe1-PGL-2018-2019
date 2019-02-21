@@ -25,7 +25,8 @@ public class District {
 			cells.add(cell);
 		}
 	}
-	
+
+	//TODO supprimer cette méthode
 	/**
 	 * Permet d'ajouter au district toutes les cellules d'un autre district
 	 * @param district le district dont on souhaite obtenir les cellules
