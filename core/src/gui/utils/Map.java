@@ -2,6 +2,8 @@ package gui.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.XmlReader;
 import logic.board.Board;
 import logic.board.District;
@@ -60,9 +63,10 @@ public class Map {
     private void loadLibgdx() {
         Gdx.gl20 = Mockito.mock(GL20.class);
         Gdx.gl = Gdx.gl20;
-
+        HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
+        config.preferencesDirectory = "core/assets";
         //Lancement de l'application et initialisation des paramètres Gdx.
-        new HeadlessApplication(new EmptyApplication());
+        new HeadlessApplication(new EmptyApplication(), config);
     }
     
     private void addWaterCells(XmlReader.Element xmlElement) {
