@@ -11,20 +11,20 @@ public class Room extends Thread{
 
     private UUID id; //Identifiant unique d'une room
     private ArrayList<Client> players;
-    private LinkedBlockingQueue<Message> messagesFromServer;
+    private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
 
     public UUID getUUID() {
         return id;
     }
     public LinkedBlockingQueue<Message> getMessagesFromServer() {
-        return messagesFromServer;
+        return messagesFrom;
     }
-    public Room(Client creatorClient,LinkedBlockingQueue<Message> messagesFromServer, LinkedBlockingQueue<Message> messagesToSend) {
+    public Room(Client creatorClient,LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
         id = UUID.randomUUID(); //Création d'un identifiant unique pour la room
         players = new ArrayList<>();
         players.add(creatorClient);
-        this.messagesFromServer = messagesFromServer;
+        this.messagesFrom = messagesFrom;
         this.messagesToSend = messagesToSend;
     }
 

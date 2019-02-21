@@ -20,18 +20,18 @@ public class ServerSender extends Thread{
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                message = messageToSend.take(); //Remarque cette méthode est bloquante
-                for (SocketChannel receiver : message.receivers) {
-                    if (receiver.isConnected()) {
-                        //Écriture du message dans le buffer du destinataire
-                        receiver.write(ByteBuffer.wrap(gson.toJson(message).getBytes()));
-                    }
-                }
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace(); //TODO
-            }
-        }
+//        while (true) {
+//            try {
+//                message = messageToSend.take(); //Remarque cette méthode est bloquante
+////                for (SocketChannel receiver : message.receivers) {
+////                    if (receiver.isConnected()) {
+////                        //Écriture du message dans le buffer du destinataire
+////                        receiver.write(ByteBuffer.wrap(gson.toJson(message).getBytes()));
+////                    }
+////                }
+//            } catch (InterruptedException | IOException e) {
+//                e.printStackTrace(); //TODO
+//            }
+//        }
     }
 }

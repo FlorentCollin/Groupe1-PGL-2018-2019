@@ -1,6 +1,8 @@
 package gui.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -18,6 +20,7 @@ import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -33,18 +36,33 @@ public class Map {
     private Board board;
     private int numberOfPlayers;
 
-    public  Board load(String worldName, boolean loadTmx) {
+    public  Board load(String worldName, boolean loadTmxRenderer) {
         XmlReader xml = new XmlReader();
-        XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
-        if(loadTmx) {
-            generateTmxMap(xml_element);
+        if(Gdx.files == null) {
+            loadLibgdx();
         }
+        XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
+        generateTmxMap(xml_element, loadTmxRenderer);
         generateBoard(xml_element);
         generateDistricts();
         generateItems(xml_element);
         checkCapitals();
         addWaterCells(xml_element);
         return board;
+    }
+
+    /**
+     * Si aucune application libgdx n'a été crée, on initialise une fausse application
+     * On n'a besoin de cette méthode pour le serveur par exemple.
+     * Le serveur ne gérant pas de GUI, libgdx n'est pas initialisé et il est impossible d'avoir accès à Gdx.files
+     * Source : https://www.badlogicgames.com/forum/viewtopic.php?f=11&t=17805#
+     */
+    private void loadLibgdx() {
+        Gdx.gl20 = Mockito.mock(GL20.class);
+        Gdx.gl = Gdx.gl20;
+
+        //Lancement de l'application et initialisation des paramètres Gdx.
+        new HeadlessApplication(new EmptyApplication());
     }
     
     private void addWaterCells(XmlReader.Element xmlElement) {
@@ -57,10 +75,12 @@ public class Map {
     	}
     }
     
-    private void generateTmxMap(XmlReader.Element xmlElement) {
+    private void generateTmxMap(XmlReader.Element xmlElement, boolean loadTmxRenderer) {
         String worldTmx = xmlElement.getAttribute("map");
         map = new TmxMapLoader().load("worlds/" + worldTmx + ".tmx");
-        tiledMapRenderer = new HexagonalTiledMapRenderer(map);
+        if(loadTmxRenderer) {
+            tiledMapRenderer = new HexagonalTiledMapRenderer(map);
+        }
         cells = (TiledMapTileLayer) map.getLayers().get("background"); //cellules
         tileSet = map.getTileSets().getTileSet("hex");
     }
