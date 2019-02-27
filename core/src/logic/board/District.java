@@ -14,10 +14,16 @@ public class District {
 	private int gold;
 	private Cell capital;
 	private ArrayList<Cell> cells;
+
+	public static int globalId = 0;
+	private int id;
 	
 	public District(Player player) {
 		cells = new ArrayList<Cell>();
 		this.player = player;
+
+		globalId++;
+		id = globalId;
 	}
 	
 	public void addCell(Cell cell) {
@@ -101,5 +107,8 @@ public class District {
 	public Cell getCapital() {
 		return capital;
 	}
-	
+
+    public int getId() {
+        return id;
+    }
 }

@@ -75,16 +75,11 @@ public class ServerListener extends Thread{
             //On retire le client si celui ci n'est plus connecté
             ServerInfo.clients.remove(clientChannel);
         }
-        //Boucle qui lit les données envoyées par le client et place ces données dans un string
-        String messageStr = "";
-        int len;
-        do {
-            ByteBuffer buffer = ByteBuffer.allocate(100);
-            buffer.clear();
-            len = clientChannel.read(buffer);
-            messageStr += new String(buffer.array(), StandardCharsets.UTF_8);
-        } while (len == 100); //len == 100 indique que l'entièreté du message n'a pas encore été lu
-        Message message = gson.fromJson(messageStr, Message.class);
-        //TODO
+        String messageStr = Message.getStringFromBuffer(clientChannel);
+        try {
+            messageToSend.put(Message.getMessage(messageStr, gson));
+        } catch (InterruptedException e) {
+            e.printStackTrace(); //TODO
+        }
     }
 }

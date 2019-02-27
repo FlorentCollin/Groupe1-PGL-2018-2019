@@ -8,31 +8,43 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class RoomController {
-    private HashMap<UUID, Room> rooms;
+    private HashMap<Client, Room> rooms;
+    //Permet de retrouver la file des messages d'une Room particulière
+    private HashMap<Room, LinkedBlockingQueue<Message>> roomQueue;
     //Lien vers la pile des messages à envoyer aux clients (utilisé par ServerSender)
     private LinkedBlockingQueue<Message> messagesToSend;
 
-    public HashMap<UUID, Room> getRooms() {
-        return rooms;
-    }
-    public RoomController(LinkedBlockingQueue<Message> messagesToSend) {
+    public RoomController(LinkedBlockingQueue<Message> messageToSend) {
         rooms = new HashMap<>();
-        this.messagesToSend = messagesToSend;
+        roomQueue = new HashMap<>();
+        this.messagesToSend = messageToSend;
     }
 
-    public UUID createRoom(Client creatorClient) {
-        Room newRoom = new Room(creatorClient, new LinkedBlockingQueue<>(), messagesToSend);
-        rooms.put(newRoom.getUUID(), newRoom);
-        return newRoom.getUUID();
+    /**
+     * Méthode utilisé par un client pour ouvrir une nouvelle Room
+     * @param creatorClient
+     * @return
+     */
+    public void createRoom(Client creatorClient, String worldName) {
+        LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>();
+        Room room = new Room(worldName, messagesFrom, messagesToSend);
+        //Mise à jour des hashMap
+        rooms.put(creatorClient, room);
+        roomQueue.put(room, messagesFrom);
     }
 
     /**
      * Méthode permettant d'envoyer un message à une room spécifique
-     * @param idRoom l'id de la room
      * @param message le message à envoyer
-     * @throws InterruptedException
+     * @param client le client qui à envoyé le message
      */
-    public void sendMessageToRoom(UUID idRoom, Message message) throws InterruptedException {
-        rooms.get(idRoom).getMessagesFromServer().put(message); //todo transform message
+    public void sendMessageToRoom(Message message, Client client) {
+        Room clientRoom = rooms.get(client);
+        LinkedBlockingQueue<Message> clientRoomQueue = roomQueue.get(clientRoom);
+        try {
+            clientRoomQueue.put(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace(); //Si la Room n'existe plus TODO
+        }
     }
 }

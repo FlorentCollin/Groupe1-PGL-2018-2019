@@ -37,18 +37,21 @@ public class Map {
     private Board board;
     private int numberOfPlayers;
 
-    public  Board load(String worldName, boolean loadTmxRenderer) {
+    public Board load(String worldName, boolean loadBoard, boolean loadTmxRenderer) {
         XmlReader xml = new XmlReader();
         if(Gdx.files == null) {
             loadLibgdx();
         }
         XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
         generateTmxMap(xml_element, loadTmxRenderer);
-        generateBoard(xml_element);
-        generateDistricts();
-        generateItems(xml_element);
-        checkCapitals();
-        addWaterCells(xml_element);
+        if(loadBoard) {
+            generateBoard(xml_element);
+            generateDistricts();
+            generateItems(xml_element);
+            checkCapitals();
+            addWaterCells(xml_element);
+
+        }
         return board;
     }
 

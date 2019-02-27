@@ -3,30 +3,37 @@ package communication;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class OnlineMessageSender extends Thread {
-    private LinkedBlockingDeque<Message> messagesToSend;
+public class OnlineMessageSender implements MessageSender {
     private SocketChannel clientChannel;
+    private Selector selector;
     private Gson gson;
 
-    public OnlineMessageSender(LinkedBlockingDeque<Message> messagesToSend, SocketChannel clientChannel) {
-        this.messagesToSend = messagesToSend;
-        this.clientChannel = clientChannel;
+    public OnlineMessageSender() {
         gson = new Gson();
+        try {
+            clientChannel = SocketChannel.open(new InetSocketAddress("localhost", 8888));
+            clientChannel.configureBlocking(false);
+            selector = Selector.open();
+            //On associe le channel à un selector
+            clientChannel.register(selector, SelectionKey.OP_READ);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void run() {
-        while(true) {
-            try {
-                Message message = messagesToSend.take();
-                clientChannel.write(ByteBuffer.wrap(gson.toJson(message).getBytes()));
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace(); //TODO
-            }
+    public void send(Message message) {
+        try {
+            clientChannel.write(ByteBuffer.wrap((message.getClass() + gson.toJson(message)).getBytes()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

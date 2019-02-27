@@ -1,56 +1,41 @@
 package communication;
 
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
-import gui.utils.Map;
-import logic.board.Board;
-import logic.board.cell.Cell;
-import roomController.OfflineRoom;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 
-public class Message {
+public abstract class Message {
 
-    public String object;
-    public String methodName;
-    public List<?> parameters;
-    public List<Class<?>> parametersClass;
-
-    public Message(String object, String methodName, List<?> parameters) {
-        this.object = object;
-        this.methodName = methodName;
-        this.parameters = parameters;
-        parametersClass = new ArrayList<>();
-        for (int i = 0; i < parameters.size(); i++) {
-            if(parameters.get(i).getClass().getSuperclass() == Cell.class) {
-                parametersClass.add(parameters.get(i).getClass().getSuperclass());
-            } else {
-                parametersClass.add(parameters.get(i).getClass());
-            }
+    public static Message getMessage(String messageStr, Gson gson) {
+        String className = messageStr.substring(0, messageStr.indexOf("{"));
+        messageStr = messageStr.substring(messageStr.indexOf("{"));
+        switch(className) {
+            case "InitMessage":
+                return gson.fromJson(messageStr, InitMessage.class);
+            case "PlayMessage":
+                return gson.fromJson(messageStr, PlayMessage.class);
+            case "TextMessage":
+                return gson.fromJson(messageStr, TextMessage.class);
+            case "UpdateMessage":
+                return gson.fromJson(messageStr, UpdateMessage.class);
+            default: return null;
         }
     }
 
-    public static void main(String[] args) throws InterruptedException, IOException {
-        LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>(), messagesTo = new LinkedBlockingQueue<>();
-        OfflineRoom offlineRoom = new OfflineRoom("g1_World1", messagesFrom, messagesTo);
-        Board board = new Map().load("g1_World1", false);
-        Gson gson = new Gson();
-        FileHandle fileHandle = Gdx.files.local("districts.json")` `;
-        fileHandle.writeString(gson.toJson(board.getDistricts()), false);
-
-
-        Message message = new Message("board", "play", Arrays.asList((Cell)board.getCell(9, 8)));
-        messagesFrom.put(message);
-        System.out.println("send");
-//        offlineRoom.run();
+    public static String getStringFromBuffer(SocketChannel clientChannel) throws IOException {
+        //Boucle qui lit les données envoyées par le client et place ces données dans un string
+        String messageStr = "";
+        int len;
+        do {
+            ByteBuffer buffer = ByteBuffer.allocate(100);
+            buffer.clear();
+            len = clientChannel.read(buffer);
+            messageStr += new String(buffer.array(), StandardCharsets.UTF_8);
+        } while (len == 100); //len == 100 indique que l'entièreté du message n'a pas encore été lu
+        return messageStr;
     }
 }

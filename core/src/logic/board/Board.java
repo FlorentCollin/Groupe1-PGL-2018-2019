@@ -1,8 +1,5 @@
 package logic.board;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
@@ -12,6 +9,9 @@ import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 
 
@@ -25,13 +25,14 @@ public class Board{
 	private Cell selectedCell, firstCell;
 	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
 	private ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
+    private boolean hasChanged;
 	//Variable qui est utilisé dans la méthode getNeighbors
 	//Elle contient toutes les directions possibles pour les cellules adjacentes
 	private final int[][][] directions = {
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
 
-	public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
+    public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
 		this.rows = rows;
 		board = new Cell[columns][rows];
@@ -131,7 +132,7 @@ public class Board{
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
 		shop.buy(cell.getDistrict());
-		selectedCell = null;
+		setSelectedCell(null);
 	}
 	
 	/**
@@ -356,6 +357,7 @@ public class Board{
 	 * Permet de passer au joueur suivant
 	 */
 	public void nextPlayer() {
+	    hasChanged = true;
 		activePlayer = (activePlayer + 1)%(players.length);
 		generateTree();
 		for(District district : districts) {
@@ -401,11 +403,14 @@ public class Board{
 	public Cell getSelectedCell() {
 		return selectedCell;
 	}
-	
+
 	public void setSelectedCell(Cell selectedCell) {
-		if(selectedCell.getDistrict().getPlayer() == getActivePlayer()) {
+	    if(selectedCell == null) {
+	        this.selectedCell = null;
+        } else if(selectedCell.getDistrict().getPlayer() == getActivePlayer()) {
 			this.selectedCell = selectedCell;
 		}
+	    hasChanged = true;
 	}
 	
 	public Player getActivePlayer() {
@@ -578,7 +583,7 @@ public class Board{
 		selectedCell.getItem().setHasMoved(true);
 		cell.setItem(selectedCell.getItem());
 		selectedCell.removeItem();
-		selectedCell = null; //peut être faire une méthode forgotSelection ?
+		setSelectedCell(null);
 	}
 	
 	/**
@@ -623,26 +628,75 @@ public class Board{
 	public Shop getShop() {
 		return shop;
 	}
-	
-	/**
-	 * Permet de jouer un tour
-	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
-	 * */
-	public void play(Cell cell) {
-		if(selectedCell != null) {
-			if(shop.getSelectedItem() != null) {
-				placeNewItem(cell);
-			}
-			else {
-				move(cell);
-			}
-			selectedCell = null;
-		}
-		else if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == players[activePlayer]
-				&& cell.getItem() != null && cell.getItem().getMode().isMovable()){
-			if(cell.getItem().canMove()) {				
-				selectedCell = cell;
-			}
-		}
-	}
+
+	public int getActivePlayerNumber() {
+	    return activePlayer;
+    }
+
+    public boolean hasChanged() {
+	    return hasChanged;
+    }
+
+    public District getDistrictById(int id) {
+        for(District district : districts) {
+            if(district.getId() == id) {
+                return district;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Permet de jouer un tour
+     *
+     * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
+     */
+    public void play(Cell cell) {
+        if (selectedCell != null) {
+            if (shop.getSelectedItem() != null) {
+                placeNewItem(cell);
+            } else {
+                move(cell);
+            }
+            hasChanged = true;
+            selectedCell = null;
+        } else if (cell.getDistrict() != null && cell.getDistrict().getPlayer() == players[activePlayer]
+                && cell.getItem() != null && cell.getItem().getMode().isMovable()) {
+            if (cell.getItem().canMove()) {
+                setSelectedCell(cell);
+            }
+        }
+    }
+
+    public void updateBoard(ArrayList<District> districts, Player[] players, int activePlayer) {
+        this.districts = districts;
+        this.players = players;
+        this.activePlayer = activePlayer;
+        for (District district : districts) {
+            for (Cell cell : district.getCells()) {
+                board[cell.getX()][cell.getY()] = cell;
+                cell.setDistrict(district);
+            }
+            for(int i = 0; i < players.length; i++) {
+                if(district.getPlayer().getId() == players[i].getId()) {
+                    players[i] = district.getPlayer();
+                }
+            }
+        }
+    }
+
+
+    public Object getObject(int id, Class<?> className) {
+        if(className.equals(District.class)) {
+            return getDistrictById(id);
+        }
+        return null;
+    }
+
+    public Object getObject(int x, int y, Class<?> className) {
+        if(className.equals(Cell.class)) {
+            return getCell(x, y);
+        }
+        return null;
+    }
 }

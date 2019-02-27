@@ -45,7 +45,6 @@ public class Slay extends Game {
     	InitSettings.dispose(USER_SETTINGS_FILE, userSettings);
     	InitSettings.dispose(USER_SHORTCUTS_FILE, userShortcuts);
     	Gdx.app.exit();
-    	System.exit(0);
 	}
 
 	/**

@@ -48,17 +48,13 @@ public class Cell {
 		return x;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
 	public int getY() {
 		return y;
 	}
 
-	public void setY(int y) {
-		this.y = y;
-	}
+	public Integer[] getId() {
+	    return new Integer[] {x, y};
+    }
 
 	@Override
 	public boolean equals(Object obj) {

@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import communication.*;
 import gui.app.Slay;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
@@ -21,8 +22,10 @@ import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.player.Player;
+import roomController.Room;
 
 import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static gui.utils.Constants.N_TILES;
 
@@ -33,20 +36,38 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private float worldWith;
     private float worldHeight;
     private TiledMapTileLayer cells;
-    private Board board;
+    private volatile Board board;
     private TextureAtlas itemsSkin;
     private ArrayList<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
+
+    private final LinkedBlockingQueue<Message> messagesFrom;
+    private final LinkedBlockingQueue<Message> messagesToSend;
+    private final MessageListener messageListener;
+    private final Room room;
+
 
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
-        board = map.load(mapName, true);
+        map.load(mapName, true,true);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
+
+
+        messagesFrom = new LinkedBlockingQueue<>();
+        messagesToSend = new LinkedBlockingQueue<>();
+        messageListener = new OfflineMessageListener(messagesToSend);
+        room = new Room(mapName, messagesFrom, messagesToSend);
+        messageListener.start();
+        room.start();
+        while(messageListener.getBoard() == null) {
+            //loop TODO MDR faut changer cette boucle infini par une notification
+        }
+        board = messageListener.getBoard();
     }
 
     @Override
@@ -54,6 +75,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super.render(delta);
         camera.update();
         changeModifiedCells();
+        if(board.getSelectedCell() != null) {
+            selectCells(board.possibleMove(board.getSelectedCell()));
+        }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
@@ -156,13 +180,24 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     }
 
+    @Override
+    public void dispose() {
+        messageListener.stopRunning();
+        room.stopRunning();
+        super.dispose();
+    }
+
 
     @Override
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.ENTER) {
-            board.nextPlayer();
+            try {
+                messagesFrom.put(new TextMessage("nextPlayer"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        return false; // pq un boolean?
+        return false;
     }
 
     @Override
@@ -180,11 +215,13 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
-            Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
-            board.play(selectedCell);
-            if(board.getSelectedCell() != null) {
-            	selectCells(board.possibleMove(selectedCell));
+            try {
+                messagesFrom.put(new PlayMessage(boardCoords.col, boardCoords.row));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+//            Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
+//            board.play(selectedCell);
         }
         return true;
     }

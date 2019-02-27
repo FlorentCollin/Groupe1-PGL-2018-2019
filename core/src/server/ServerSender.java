@@ -2,13 +2,14 @@ package server;
 
 import com.google.gson.Gson;
 import communication.Message;
+import communication.UpdateMessage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ServerSender extends Thread{
+public class ServerSender extends Thread {
     private LinkedBlockingQueue<Message> messageToSend;
     private Message message;
     private Gson gson;
@@ -20,18 +21,22 @@ public class ServerSender extends Thread{
 
     @Override
     public void run() {
-//        while (true) {
-//            try {
-//                message = messageToSend.take(); //Remarque cette méthode est bloquante
-////                for (SocketChannel receiver : message.receivers) {
-////                    if (receiver.isConnected()) {
-////                        //Écriture du message dans le buffer du destinataire
-////                        receiver.write(ByteBuffer.wrap(gson.toJson(message).getBytes()));
-////                    }
-////                }
-//            } catch (InterruptedException | IOException e) {
-//                e.printStackTrace(); //TODO
-//            }
-//        }
+        while (true) {
+            try {
+                message = messageToSend.take(); //Remarque cette méthode est bloquante
+                if (message instanceof UpdateMessage) {
+                    UpdateMessage updateMessage = (UpdateMessage) message;
+                    for (Client client : updateMessage.getClients()) {
+                        SocketChannel clientChannel = client.getSocketChannel();
+                        if (clientChannel.isConnected()) {
+                            //Écriture du message dans le buffer du destinataire
+                            clientChannel.write(ByteBuffer.wrap((message.getClass() + gson.toJson(updateMessage)).getBytes()));
+                        }
+                    }
+                }
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace(); //TODO
+            }
+        }
     }
 }
