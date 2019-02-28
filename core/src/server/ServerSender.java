@@ -2,7 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import communication.Message;
-import communication.UpdateMessage;
+import communication.NetworkMessage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -24,13 +24,13 @@ public class ServerSender extends Thread {
         while (true) {
             try {
                 message = messageToSend.take(); //Remarque cette méthode est bloquante
-                if (message instanceof UpdateMessage) {
-                    UpdateMessage updateMessage = (UpdateMessage) message;
-                    for (Client client : updateMessage.getClients()) {
+                if (message instanceof NetworkMessage) {
+                    NetworkMessage networkMessage = (NetworkMessage) message;
+                    for (Client client : networkMessage.getClients()) {
                         SocketChannel clientChannel = client.getSocketChannel();
                         if (clientChannel.isConnected()) {
                             //Écriture du message dans le buffer du destinataire
-                            clientChannel.write(ByteBuffer.wrap((message.getClass() + gson.toJson(updateMessage)).getBytes()));
+                            clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
                         }
                     }
                 }

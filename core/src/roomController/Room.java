@@ -7,6 +7,7 @@ import logic.board.cell.Cell;
 import server.Client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,16 +24,16 @@ public class Room extends Thread {
         return messagesFrom;
     }
 
-    public Room(String worldName,LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
+    public Room(String worldName, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
         Map map = new Map();
         board = map.load(worldName, true, false);
         this.messagesFrom = messagesFrom;
         this.messagesToSend = messagesToSend;
-        try {
-            messagesToSend.put(new InitMessage(board));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            messagesToSend.put(new InitMessage(board));
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void stopRunning() {
@@ -78,7 +79,14 @@ public class Room extends Thread {
         }
     }
 
-    public boolean addClient(Client client) {
-        return clients.add(client);
+    public void addClient(Client client) {
+        clients.add(client);
+        try {
+            InitMessage initMessage = new InitMessage(board);
+            initMessage.setClients(Arrays.asList(client));
+            messagesToSend.put(initMessage);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

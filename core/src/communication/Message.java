@@ -22,20 +22,24 @@ public abstract class Message {
                 return gson.fromJson(messageStr, TextMessage.class);
             case "UpdateMessage":
                 return gson.fromJson(messageStr, UpdateMessage.class);
+            case "CreateRoomMessage":
+                return gson.fromJson(messageStr, CreateRoomMessage.class);
+            case "JoinRoomMessage":
+                return gson.fromJson(messageStr, JoinRoomMessage.class);
             default: return null;
         }
     }
 
     public static String getStringFromBuffer(SocketChannel clientChannel) throws IOException {
         //Boucle qui lit les données envoyées par le client et place ces données dans un string
-        String messageStr = "";
+        StringBuilder messageStr = new StringBuilder();
         int len;
         do {
             ByteBuffer buffer = ByteBuffer.allocate(100);
             buffer.clear();
             len = clientChannel.read(buffer);
-            messageStr += new String(buffer.array(), StandardCharsets.UTF_8);
+            messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
         } while (len == 100); //len == 100 indique que l'entièreté du message n'a pas encore été lu
-        return messageStr;
+        return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
     }
 }

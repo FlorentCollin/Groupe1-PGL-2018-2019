@@ -1,6 +1,8 @@
-package server;
+package com.gl1.slay.server;
 
 import communication.Message;
+import server.ServerListener;
+import server.ServerSender;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;

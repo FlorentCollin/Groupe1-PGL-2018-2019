@@ -31,9 +31,17 @@ public class OnlineMessageSender implements MessageSender {
     @Override
     public void send(Message message) {
         try {
-            clientChannel.write(ByteBuffer.wrap((message.getClass() + gson.toJson(message)).getBytes()));
+            clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public SocketChannel getClientChannel() {
+        return clientChannel;
+    }
+
+    public Selector getSelector() {
+        return selector;
     }
 }

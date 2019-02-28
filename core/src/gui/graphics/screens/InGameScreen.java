@@ -41,14 +41,19 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private ArrayList<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
 
-    private final LinkedBlockingQueue<Message> messagesFrom;
-    private final LinkedBlockingQueue<Message> messagesToSend;
-    private final MessageListener messageListener;
-    private final Room room;
+    private LinkedBlockingQueue<Message> messagesFrom;
+    private LinkedBlockingQueue<Message> messagesToSend;
+    private MessageListener messageListener;
+    private MessageSender messageSender;
+    private Room room;
 
 
-    public InGameScreen(Slay parent, String mapName) {
+    public InGameScreen(Slay parent, String mapName, MessageSender messageSender, MessageListener messageListener) {
         super(parent);
+        this.messageSender = messageSender;
+        this.messageListener = messageListener;
+        board = messageListener.getBoard();
+
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
         map.load(mapName, true,true);
@@ -57,17 +62,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
-
-        messagesFrom = new LinkedBlockingQueue<>();
-        messagesToSend = new LinkedBlockingQueue<>();
-        messageListener = new OfflineMessageListener(messagesToSend);
-        room = new Room(mapName, messagesFrom, messagesToSend);
-        messageListener.start();
-        room.start();
-        while(messageListener.getBoard() == null) {
-            //loop TODO MDR faut changer cette boucle infini par une notification
-        }
-        board = messageListener.getBoard();
     }
 
     @Override
@@ -191,11 +185,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.ENTER) {
-            try {
-                messagesFrom.put(new TextMessage("nextPlayer"));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            messageSender.send(new TextMessage("nextPlayer"));
         }
         return false;
     }
@@ -215,13 +205,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
-            try {
-                messagesFrom.put(new PlayMessage(boardCoords.col, boardCoords.row));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-//            Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
-//            board.play(selectedCell);
+            messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
         }
         return true;
     }
@@ -247,10 +231,10 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                     && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
                 Cell cell = board.getCell(boardCoords.col, boardCoords.row);
-                if(board.getCell(boardCoords.col, boardCoords.row) != null) {
+                if(cell != null) {
                 	// Ne s'applique que si la case appartient au joueur
                 	// Ainsi il voit directement avec quelles cases il peut interagir
-                    if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == board.getActivePlayer()) {
+                    if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
                         selectCells(cell.getDistrict().getCells());
                     } else {
                         unselectCells();
@@ -312,7 +296,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     int playerNumber;
                     Player player = cell.getDistrict().getPlayer();
                     for (int k = 0; k < board.getPlayers().length; k++) {
-                        if(player == board.getPlayers()[k]) {
+                        if(player.getId() == board.getPlayers()[k].getId()) {
                             playerNumber = k;
                             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
                             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);

@@ -1,5 +1,7 @@
 package roomController;
 
+import communication.CreateRoomMessage;
+import communication.JoinRoomMessage;
 import communication.Message;
 import server.Client;
 
@@ -31,6 +33,8 @@ public class RoomController {
         //Mise à jour des hashMap
         rooms.put(creatorClient, room);
         roomQueue.put(room, messagesFrom);
+        room.addClient(creatorClient);
+        room.start();
     }
 
     /**
@@ -45,6 +49,20 @@ public class RoomController {
             clientRoomQueue.put(message);
         } catch (InterruptedException e) {
             e.printStackTrace(); //Si la Room n'existe plus TODO
+        }
+    }
+
+    public void manageMessage(Client client, Message message) {
+        if(message instanceof CreateRoomMessage) {
+            System.out.println("Creating Room");
+            createRoom(client, ((CreateRoomMessage) message).getRoomName());
+        } else if(message instanceof JoinRoomMessage) { //TODO Need refactoring
+            Client aClient = rooms.keySet().iterator().next();
+            Room room = rooms.get(aClient);
+            room.addClient(client);
+            rooms.put(client, room);
+        } else {
+            sendMessageToRoom(message, client);
         }
     }
 }

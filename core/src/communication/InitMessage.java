@@ -2,7 +2,7 @@ package communication;
 
 import logic.board.Board;
 
-public class InitMessage extends Message {
+public class InitMessage extends NetworkMessage {
 
     private Board board;
 

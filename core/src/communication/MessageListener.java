@@ -14,6 +14,9 @@ public abstract class MessageListener extends Thread {
         this.messagesFrom = messagesFrom;
     }
 
+    protected MessageListener() {
+    }
+
     public void stopRunning() {
         running.set(false);
     }
@@ -22,12 +25,13 @@ public abstract class MessageListener extends Thread {
             board = ((InitMessage) message).getBoard();
         } else if(message instanceof UpdateMessage) {
             UpdateMessage updateMessage = (UpdateMessage) message;
+            board.updateBoard(updateMessage.getDistricts(), updateMessage.getPlayers(), updateMessage.getActivePlayer());
             if(updateMessage.getX() == null && updateMessage.getY() == null) {
                 board.setSelectedCell(null);
             } else {
+                System.out.println(board.getCell(9,8));
                 board.setSelectedCell(board.getCell(updateMessage.getX(), updateMessage.getY()));
             }
-            board.updateBoard(updateMessage.getDistricts(), updateMessage.getPlayers(), updateMessage.getActivePlayer());
         }
     }
 

@@ -59,6 +59,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
+        compile group: 'org.danilopianini', name: 'gson-extras', version: '0.2.1'
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "org.mockito:mockito-core:2.+"
         compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
@@ -70,6 +71,15 @@ project(":core") {
         testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
     }
 
+}
+
+project(":server") {
+    apply plugin: "java"
+
+
+    dependencies {
+        compile project(":core")
+    }
 }
 
 

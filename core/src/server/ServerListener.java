@@ -74,12 +74,9 @@ public class ServerListener extends Thread{
         if (!clientChannel.isConnected()) {
             //On retire le client si celui ci n'est plus connecté
             ServerInfo.clients.remove(clientChannel);
-        }
-        String messageStr = Message.getStringFromBuffer(clientChannel);
-        try {
-            messageToSend.put(Message.getMessage(messageStr, gson));
-        } catch (InterruptedException e) {
-            e.printStackTrace(); //TODO
+        } else {
+            String messageStr = Message.getStringFromBuffer(clientChannel);
+            roomController.manageMessage(ServerInfo.clients.get(clientChannel), Message.getMessage(messageStr, gson));
         }
     }
 }

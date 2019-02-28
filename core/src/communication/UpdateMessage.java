@@ -2,13 +2,10 @@ package communication;
 
 import logic.board.District;
 import logic.player.Player;
-import server.Client;
 
 import java.util.ArrayList;
 
-public class UpdateMessage extends Message {
-
-    private ArrayList<Client> clients;
+public class UpdateMessage extends NetworkMessage {
 
     private ArrayList<District> districts;
     private Player[] players;
@@ -48,13 +45,5 @@ public class UpdateMessage extends Message {
 
     public int getActivePlayer() {
         return activePlayer;
-    }
-
-    public ArrayList<Client> getClients() {
-        return clients;
-    }
-
-    public void setClients(ArrayList<Client> clients) {
-        this.clients = clients;
     }
 }

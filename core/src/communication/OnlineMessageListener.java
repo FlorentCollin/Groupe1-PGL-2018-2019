@@ -1,27 +1,40 @@
 package communication;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import logic.board.Board;
+import logic.item.Capital;
+import logic.item.Item;
+import logic.item.Soldier;
+import logic.item.Tree;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class OnlineMessageListener extends MessageListener{
 
     private final SocketChannel clientChannel;
     private final Selector selector;
-    private final Gson gson;
+    private Gson gson;
 
-    public OnlineMessageListener(LinkedBlockingQueue<Message> messagesFrom, SocketChannel clientChannel, Selector selector) {
-        super(messagesFrom);
+    public OnlineMessageListener(SocketChannel clientChannel, Selector selector) {
         this.clientChannel = clientChannel;
         this.selector = selector;
-        gson = new Gson();
+        RuntimeTypeAdapterFactory<Item> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
+                .of(Item.class, "type")
+                .registerSubtype(Capital.class, Capital.class.getName())
+                .registerSubtype(Soldier.class, Soldier.class.getName())
+                .registerSubtype(Tree.class, Tree.class.getName());
+
+        gson = new GsonBuilder().registerTypeAdapterFactory(runtimeTypeAdapterFactory).create();
+//        gson = new Gson();
     }
 
     @Override
@@ -47,6 +60,7 @@ public class OnlineMessageListener extends MessageListener{
                     Message message = Message.getMessage(messageStr, gson);
                     executeMessage(message);
                 }
+                keyIterator.remove();
             }
         }
     }

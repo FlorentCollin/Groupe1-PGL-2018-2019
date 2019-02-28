@@ -14,6 +14,9 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import gui.app.Slay;
 import gui.utils.Constants;
 
+/**
+ * Classe représentant un Screen, c'est la classe étendue par tous les autres screens.
+ */
 public abstract class BasicScreen implements Screen {
     protected Stage stage;
     protected Slay parent;
@@ -31,6 +34,7 @@ public abstract class BasicScreen implements Screen {
 
     public BasicScreen(Slay parent) {
         this.parent = parent;
+        //Chargement du skin spécifique pour les boutons.
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         generateStage();
         generateFont(stage.getWidth());
@@ -104,5 +108,15 @@ public abstract class BasicScreen implements Screen {
         defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         textFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         generator.dispose();
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
     }
 }

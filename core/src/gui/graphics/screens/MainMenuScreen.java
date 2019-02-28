@@ -92,8 +92,8 @@ public class MainMenuScreen extends MenuScreen {
         playOnlineButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-//                    parent.changeScreen(OnlineMenuScreen.class);
-                    parent.setScreen(new InGameScreen(parent, "g1_World1"));
+                    parent.changeScreen(OnlineMenuScreen.class);
+//                    parent.setScreen(new InGameScreen(parent, "g1_World1"));
                 }
             });
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));
