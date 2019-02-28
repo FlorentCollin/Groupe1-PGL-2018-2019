@@ -1,5 +1,9 @@
 package gui.utils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -8,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
+
 import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.Cell;
@@ -17,10 +22,8 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
+import logic.player.ai.Strategy;
 import logic.shop.Shop;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /** Classe utilisé pour charger et convertir une map TMX en Board **/
 
@@ -32,6 +35,7 @@ public class Map {
     private TiledMapTileSet tileSet;
     private Board board;
     private int numberOfPlayers;
+    private Constructor<?> constructor;
 
     public  Board load(String worldName) {
         XmlReader xml = new XmlReader();
@@ -42,7 +46,32 @@ public class Map {
         generateItems(xml_element);
         checkCapitals();
         addWaterCells(xml_element);
+        checkAI(xml_element);
         return board;
+    }
+    
+    private void checkAI(XmlReader.Element xmlElement) {
+    	XmlReader.Element ais = xmlElement.getChildByName("ais");
+    	for(int i = 0; i < ais.getChildCount(); i++) {
+    		XmlReader.Element ai = ais.getChild(i);
+    		int nPlayer = Integer.parseInt(ai.getAttribute("soldierNumber"));
+    		Class<?> strategyClass = getStrategy(ai.getAttribute("strategy"));
+    		try {
+				constructor = strategyClass.getConstructor();
+			} catch (NoSuchMethodException | SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		Strategy strategy = null;
+			try {
+				strategy = (Strategy) constructor.newInstance();
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		board.changeToAI(nPlayer, strategy);
+    	}
     }
     
     private void addWaterCells(XmlReader.Element xmlElement) {
@@ -65,9 +94,9 @@ public class Map {
 
     private void generateBoard(XmlReader.Element xmlElement) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-        Player[] players = new Player[numberOfPlayers];
+        ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
-            players[i] = new Player();
+            players.add(new Player());
         }
         board = new Board(cells.getWidth(), cells.getHeight(), players, new NaturalDisastersController(), new Shop());
     }
@@ -80,7 +109,7 @@ public class Map {
                 MapProperties properties = cell.getTile().getProperties();
                 int nPlayer = (int) properties.get("player");
                 if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre
-                    District district = new District(board.getPlayers()[nPlayer - 1]);
+                    District district = new District(board.getPlayers().get(nPlayer - 1));
                     district.addCell(board.getCell(i,j));
                     board.addDistrict(district);
                     board.getCell(i, j).setDistrict(district);
@@ -112,10 +141,10 @@ public class Map {
                     Integer.parseInt(item.getAttribute("y")));
             try {
                 if(itemClass.equals(Soldier.class)) {
-                    Constructor<?> constructor = itemClass.getConstructor(Player.class, SoldierLevel.class);
+                    Constructor<?> constructor = itemClass.getConstructor(SoldierLevel.class);
                     int soldierLevel = Integer.parseInt(item.getAttribute("level"));
                     Item newItem = null;
-                    newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.values()[soldierLevel-1]);
+                    newItem = (Item) constructor.newInstance(SoldierLevel.values()[soldierLevel-1]);
                     cell.setItem(newItem);
                 } else {
                     Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
@@ -154,6 +183,16 @@ public class Map {
             System.out.println("ERROR : A name of an Item is wrong in the xml file : " + str);
         }
         return null;
+    }
+    
+    private Class<?> getStrategy(String strategy){
+    	try {
+    		return Class.forName("logic.player.ai."+strategy);
+    	}
+    	catch(ClassNotFoundException e) {
+    		System.out.println("ERROR : the strategy "+strategy+" didn't exist");
+    		return null;
+    	}
     }
 
     public TiledMap getMap() {

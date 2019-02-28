@@ -4,6 +4,7 @@
  <tile id="0">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="isAI" type="bool" value="false"/>
    <property name="player" type="int" value="1"/>
   </properties>
   <image width="256" height="222" source="hex_green.png"/>
@@ -11,6 +12,7 @@
  <tile id="1">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="isAI" type="bool" value="true"/>
    <property name="player" type="int" value="2"/>
   </properties>
   <image width="256" height="222" source="hex_orange.png"/>
@@ -18,6 +20,7 @@
  <tile id="2">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="isAI" type="bool" value="false"/>
    <property name="player" type="int" value="0"/>
   </properties>
   <image width="256" height="222" source="hex_neutral.png"/>
@@ -25,6 +28,7 @@
  <tile id="3">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="isAI" type="bool" value="false"/>
    <property name="player" type="int" value="1"/>
   </properties>
   <image width="256" height="222" source="hex_green_selected.png"/>
@@ -32,6 +36,7 @@
  <tile id="4">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="isAI" type="bool" value="true"/>
    <property name="player" type="int" value="2"/>
   </properties>
   <image width="256" height="222" source="hex_orange_selected.png"/>
@@ -39,6 +44,7 @@
  <tile id="5">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="isAI" type="bool" value="false"/>
    <property name="player" type="int" value="0"/>
   </properties>
   <image width="256" height="222" source="hex_neutral_selectedpng.png"/>
@@ -46,11 +52,15 @@
  <tile id="6">
   <properties>
    <property name="available" type="bool" value="false"/>
+   <property name="isAI" type="bool" value="false"/>
    <property name="player" type="int" value="0"/>
   </properties>
   <image width="256" height="222" source="hex_blue.png"/>
  </tile>
  <tile id="7">
+  <properties>
+   <property name="isAI" type="bool" value="false"/>
+  </properties>
   <image width="256" height="222" source="hex_blue_selected.png"/>
  </tile>
 </tileset>

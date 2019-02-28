@@ -20,6 +20,7 @@ import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
+import logic.item.level.SoldierLevel;
 import logic.player.Player;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private Map map;
     private Vector3 mouseLoc = new Vector3();
-    private float worldWith;
+    private float worldWith; // ?
     private float worldHeight;
     private TiledMapTileLayer cells;
     private Board board;
@@ -162,6 +163,30 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         if(keycode == Input.Keys.ENTER) {
             board.nextPlayer();
         }
+        else if(keycode == Input.Keys.Z) {
+        	board.undo();
+        }
+        else if(keycode == Input.Keys.ESCAPE) {
+        	Gdx.app.exit();
+        }
+        if(board.getSelectedCell() != null) {
+	        if(keycode == Input.Keys.NUMPAD_1) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
+	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+	        }
+	        else if(keycode == Input.Keys.NUMPAD_2) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level2), board.getSelectedCell().getDistrict());
+	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+	        }
+	        else if(keycode == Input.Keys.NUMPAD_3) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level3), board.getSelectedCell().getDistrict());
+	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+	        }
+	        else if(keycode == Input.Keys.NUMPAD_4) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level4), board.getSelectedCell().getDistrict());
+	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+	        }
+        }
         return false; // pq un boolean?
     }
 
@@ -182,7 +207,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
             board.play(selectedCell);
-            if(board.getSelectedCell() != null) {
+            if(board.getSelectedCell() != null && board.getSelectedCell().getItem() != null && board.getSelectedCell().getItem().isMovable() && board.getSelectedCell().getItem().canMove()) {
             	selectCells(board.possibleMove(selectedCell));
             }
         }
@@ -276,8 +301,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 if(cell.getDistrict() != null) {
                     int playerNumber;
                     Player player = cell.getDistrict().getPlayer();
-                    for (int k = 0; k < board.getPlayers().length; k++) {
-                        if(player == board.getPlayers()[k]) {
+                    for (int k = 0; k < board.getPlayers().size(); k++) {
+                        if(player == board.getPlayers().get(k)) {
                             playerNumber = k;
                             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
                             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);

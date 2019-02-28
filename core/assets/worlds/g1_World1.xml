@@ -35,4 +35,8 @@
     	<waterCell type="WaterCell" x="11" y="6"/>
     	<waterCell type="WaterCell" x="12" y="6"/>
     </waterCells>
+    <ais>
+    	<ai soldierNumber="1" strategy="RandomStrategy" />
+    </ais>
+    
 </world>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import logic.board.cell.Cell;
 import logic.item.Capital;
+import logic.item.Tomb;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.Tree;
@@ -39,7 +40,11 @@ public class District {
 	}
 	
 	public void remove() {
-		cells.clear();
+		for(Cell c : cells) {
+			if(c.getItem() instanceof Soldier) {
+				c.setItem(new Tomb());
+			}
+		}
 	}
 	
 	public void addCapital(Cell cell) {
