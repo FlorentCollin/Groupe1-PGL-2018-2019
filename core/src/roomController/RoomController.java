@@ -6,12 +6,14 @@ import communication.Message;
 import server.Client;
 
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Classe qui gère l'ensemble des parties en ligne (rooms) du serveur
+ */
 public class RoomController {
     private HashMap<Client, Room> rooms;
-    //Permet de retrouver la file des messages d'une Room particulière
+    // roomQueue : permet de retrouver la file des messages d'une Room particulière
     private HashMap<Room, LinkedBlockingQueue<Message>> roomQueue;
     //Lien vers la pile des messages à envoyer aux clients (utilisé par ServerSender)
     private LinkedBlockingQueue<Message> messagesToSend;
@@ -28,13 +30,14 @@ public class RoomController {
      * @return
      */
     public void createRoom(Client creatorClient, String worldName) {
+        //Création d'un lien vers une file de messages pour pouvoir transmettre des messages des clients vers cette room
         LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>();
         Room room = new Room(worldName, messagesFrom, messagesToSend);
-        //Mise à jour des hashMap
+        //Mise à jour des hashMaps
         rooms.put(creatorClient, room);
         roomQueue.put(room, messagesFrom);
         room.addClient(creatorClient);
-        room.start();
+        room.start(); //Démarrage de la room.
     }
 
     /**
@@ -52,6 +55,11 @@ public class RoomController {
         }
     }
 
+    /**
+     * Méthode qui va s'occuper d'effectuer l'action d'un message en fonction du type de message
+     * @param client Le client qui à envoyé le message
+     * @param message Le message envoyé par le client
+     */
     public void manageMessage(Client client, Message message) {
         if(message instanceof CreateRoomMessage) {
             System.out.println("Creating Room");
@@ -62,6 +70,8 @@ public class RoomController {
             room.addClient(client);
             rooms.put(client, room);
         } else {
+            //Si le message n'est pas un message que le roomController peut gérer,
+            //c'est qu'il doit l'envoyer à la room correspondante.
             sendMessageToRoom(message, client);
         }
     }

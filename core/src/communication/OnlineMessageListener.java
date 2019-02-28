@@ -1,12 +1,8 @@
 package communication;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-import logic.board.Board;
 import logic.item.Capital;
 import logic.item.Item;
 import logic.item.Soldier;
@@ -18,6 +14,9 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
+/**
+ * Class qui représente un listener, elle s'occupe de récupérer les messages envoyés par le serveur et de les exécuter
+ */
 public class OnlineMessageListener extends MessageListener{
 
     private final SocketChannel clientChannel;
@@ -27,6 +26,9 @@ public class OnlineMessageListener extends MessageListener{
     public OnlineMessageListener(SocketChannel clientChannel, Selector selector) {
         this.clientChannel = clientChannel;
         this.selector = selector;
+        //TODO NEED SEE APACHE LICENSE 2.0
+        //TODO THIS RUNTIMETYPEADAPTERFACTORY NEED TO BE ON A SIDE METHOD TO BE REUSE
+        //Création du Gson modifié pour pouvoir, désérializer des items selon leur classe respective
         RuntimeTypeAdapterFactory<Item> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Item.class, "type")
                 .registerSubtype(Capital.class, Capital.class.getName())
@@ -34,13 +36,13 @@ public class OnlineMessageListener extends MessageListener{
                 .registerSubtype(Tree.class, Tree.class.getName());
 
         gson = new GsonBuilder().registerTypeAdapterFactory(runtimeTypeAdapterFactory).create();
-//        gson = new Gson();
     }
 
     @Override
     public void run() {
         running.set(true);
-        while(running.get()) {
+        //Boucle infinie tant que le client est connecté au serveur
+        while(running.get() && clientChannel.isConnected()) {
             try {
                 readFromServer();
             } catch (IOException e) {
@@ -49,16 +51,22 @@ public class OnlineMessageListener extends MessageListener{
         }
     }
 
+    /**
+     * Méthode qui va lire les messages du serveur et les exécuter.
+     * @throws IOException
+     */
     private void readFromServer() throws IOException {
         Iterator<SelectionKey> keyIterator;
         if(selector.select() != 0) {
             keyIterator = selector.selectedKeys().iterator();
             while(keyIterator.hasNext()) {
                 SelectionKey key = keyIterator.next();
-                if(key.isReadable()) {
+                if(key.isReadable()) { //Si le serveur à envoyé un message
+                    //Récupération du string correspondant au message
                     String messageStr = Message.getStringFromBuffer(clientChannel);
+                    //Désérialization du string en un message
                     Message message = Message.getMessage(messageStr, gson);
-                    executeMessage(message);
+                    executeMessage(message); //Exécution
                 }
                 keyIterator.remove();
             }

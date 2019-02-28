@@ -11,6 +11,9 @@ import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Thread représentant une partie que ce soit en ligne ou hors-ligne.
+ */
 public class Room extends Thread {
 
     private LinkedBlockingQueue<Message> messagesFrom;
@@ -29,11 +32,6 @@ public class Room extends Thread {
         board = map.load(worldName, true, false);
         this.messagesFrom = messagesFrom;
         this.messagesToSend = messagesToSend;
-//        try {
-//            messagesToSend.put(new InitMessage(board));
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public void stopRunning() {
@@ -45,20 +43,22 @@ public class Room extends Thread {
         running.set(true);
         while(running.get()) {
             try {
+                //Récupération du message du client
                 Message message = messagesFrom.take();
                 executeMessage(message);
-                if(board.hasChanged()) {
+                //Si le board à changé alors il faut notifier les clients des changements.
+                if(board.hasChanged()) { //TODO NEED REFACTORING when offline we don't need to send message
                     UpdateMessage updateMessage;
-                    if(board.getSelectedCell() != null) {
+                    if(board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
                         Cell selectedCell = board.getSelectedCell();
                         updateMessage = new UpdateMessage(board.getDistricts(),board.getPlayers(),
                                 board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
-                    } else {
+                    } else { //Création d'un UpdateMessage sans selectedCell
                         updateMessage = new UpdateMessage(board.getDistricts(),
                                 board.getPlayers(), board.getActivePlayerNumber());
                     }
-                    updateMessage.setClients(clients);
-                    messagesToSend.put(updateMessage);
+                    updateMessage.setClients(clients); //Ajout des clients au message
+                    messagesToSend.put(updateMessage); //Envoie du message
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -66,6 +66,10 @@ public class Room extends Thread {
         }
     }
 
+    /**
+     * Méthode qui va exécuter un message d'un client
+     * @param message Le message à exécuter
+     */
     private void executeMessage(Message message) {
         if(message instanceof PlayMessage) {
             PlayMessage playMessage = (PlayMessage) message;
@@ -79,6 +83,10 @@ public class Room extends Thread {
         }
     }
 
+    /**
+     * Ajout d'un client et notification à ce client de l'état actuel du Board
+     * @param client Le client à ajouter
+     */
     public void addClient(Client client) {
         clients.add(client);
         try {

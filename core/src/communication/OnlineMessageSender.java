@@ -8,8 +8,12 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.concurrent.LinkedBlockingDeque;
 
+import static gui.utils.Constants.SERVER_ADDRESS;
+
+/**
+ * Classe qui permet l'envoit de message de l'interface graphique au serveur durant une partie en ligne
+ */
 public class OnlineMessageSender implements MessageSender {
     private SocketChannel clientChannel;
     private Selector selector;
@@ -18,7 +22,8 @@ public class OnlineMessageSender implements MessageSender {
     public OnlineMessageSender() {
         gson = new Gson();
         try {
-            clientChannel = SocketChannel.open(new InetSocketAddress("localhost", 8888));
+            //Ouverture de la connection au serveur
+            clientChannel = SocketChannel.open(new InetSocketAddress(SERVER_ADDRESS, 8888));
             clientChannel.configureBlocking(false);
             selector = Selector.open();
             //On associe le channel à un selector
@@ -31,6 +36,7 @@ public class OnlineMessageSender implements MessageSender {
     @Override
     public void send(Message message) {
         try {
+            //Écriture du message dans le buffer du client pour que le serveur puisse le récupérer
             clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
         } catch (IOException e) {
             e.printStackTrace();

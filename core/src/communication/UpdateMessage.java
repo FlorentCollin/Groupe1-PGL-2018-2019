@@ -5,6 +5,10 @@ import logic.player.Player;
 
 import java.util.ArrayList;
 
+/**
+ * Message qui est envoyé par une room à un(des) client(s) pour signaler que le board à été modifié et que le board
+ * des joueurs doit être mis à jour.
+ */
 public class UpdateMessage extends NetworkMessage {
 
     private ArrayList<District> districts;

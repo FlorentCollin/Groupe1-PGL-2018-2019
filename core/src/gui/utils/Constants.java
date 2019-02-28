@@ -4,6 +4,8 @@ package gui.utils;
  * Classe contenant toutes les constantes utiles à l'interface graphique
  */
 public class Constants {
+    public static final String SERVER_ADDRESS = "localhost";
+
     /** Résolution maximum **/
     public static final int MAX_RES = 1920;
     public static final int PAD = 20;

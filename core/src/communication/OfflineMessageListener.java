@@ -2,6 +2,9 @@ package communication;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * TODO DELETE THIS CLASS IF NOT USED
+ */
 public class OfflineMessageListener extends MessageListener{
 
     public OfflineMessageListener(LinkedBlockingQueue<Message> messagesFrom) {
