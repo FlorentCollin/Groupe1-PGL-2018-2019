@@ -1,11 +1,18 @@
 package gui.graphics.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.XmlReader;
 import gui.app.Slay;
+
+import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
@@ -27,12 +34,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         TextField mapName = new TextField("", textFieldStyle);
         mapName.appendText("name of the room");
 
-        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
-        selectBoxStyle.font = textFont;
-        selectBoxStyle.listStyle.font = textFont;
-        SelectBox mapSelectBox = new SelectBox(selectBoxStyle);
-        mapSelectBox.setItems("Map 1", "Map 2", "Map 3", "Map 4");
-        mapSelectBox.setSelected("Map 1");
 
         Label playersSliderNumber = new Label("1", labelStyle);
         Label aiSliderNumber = new Label("0", labelStyle);
@@ -60,6 +61,16 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 }
             }
         });
+
+        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
+        selectBoxStyle.font = textFont;
+        selectBoxStyle.listStyle.font = textFont;
+        SelectBox mapSelectBox = new SelectBox(selectBoxStyle);
+
+        ArrayList<XmlReader.Element> worldsXml = getWorldsXml();
+        Array<String> worldsNames = getWorldsName(worldsXml);
+        mapSelectBox.setItems(worldsNames);
+        mapSelectBox.setSelected(worldsNames.get(0));
 
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
@@ -107,6 +118,18 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
         stage.addActor(table);
 
+        mapSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                for(XmlReader.Element xmlElement : worldsXml) {
+                    if(xmlElement.getAttribute("name") == mapSelectBox.getSelected()) {
+                        int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
+                        Cell cell = scrollTable.getCell(playersSlider);
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
@@ -129,6 +152,30 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
     @Override
     public void resume() {
+    }
 
+    private ArrayList<XmlReader.Element> getWorldsXml() {
+        ArrayList<XmlReader.Element> worldsXml = new ArrayList<>();
+        FileHandle dirHandle = Gdx.files.internal("worlds");
+        XmlReader xml = new XmlReader();
+        for(FileHandle file : dirHandle.list()) {
+            if(file.extension().equals("xml")) {
+                XmlReader.Element xml_element = xml.parse(file);
+                worldsXml.add(xml_element);
+            }
+        }
+        return worldsXml;
+    }
+
+    private Array<String> getWorldsName(ArrayList<XmlReader.Element> worldsXml) {
+        Array<String> worldsNames = new Array<>();
+        for(XmlReader.Element xmlElement : worldsXml) {
+            worldsNames.add(xmlElement.getAttribute("name"));
+        }
+        return worldsNames;
+    }
+
+    private void addPlayersSliderListener(Slider playersSlider) {
+        
     }
 }
