@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<world name="World 1" map="g1_World1">
+<world name="World 1" map="g1_World1" width="20" height="15">
     <players number="2" />
     <items>
       <item type="Capital" golds="40" x="2" y="2" />
       <item type="Capital" golds="40" x="17" y="12" />
-      
+
 
       <item type="Capital" golds="20" x="9" y="5" />
       <item type="Capital" golds="20" x="11" y="8" />
@@ -27,4 +27,12 @@
       <item type="Soldier" level="1" x="2" y="3" />
       <item type="Soldier" level="2" x="16" y="12" />
     </items>
+    <waterCells>
+    	<waterCell type="WaterCell" x="7" y="8"/>
+    	<waterCell type="WaterCell" x="8" y="8"/>
+    	<waterCell type="WaterCell" x="9" y="7"/>
+    	<waterCell type="WaterCell" x="10" y="7"/>
+    	<waterCell type="WaterCell" x="11" y="6"/>
+    	<waterCell type="WaterCell" x="12" y="6"/>
+    </waterCells>
 </world>

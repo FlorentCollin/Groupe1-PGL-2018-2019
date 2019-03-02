@@ -14,10 +14,16 @@ public class District {
 	private int gold;
 	private Cell capital;
 	private ArrayList<Cell> cells;
+
+	public static int globalId = 0;
+	private int id;
 	
 	public District(Player player) {
 		cells = new ArrayList<Cell>();
 		this.player = player;
+
+		globalId++;
+		id = globalId;
 	}
 	
 	public void addCell(Cell cell) {
@@ -25,7 +31,8 @@ public class District {
 			cells.add(cell);
 		}
 	}
-	
+
+	//TODO supprimer cette méthode
 	/**
 	 * Permet d'ajouter au district toutes les cellules d'un autre district
 	 * @param district le district dont on souhaite obtenir les cellules
@@ -100,5 +107,8 @@ public class District {
 	public Cell getCapital() {
 		return capital;
 	}
-	
+
+    public int getId() {
+        return id;
+    }
 }

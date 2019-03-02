@@ -18,8 +18,10 @@ public class Shop {
 		selectedItem = null;
 	}
 	
-	public void setSelectedItem(Item item) {
-		selectedItem = item;
+	public void setSelectedItem(Item item, District district) {
+		if(district.getGold() >= item.getMode().getPrice()) {
+			selectedItem = item;
+		}
 	}
 	
 	public Item getSelectedItem() {

@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import communication.*;
 import gui.app.Slay;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
@@ -21,8 +22,10 @@ import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.player.Player;
+import roomController.Room;
 
 import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static gui.utils.Constants.N_TILES;
 
@@ -33,22 +36,35 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private float worldWith;
     private float worldHeight;
     private TiledMapTileLayer cells;
-    private Board board;
+    private volatile Board board;
     private TextureAtlas itemsSkin;
     private ArrayList<Cell> selectedCells = new ArrayList<>();
+    private FillViewport fillViewport;
 
-    public InGameScreen(Slay parent, String mapName) {
+    private LinkedBlockingQueue<Message> messagesFrom;
+    private LinkedBlockingQueue<Message> messagesToSend;
+    private MessageListener messageListener;
+    private MessageSender messageSender;
+    private Room room;
+
+    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender) {
         super(parent);
+        this.messageSender = messageSender;
+        this.board = board;
+
+        //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
-        board = map.load(mapName);
+        map.load(mapName, false,true, true);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
-        viewport = new FillViewport(worldWith, worldHeight, camera);
-        camera.update();
+    }
 
+    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
+        this(parent, mapName, board, messageSender);
+        this.messageListener = messageListener;
     }
 
     @Override
@@ -56,9 +72,19 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super.render(delta);
         camera.update();
         changeModifiedCells();
+        if(board.getSelectedCell() != null) {
+            selectCells(board.possibleMove(board.getSelectedCell()));
+        } else {
+            unselectCells();
+        }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
     }
 
     private void renderItems() {
@@ -103,16 +129,17 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     protected void generateStage() {
         camera = new OrthographicCamera();
-        viewport = new FillViewport(1920, 1080, camera);
-        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-        stage = new Stage(viewport);
+        fillViewport = new FillViewport(1280, 720, camera);
+        fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.update();
+        stage = new Stage(fillViewport);
         Gdx.input.setInputProcessor(this);
     }
 
     private Vector3 getMouseLoc() {
         mouseLoc.x = Gdx.input.getX();
         mouseLoc.y = Gdx.input.getY();
-        camera.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
+        fillViewport.unproject(mouseLoc); //Récupération des coordonnées de la souris sur la map
         mouseLoc.y = Math.abs(worldHeight -mouseLoc.y); //On inverse l'axe des ordonnées
         //Cela permet d'avoir le repère placé en haut à gauche avec les y allant vers le bas et les x vers la droite
         return mouseLoc;
@@ -126,7 +153,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         //- cells.getTileWidth() / 2 et - cells.getTileHeight() / 2 sont là pour créer le décalage de l'origine.
         // Ce qui permet de retrouver les bonnes coordonnés
         // le (int)cells.getTileWidth() /2 correspond à la taille de l'hexagone (ie la longueur de la droite qui va du
-        // centre vers une des pointes de l'hexagone
+        // centre vers une des pointes de l'hexagon
         return TransformCoords.pixelToOffset((int)(mouseLoc.x - cells.getTileWidth() / 2),
                 (int)(mouseLoc.y - cells.getTileHeight() / 2), (int)cells.getTileWidth() /2);
     }
@@ -152,13 +179,22 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     }
 
+    @Override
+    public void dispose() {
+        messageListener.stopRunning();
+        room.stopRunning();
+        super.dispose();
+    }
+
 
     @Override
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.ENTER) {
-            board.nextPlayer();
+            messageSender.send(new TextMessage("nextPlayer"));
+        } else if(keycode == Input.Keys.ESCAPE) {
+            parent.changeScreen(MainMenuScreen.class);
         }
-        return false; // pq un boolean?
+        return false;
     }
 
     @Override
@@ -176,11 +212,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
-            Cell selectedCell = board.getCell(boardCoords.col, boardCoords.row);
-            board.play(selectedCell);
-            if(board.getSelectedCell() != null) {
-            	selectCells(board.possibleMove(selectedCell));
-            }
+            messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
         }
         return true;
     }
@@ -206,10 +238,10 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                     && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
                 Cell cell = board.getCell(boardCoords.col, boardCoords.row);
-                if(board.getCell(boardCoords.col, boardCoords.row) != null) {
+                if(cell != null) {
                 	// Ne s'applique que si la case appartient au joueur
                 	// Ainsi il voit directement avec quelles cases il peut interagir
-                    if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == board.getActivePlayer()) {
+                    if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
                         selectCells(cell.getDistrict().getCells());
                     } else {
                         unselectCells();
@@ -242,9 +274,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         unselectCells();
         selectedCells = cellsArray;
         for(Cell cell : selectedCells) {
-            int[] pos = board.getPosition(cell);
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
-            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
+            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
             // Récupération de la cellule dans la mapTmx
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à sélectionner.
@@ -254,9 +285,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private void unselectCells() {
         for (Cell selectedCell : selectedCells) {
-            int[] pos = board.getPosition(selectedCell);
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
-            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
+            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(selectedCell.getX(),selectedCell.getY()));
             // Récupération de la cellule dans la mapTmx
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à désélectionner.
@@ -273,7 +303,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     int playerNumber;
                     Player player = cell.getDistrict().getPlayer();
                     for (int k = 0; k < board.getPlayers().length; k++) {
-                        if(player == board.getPlayers()[k]) {
+                        if(player.getId() == board.getPlayers()[k].getId()) {
                             playerNumber = k;
                             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
                             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);

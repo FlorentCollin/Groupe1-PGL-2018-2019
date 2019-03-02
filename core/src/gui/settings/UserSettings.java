@@ -18,6 +18,9 @@ public class UserSettings {
         setSoundLevel(100);
     }
 
+    /**
+     * Initialisation des paramètres dans libgdx
+     */
     public void init() {
         setMusicLevel(musicLevel);
         setSoundLevel(soundLevel);

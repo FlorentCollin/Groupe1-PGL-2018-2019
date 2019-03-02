@@ -1,15 +1,17 @@
 package logic.board;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import logic.board.cell.Cell;
+import logic.board.cell.LandCell;
+import logic.board.cell.WaterCell;
 import logic.item.Capital;
 import logic.item.Item;
 import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 
 
@@ -22,20 +24,21 @@ public class Board{
 	private NaturalDisastersController naturalDisastersController;
 	private Cell selectedCell, firstCell;
 	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
-	private ArrayList<Cell> visited = new ArrayList<Cell>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
+	private ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
+    private boolean hasChanged;
 	//Variable qui est utilisé dans la méthode getNeighbors
 	//Elle contient toutes les directions possibles pour les cellules adjacentes
 	private final int[][][] directions = {
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
 
-	public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
+    public Board(int columns, int rows, Player[] players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
 		this.rows = rows;
 		board = new Cell[columns][rows];
 		this.players = players;
 		this.naturalDisastersController = naturalDisastersController;
-		this.districts = new ArrayList<District>();
+		this.districts = new ArrayList<>();
 		this.shop = shop;
 		fullIn();
 		activePlayer = 0;
@@ -46,7 +49,7 @@ public class Board{
 		this.rows = rows;
 		board = new Cell[columns][rows];
 		this.players = players;
-		this.districts = new ArrayList<District>();
+		this.districts = new ArrayList<>();
 		this.shop = shop;
 		fullIn();
 		activePlayer = 0;
@@ -58,9 +61,18 @@ public class Board{
 	private void fullIn() {
 		for(int i = 0; i<columns; i++) {
 			for(int j = 0; j<rows; j++) {
-				board[i][j] = new Cell();
+				board[i][j] = new LandCell(i,j);
 			}
 		}
+	}
+	
+	/**
+	 * Permet de placer de l'eau sur la carte
+	 * @param i la position en x
+	 * @param j la position en y
+	 * */
+	public void changeToWaterCell(int i, int j) {
+		board[i][j] = new WaterCell(i,j);
 	}
 	
 	/**
@@ -120,7 +132,7 @@ public class Board{
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
 		shop.buy(cell.getDistrict());
-		selectedCell = null;
+		setSelectedCell(null);
 	}
 	
 	/**
@@ -201,10 +213,7 @@ public class Board{
 		if(cell.getDistrict() == null) {
 			return true;
 		}
-		if(cell.getDistrict().getPlayer() == null) {
-			return true;
-		}
-		return false;
+		return cell.getDistrict().getPlayer() == null;
 	}
 	
 	/**
@@ -215,10 +224,7 @@ public class Board{
 	 * 			false sinon
 	 * */
 	private boolean isSameItem(Cell cell, Item item) {
-		if(cell.getItem().getClass().isInstance(item)) {
-			return true;
-		}
-		return false;
+		return cell.getItem().getClass().isInstance(item);
 	}
 	
 	/**
@@ -226,7 +232,8 @@ public class Board{
 	 * @param cell la cellule sur laquelle on souhaite se placer
 	 * @param item l'item de la cellule de départ
 	 * @return true si le niveau est identique
-	 * 			false sinon*/
+	 * 			false sinon
+	 * */
 	private boolean hasSameLevel(Cell cell, Item item) {
 		return cell.getItem().getLevel() == item.getLevel();
 	}
@@ -237,13 +244,15 @@ public class Board{
 	 * @return les cellules sur lesquelles peut se déplacer l'item
 	 * */
 	public ArrayList<Cell> possibleMove(Cell cell) {
-		ArrayList<Cell> possible = new ArrayList<Cell>();
+		ArrayList<Cell> possible = new ArrayList<>();
 		ArrayList<Cell> around = getNeighbors(cell);
-		ArrayList<Cell> subAround = new ArrayList<Cell>();
+		ArrayList<Cell> subAround = new ArrayList<>();
 		for(int i=0; i < cell.getItem().getMode().getMaxDep()-1; i++) {
 			subAround.clear();
 			for(Cell c : around) {
-				if(c.getDistrict() == cell.getDistrict() && (c.getItem() == null || (c.getItem().getClass().isInstance(cell.getClass()) && c.getItem().getLevel() == cell.getItem().getLevel()))) {
+				if(c.getDistrict() == cell.getDistrict() && (c.getItem() == null
+						|| (c.getItem().getClass().isInstance(cell.getClass())
+						&& c.getItem().getLevel() == cell.getItem().getLevel()))) {
 					subAround.addAll(getNeighbors(c));
 				}
 			}
@@ -265,7 +274,7 @@ public class Board{
 	 * @return les cellules sur lesquelles peut être placé le nouvel item
 	 * */
 	public ArrayList<Cell> possibleMove(District district){
-		ArrayList<Cell> possible = new ArrayList<Cell>();
+		ArrayList<Cell> possible = new ArrayList<>();
 		for(Cell c : district.getCells()) {
 			if(possible.indexOf(c) == -1) {
 				possible.add(c);
@@ -286,18 +295,20 @@ public class Board{
 	 * @return la liste des cellules autour de cell pour lesquels c'est possible
 	 * */
 	private ArrayList<Cell> getNeighbors(Cell cell){
-		ArrayList<Cell> around = new ArrayList<Cell>();
-		int x = getPosition(cell)[0];
-		int y = getPosition(cell)[1];
+		ArrayList<Cell> around = new ArrayList<>();
+		int x = cell.getX();
+		int y = cell.getY();
 		int parity = x & 1;
 		for (int direction = 0; direction < 6; direction++) { //6 car un  hexagone possède 6 voisins
 			int[] dir = directions[parity][direction];
 			int neighborX = x + dir[0];
 			int neighborY = y + dir[1];
+			//On vérifie que le voisin est bien dans les limites de la map
 			if(neighborX>=0 && neighborX<columns && neighborY>=0 && neighborY<rows) {
-				around.add(board[neighborX][neighborY]);
+				if(board[neighborX][neighborY].isAccessible()) {
+					around.add(board[neighborX][neighborY]);
+				}
 			}
-
 		}
 		return around;
 	}
@@ -346,6 +357,7 @@ public class Board{
 	 * Permet de passer au joueur suivant
 	 */
 	public void nextPlayer() {
+	    hasChanged = true;
 		activePlayer = (activePlayer + 1)%(players.length);
 		generateTree();
 		for(District district : districts) {
@@ -368,7 +380,8 @@ public class Board{
 	public Cell getCell(int i, int j) {
 		return board[i][j];
 	}
-	
+
+	//TODO Supprimer cette méthode si elle n'est plus utilisé
 	/**
 	 * Peremt de récupérer la positon d'une cellule
 	 * @param c la cellule dont on souhaite connaître la position
@@ -390,15 +403,14 @@ public class Board{
 	public Cell getSelectedCell() {
 		return selectedCell;
 	}
-	
+
 	public void setSelectedCell(Cell selectedCell) {
-		if(selectedCell.getDistrict().getPlayer() == getActivePlayer()) {
+	    if(selectedCell == null) {
+	        this.selectedCell = null;
+        } else if(selectedCell.getDistrict().getPlayer() == getActivePlayer()) {
 			this.selectedCell = selectedCell;
 		}
-	}
-
-	public void resetSelectedCell() {
-		this.selectedCell = null;
+	    hasChanged = true;
 	}
 	
 	public Player getActivePlayer() {
@@ -427,15 +439,15 @@ public class Board{
 	
 	/**
 	 * Permet de fusionner deux districts
-	 * @param greather le district le plus grand
-	 * @param samller le district le plus petit
+	 * @param bigger le district le plus grand
+	 * @param smaller le district le plus petit
 	 * */
-	private void merge(District greather, District smaller) {
-		greather.addGold(smaller.getGold());
+	private void merge(District bigger, District smaller) {
+		bigger.addGold(smaller.getGold());
 		smaller.removeCapital();
-		greather.addAllCell(smaller);
 		for(Cell c : smaller.getCells()) {
-			c.setDistrict(greather);
+			bigger.addCell(c);
+			c.setDistrict(bigger);
 		}
 		districts.remove(smaller);
 	}
@@ -464,10 +476,9 @@ public class Board{
 	
 	/**
 	 * Permet de vérifier si il faut diviser un district
-	 * @param cell la cellule depuis làquelle on effectue la vérification
+	 * @param cell la cellule depuis laquelle on effectue la vérification
 	 * */
 	private void checkSplit(Cell cell) {
-		// TO DO
 		for(Cell c : getNeighbors(cell)) {
 			if(c.getDistrict() != null && c.getDistrict().getPlayer() != getActivePlayer()) {
 				visited.clear();
@@ -513,7 +524,7 @@ public class Board{
 		for(int i=0; i<columns; i++) {
 			for(int j = 0; j<rows; j++) {
 				nTrees = 0;
-				if(board[i][j].getItem() == null) {
+				if(board[i][j].getItem() == null && board[i][j].isAccessible()) {
 					for(Cell c : getNeighbors(board[i][j])) { // on considère que la cellule est un district pour obtenir toutes les cellules l'entourant
 						if(c.getItem() instanceof Tree) {
 							nTrees += 1;
@@ -544,9 +555,22 @@ public class Board{
 	 * @param district le district ayant besoin d'une nouvelle capitale
 	 * */
 	private void generateCapital(District district) {
+		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
-		//On r�cup�re une cellule du district al�atoirement
-		Cell cell = district.getCells().get(rand.nextInt(district.getCells().size()));
+		//On récupère une cellule du district aléatoirement
+		int i = rand.nextInt(district.getCells().size());
+		while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
+			visited.add(district.getCells().get(i));
+			i = rand.nextInt(district.getCells().size());
+		}
+		if(visited.size() == district.getCells().size()) {
+			for(Cell c : district.getCells()) {
+				if(c.getItem() instanceof Tree) {
+					i = rand.nextInt(district.getCells().size());
+				}
+			}
+		}
+		Cell cell = district.getCells().get(i);
 		district.addCapital(cell);
 	}
 	
@@ -559,7 +583,7 @@ public class Board{
 		selectedCell.getItem().setHasMoved(true);
 		cell.setItem(selectedCell.getItem());
 		selectedCell.removeItem();
-		selectedCell = null; //peut être faire une méthode forgotSelection ?
+		setSelectedCell(null);
 	}
 	
 	/**
@@ -604,25 +628,75 @@ public class Board{
 	public Shop getShop() {
 		return shop;
 	}
-	
-	/**
-	 * Permet de jouer un tour
-	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
-	 * */
-	public void play(Cell cell) {
-		if(selectedCell != null) {
-			if(shop.getSelectedItem() != null) {
-				placeNewItem(cell);
-			}
-			else {
-				move(cell);
-			}
-			selectedCell = null;
-		}
-		else if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == players[activePlayer] && cell.getItem() != null && cell.getItem().getMode().isMovable()){
-			if(cell.getItem().canMove()) {				
-				selectedCell = cell;
-			}
-		}
-	}
+
+	public int getActivePlayerNumber() {
+	    return activePlayer;
+    }
+
+    public boolean hasChanged() {
+	    return hasChanged;
+    }
+
+    public District getDistrictById(int id) {
+        for(District district : districts) {
+            if(district.getId() == id) {
+                return district;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Permet de jouer un tour
+     *
+     * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
+     */
+    public void play(Cell cell) {
+        if (selectedCell != null) {
+            if (shop.getSelectedItem() != null) {
+                placeNewItem(cell);
+            } else {
+                move(cell);
+            }
+            hasChanged = true;
+            selectedCell = null;
+        } else if (cell.getDistrict() != null && cell.getDistrict().getPlayer() == players[activePlayer]
+                && cell.getItem() != null && cell.getItem().getMode().isMovable()) {
+            if (cell.getItem().canMove()) {
+                setSelectedCell(cell);
+            }
+        }
+    }
+
+    public void updateBoard(ArrayList<District> districts, Player[] players, int activePlayer) {
+        this.districts = districts;
+        this.players = players;
+        this.activePlayer = activePlayer;
+        for (District district : districts) {
+            for (Cell cell : district.getCells()) {
+                board[cell.getX()][cell.getY()] = cell;
+                cell.setDistrict(district);
+            }
+            for(int i = 0; i < players.length; i++) {
+                if(district.getPlayer().getId() == players[i].getId()) {
+                    players[i] = district.getPlayer();
+                }
+            }
+        }
+    }
+
+
+    public Object getObject(int id, Class<?> className) {
+        if(className.equals(District.class)) {
+            return getDistrictById(id);
+        }
+        return null;
+    }
+
+    public Object getObject(int x, int y, Class<?> className) {
+        if(className.equals(Cell.class)) {
+            return getCell(x, y);
+        }
+        return null;
+    }
 }

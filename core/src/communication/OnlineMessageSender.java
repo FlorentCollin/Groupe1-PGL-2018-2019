@@ -1,4 +1,53 @@
 package communication;
 
-public class OnlineMessageSender {
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
+
+import static gui.utils.Constants.SERVER_ADDRESS;
+
+/**
+ * Classe qui permet l'envoit de message de l'interface graphique au serveur durant une partie en ligne
+ */
+public class OnlineMessageSender implements MessageSender {
+    private SocketChannel clientChannel;
+    private Selector selector;
+    private Gson gson;
+
+    public OnlineMessageSender() {
+        gson = new Gson();
+        try {
+            //Ouverture de la connection au serveur
+            clientChannel = SocketChannel.open(new InetSocketAddress(SERVER_ADDRESS, 8888));
+            clientChannel.configureBlocking(false);
+            selector = Selector.open();
+            //On associe le channel à un selector
+            clientChannel.register(selector, SelectionKey.OP_READ);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void send(Message message) {
+        try {
+            //Écriture du message dans le buffer du client pour que le serveur puisse le récupérer
+            clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public SocketChannel getClientChannel() {
+        return clientChannel;
+    }
+
+    public Selector getSelector() {
+        return selector;
+    }
 }

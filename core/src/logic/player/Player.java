@@ -10,18 +10,24 @@ public class Player {
 	private String name;
 	private Color color;
 	protected ArrayList<Soldier> soldiers;
+
+	public static int globalId = 0;
+	private int id;
 	
 	public Player() {
 		/*Dans le cas où le joueur ne stipule rien 
 		 * ou est une ia*/
-		soldiers =  new ArrayList<Soldier>();
+		globalId++;
+		id = globalId;
+		soldiers =  new ArrayList<>();
 	}
 	
 	public Player(String name, Color color) {
 		/*Dans le cas d'un véritable joueur modifiant des paramètres*/
+        super();
 		this.name = name;
 		this.color = color;
-		soldiers = new ArrayList<Soldier>();
+
 	}
 	
 	public Color getColor() {
@@ -42,4 +48,8 @@ public class Player {
 		//utilité idem que pour setColor
 		this.name = name;
 	}
+
+    public int getId() {
+	    return id;
+    }
 }

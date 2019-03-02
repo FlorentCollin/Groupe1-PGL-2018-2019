@@ -3,9 +3,10 @@ package logic.item;
 import logic.item.level.Level;
 import logic.player.Player;
 
-public abstract class Item {
+public class Item {
 	protected Mode mode;
 	protected Player player; //afin de comparer pour Cell
+    protected String type = getClass().getName();
 	
 	public Item(Player player) {
 		this.player = player;

@@ -58,7 +58,7 @@ public class BoardTest {
 	public void testPlaceNewItemOnFreeTerritory() {
 		board.setSelectedCell(board.getCell(1,1));
 		Soldier s = new Soldier(p1);
-		shop.setSelectedItem(s);
+		shop.setSelectedItem(s, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0,2));
 		assertTrue(board.getCell(0, 2).getItem() == s);
 		assertTrue(board.getCell(0, 2).getDistrict() == board.getCell(1, 1).getDistrict());
@@ -68,20 +68,20 @@ public class BoardTest {
 	public void testPlaceNewItemOnOwnTerritory() {
 		//Test pour une cellule vide
 		Soldier soldier = new Soldier(p1);
-		shop.setSelectedItem(soldier);
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		assertTrue(board.getCell(0, 0).getItem() == soldier);
 		//Test pour une cellule contenant un autre soldat
 		Soldier s2 = new Soldier(p1);
 		board.setSelectedCell(board.getCell(1, 1));
-		shop.setSelectedItem(s2);
+		shop.setSelectedItem(s2, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		assertTrue(board.getCell(0, 0).getItem() == soldier);
 		//Test pour une cellule contenant un item autre qu'un soldat
 		Capital capital = new Capital();
 		board.getCell(1, 0).setItem(capital);
-		shop.setSelectedItem(s2);
+		shop.setSelectedItem(s2, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(1, 0));
 		assertTrue(board.getCell(1, 0).getItem() == capital);
 	}
@@ -89,12 +89,12 @@ public class BoardTest {
 	@Test
 	public void testFusion() {
 		Soldier soldier = new Soldier(p1);
-		shop.setSelectedItem(soldier);
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		Soldier soldier2 = new Soldier(p1);
-		shop.setSelectedItem(soldier2);
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier2, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		assertTrue(board.getCell(0, 0).getItem().getLevel() == SoldierLevel.level2);
 	}
@@ -102,12 +102,12 @@ public class BoardTest {
 	@Test
 	public void testNotFusion() {
 		Soldier soldier = new Soldier(p1, SoldierLevel.level2);
-		shop.setSelectedItem(soldier);
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		Soldier soldier2 = new Soldier(p1);
-		shop.setSelectedItem(soldier2);
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier2, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		assertTrue(board.getCell(0, 0).getItem() == soldier);
 	}
@@ -116,12 +116,12 @@ public class BoardTest {
 	public void testMoveFusion() {
 		//Ajout d'un soldat en (0,0)
 		Soldier firstSoldier = new Soldier(p1);
-		shop.setSelectedItem(firstSoldier);
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(firstSoldier, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 0));
 		//Ajout d'un soldat en (0,1)
-		shop.setSelectedItem(new Soldier(p1));
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(new Soldier(p1), board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0, 1));
 		//Déplacement
 		board.setSelectedCell(board.getCell(0, 1));
@@ -148,17 +148,17 @@ public class BoardTest {
 		//Place sur (2,2)
 		board.setSelectedCell(board.getCell(1, 1));
 		Soldier s1 = new Soldier(p1);
-		shop.setSelectedItem(s1);
+		shop.setSelectedItem(s1, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(2, 2));
 		//Place sur (1,2)
 		board.setSelectedCell(board.getCell(1, 1));
 		Soldier s2 = new Soldier(p1);
-		shop.setSelectedItem(s2);
+		shop.setSelectedItem(s2, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(1, 2));
 		//Place sur (2,1)
 		board.setSelectedCell(board.getCell(1, 1));
 		Soldier s3 = new Soldier(p1);
-		shop.setSelectedItem(s3);
+		shop.setSelectedItem(s3, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(2, 1));
 		
 		assertTrue(board.getCell(2, 2).getDistrict() == board.getCell(1, 1).getDistrict());
@@ -186,6 +186,7 @@ public class BoardTest {
 	@Test
 	public void testPossibleMoveForCell() {
 		Cell cell = board.getCell(1, 1);
+		cell.setItem(new Soldier(p1));
 		ArrayList<Cell> possibleMoves = board.possibleMove(cell);
 		ArrayList<Cell> check = new ArrayList<Cell>();
 		check.add(board.getCell(0, 1));
@@ -267,8 +268,8 @@ public class BoardTest {
 	@Test
 	public void testMerge() {
 		district2.setPlayer(p1);
-		shop.setSelectedItem(new Soldier(p1));
 		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(new Soldier(p1), board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(1, 2));
 		assertTrue(board.getCell(2, 2).getDistrict() == board.getCell(1, 1).getDistrict());
 	}
