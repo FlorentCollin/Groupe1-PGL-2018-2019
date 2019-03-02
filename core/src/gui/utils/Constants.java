@@ -10,7 +10,7 @@ public class Constants {
     public static final int MAX_RES = 1920;
     public static final int PAD = 20;
 
-    public static final int N_TILES = 3; //Nombre de tiles présent dans le tileset hex.
+    public static final int N_TILES = 4; //Nombre de tiles présent dans le tileset hex.
     // Ce nombre est utilisé pour sélectionner et désélectionner des cellules
 
     public static final String USER_SETTINGS_FILE = "settings/userSettings.json";
