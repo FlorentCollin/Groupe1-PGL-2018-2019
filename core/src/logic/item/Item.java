@@ -4,6 +4,7 @@ import logic.item.level.Level;
 
 public abstract class Item {
 	protected Level level;
+    protected String type = getClass().getName();
 	
 	protected boolean movable = false;
 	protected boolean buyable = false;

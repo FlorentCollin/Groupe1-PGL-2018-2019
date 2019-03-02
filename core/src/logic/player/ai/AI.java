@@ -9,9 +9,9 @@ import logic.item.Soldier;
 import logic.player.Player;
 
 public class AI extends Player{
-	private Strategy strategy;
-	private Board board;
-	private ArrayList<District> districts;
+	private transient Strategy strategy;
+	private transient Board board;
+	private transient ArrayList<District> districts;
 	
 	public AI(Strategy strategy, Board board) {
 		this.strategy = strategy;

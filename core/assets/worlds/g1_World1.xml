@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<world name="World 1" map="g1_World1">
+<world name="World 1" map="g1_World1" width="20" height="15">
     <players number="3" />
     <items>
       <item type="Soldier" level="1" x="10" y="6" />

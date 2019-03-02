@@ -3,8 +3,7 @@ package logic.item;
 import logic.item.level.SoldierLevel;
 
 public class Soldier extends Item{
-	private SoldierLevel level;
-	
+
 	public Soldier(SoldierLevel level) {
 		this.level = level;
 		buyable = true;
@@ -15,7 +14,7 @@ public class Soldier extends Item{
 	}
 	
 	public SoldierLevel getLevel() {
-		return this.level;
+		return (SoldierLevel)this.level;
 	}
 	
 	public void setLevel(SoldierLevel level) {
@@ -43,12 +42,14 @@ public class Soldier extends Item{
 	
 	@Override
 	public int getSalary() {
-		return level.getSalary();
+		SoldierLevel soldierLevel = (SoldierLevel) level;
+		return soldierLevel.getSalary();
 	}
 	
 	@Override
 	public int getPrice() {
-		return level.getPrice();
+		SoldierLevel soldierLevel = (SoldierLevel) level;
+		return soldierLevel.getPrice();
 	}
 	
 }

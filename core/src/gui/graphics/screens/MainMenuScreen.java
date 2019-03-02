@@ -79,16 +79,6 @@ public class MainMenuScreen extends MenuScreen {
 
         stage.addActor(slayLogo);
 
-//        Skin skin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
-//        Dialog dialog = new Dialog("Warning", skin, "dialog") {
-//            public void result(Object obj) {
-//                System.out.println("result " + obj );
-//            }
-//        };
-//        dialog.text("Enter your username");
-//        dialog.add(new TextField("", skin));
-//        dialog.button("Cancel", false);
-//        dialog.button("Confirm", true);
         //Ajout des animations de soulignage du boutton sélectionné
         //Ainsi que des différents listeners pour changer de menu ou quitter le jeu
         playOfflineButton.addListener(this.underlineAnimation(playOfflineButton));
@@ -102,8 +92,8 @@ public class MainMenuScreen extends MenuScreen {
         playOnlineButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-//                    parent.changeScreen(OnlineMenuScreen.class);
-                    parent.setScreen(new InGameScreen(parent, "g1_World1"));
+                    parent.changeScreen(OnlineMenuScreen.class);
+//                    parent.setScreen(new InGameScreen(parent, "g1_World1"));
                 }
             });
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));

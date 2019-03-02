@@ -18,7 +18,7 @@
   </properties>
   <image width="256" height="222" source="hex_orange.png"/>
  </tile>
- <tile id="2">
+ <tile id="3">
   <properties>
    <property name="available" type="bool" value="true"/>
    <property name="isAI" type="bool" value="false"/>
@@ -26,7 +26,7 @@
   </properties>
   <image width="256" height="222" source="hex_neutral.png"/>
  </tile>
- <tile id="3">
+ <tile id="4">
   <properties>
    <property name="available" type="bool" value="true"/>
    <property name="isAI" type="bool" value="false"/>
@@ -34,7 +34,7 @@
   </properties>
   <image width="256" height="222" source="hex_green_selected.png"/>
  </tile>
- <tile id="4">
+ <tile id="5">
   <properties>
    <property name="available" type="bool" value="true"/>
    <property name="isAI" type="bool" value="true"/>
@@ -43,7 +43,7 @@
   </properties>
   <image width="256" height="222" source="hex_orange_selected.png"/>
  </tile>
- <tile id="5">
+ <tile id="7">
   <properties>
    <property name="available" type="bool" value="true"/>
    <property name="isAI" type="bool" value="false"/>
@@ -51,7 +51,7 @@
   </properties>
   <image width="256" height="222" source="hex_neutral_selectedpng.png"/>
  </tile>
- <tile id="6">
+ <tile id="8">
   <properties>
    <property name="available" type="bool" value="false"/>
    <property name="isAI" type="bool" value="false"/>
@@ -59,7 +59,7 @@
   </properties>
   <image width="256" height="222" source="hex_blue.png"/>
  </tile>
- <tile id="7">
+ <tile id="9">
   <properties>
    <property name="available" type="bool" value="false"/>
    <property name="isAI" type="bool" value="false"/>
@@ -67,7 +67,7 @@
   </properties>
   <image width="256" height="222" source="hex_blue_selected.png"/>
  </tile>
- <tile id="8">
+ <tile id="2">
   <properties>
    <property name="available" type="bool" value="true"/>
    <property name="isAI" type="bool" value="true"/>
@@ -76,7 +76,7 @@
   </properties>
   <image width="256" height="222" source="hex_pink.png"/>
  </tile>
- <tile id="9">
+ <tile id="6">
   <properties>
    <property name="available" type="bool" value="true"/>
    <property name="isAI" type="bool" value="true"/>

@@ -14,6 +14,9 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import gui.app.Slay;
 import gui.utils.Constants;
 
+/**
+ * Classe représentant un Screen, c'est la classe étendue par tous les autres screens.
+ */
 public abstract class BasicScreen implements Screen {
     protected Stage stage;
     protected Slay parent;
@@ -31,11 +34,11 @@ public abstract class BasicScreen implements Screen {
 
     public BasicScreen(Slay parent) {
         this.parent = parent;
+        //Chargement du skin spécifique pour les boutons.
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         generateStage();
-        generateFont(stage.getWidth());
+        generateFont();
         ratio = Constants.getRatio(stage.getWidth());
-
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
     }
@@ -45,8 +48,7 @@ public abstract class BasicScreen implements Screen {
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         this.stage = stage;
         ratio = Constants.getRatio(stage.getWidth());
-        generateFont(stage.getWidth());
-
+        generateFont();
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         this.stage.draw();
     }
@@ -61,7 +63,8 @@ public abstract class BasicScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, false);
+        stage.getViewport().update(width, height, true);
+        stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
     }
 
     @Override
@@ -73,12 +76,12 @@ public abstract class BasicScreen implements Screen {
     protected void generateStage() {
         camera = new OrthographicCamera();
         viewport = new ScalingViewport(Scaling.stretch, 1920, 1080, camera);
-        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
     }
 
-    protected void generateFont(float stageWidth) {
+    protected void generateFont() {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 42;
@@ -103,5 +106,15 @@ public abstract class BasicScreen implements Screen {
         defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         textFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         generator.dispose();
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
     }
 }
