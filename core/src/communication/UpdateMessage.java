@@ -3,6 +3,7 @@ package communication;
 import logic.board.District;
 import logic.player.Player;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -12,18 +13,18 @@ import java.util.ArrayList;
 public class UpdateMessage extends NetworkMessage {
 
     private ArrayList<District> districts;
-    private Player[] players;
+    private ArrayList<Player> players;
     private int activePlayer;
     private Integer x, y; // Correspond à la position en x et y de la cellule sélectionné si elle existe
 
     //TODO Need refactoring about what is updated in the board because here all is pass every time something has changed
-    public UpdateMessage(ArrayList<District> districts, Player[] players, int activePlayer) {
+    public UpdateMessage(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {
         this.districts = districts;
         this.players = players;
         this.activePlayer = activePlayer;
     }
 
-    public UpdateMessage(ArrayList<District> districts, Player[] players, int activePlayer, int x, int y) {
+    public UpdateMessage(ArrayList<District> districts, ArrayList<Player> players, int activePlayer, int x, int y) {
         this.districts = districts;
         this.players = players;
         this.activePlayer = activePlayer;
@@ -43,7 +44,7 @@ public class UpdateMessage extends NetworkMessage {
         return y;
     }
 
-    public Player[] getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 

@@ -4,6 +4,7 @@ package gui.graphics.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,15 +13,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.google.gson.Gson;
 import communication.*;
 import gui.app.Slay;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
+import logic.board.District;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
+import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import roomController.Room;
 
@@ -33,7 +37,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private Map map;
     private Vector3 mouseLoc = new Vector3();
-    private float worldWith;
+    private float worldWith; // ?
     private float worldHeight;
     private TiledMapTileLayer cells;
     private volatile Board board;
@@ -55,7 +59,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
-        map.load(mapName, false,true, true);
+        map.load(mapName, false, true, true);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
@@ -194,6 +198,35 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         } else if(keycode == Input.Keys.ESCAPE) {
             parent.changeScreen(MainMenuScreen.class);
         }
+        else if(keycode == Input.Keys.Z) {
+        	board.undo();
+        }
+        else if(keycode == Input.Keys.ESCAPE) {
+        	Gdx.app.exit();
+        }
+        else if(keycode == Input.Keys.P) {
+        	System.out.println("size : "+board.getPlayers().size());
+        	for(Player player : board.getPlayers()) {
+        		System.out.println(player);
+        	}
+        }
+        if(board.getSelectedCell() != null) {
+	        if(keycode == Input.Keys.NUMPAD_1 || keycode == Input.Keys.Z) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
+	        }
+	        else if(keycode == Input.Keys.NUMPAD_2 || keycode == Input.Keys.NUM_2) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level2), board.getSelectedCell().getDistrict());
+	        }
+	        else if(keycode == Input.Keys.NUMPAD_3 || keycode == Input.Keys.NUM_3) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level3), board.getSelectedCell().getDistrict());
+	        }
+	        else if(keycode == Input.Keys.NUMPAD_4 || keycode == Input.Keys.NUM_4) {
+	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level4), board.getSelectedCell().getDistrict());
+	        }
+	        if(board.getShop().getSelectedItem() != null) {
+	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+	        }
+        }
         return false;
     }
 
@@ -257,14 +290,14 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public boolean scrolled(int amount) {
         if(amount == -1) {
         	if(camera.zoom - 0.2 >= 0) {
-        		camera.zoom -= 0.2;        		
+        		camera.zoom -= 0.2;
         	}
         } else {
             camera.zoom += 0.2;
         }
         return true;
     }
-    
+
     public Board getBoard() {
         return board;
     }
@@ -302,8 +335,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 if(cell.getDistrict() != null) {
                     int playerNumber;
                     Player player = cell.getDistrict().getPlayer();
-                    for (int k = 0; k < board.getPlayers().length; k++) {
-                        if(player.getId() == board.getPlayers()[k].getId()) {
+                    for (int k = 0; k < board.getPlayers().size(); k++) {
+                        if(player == board.getPlayers().get(k)) {
                             playerNumber = k;
                             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
                             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);

@@ -63,6 +63,8 @@ public abstract class Message {
             ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
             buffer.clear();
             len = clientChannel.read(buffer);
+            if(len == -1)
+                clientChannel.close();
             messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
         } while (len == bufferSize); //len == 100 indique que l'entièreté du message n'a pas encore été lu
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string

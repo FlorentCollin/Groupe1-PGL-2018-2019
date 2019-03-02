@@ -1,46 +1,69 @@
 package logic.item;
 
 import logic.item.level.Level;
-import logic.player.Player;
+import logic.item.level.SoldierLevel;
 
-public class Item {
-	protected Mode mode;
-	protected Player player; //afin de comparer pour Cell
+public abstract class Item {
+	protected SoldierLevel level;
     protected String type = getClass().getName();
 	
-	public Item(Player player) {
-		this.player = player;
-	}
+	protected boolean movable = false;
+	protected boolean buyable = false;
+	protected boolean improvable = false;
+	
+	protected boolean hasMoved = false; //A remplacer par canMove
+	protected boolean hasSalary = false;
+	
+	protected int maxMove = 0;
 	
 	public Item() {
 		
 	}
 	
 	/**
-	 * Permet de savoir si un item peut être achetable, déplaçable ou améliorable
-	 * @return le mode dans lequel se trouve l'item
+	 * Permet d'améliorer l'item
 	 * */
-	public Mode getMode() {
-		return this.mode;
-	}
-	
-	public Player getPlayer() {
-		return this.player;
-	}
-	
 	public void improve() {
 		
 	}
 	
 	public Level getLevel() {
-		return null;
+		return level;
 	}
 	
 	public void setHasMoved(boolean hasMoved) {
-		
+		this.hasMoved = hasMoved;
 	}
 	
 	public boolean canMove() {
-		return false;
+		return !hasMoved;
+	}
+	
+	public int getSalary() {
+		return 0;
+	}
+	
+	public boolean isMovable() {
+		return movable;
+	}
+	
+	public boolean isBuyable() {
+		return buyable;
+	}
+	
+	public boolean isImprovable() {
+		return improvable;
+	}
+	
+	public boolean hasSalary() {
+		return hasSalary;
+	}
+	
+	public int getMaxMove() {
+		return maxMove;
+	}
+	
+	public int getPrice() {
+		return 0;
 	}
 }

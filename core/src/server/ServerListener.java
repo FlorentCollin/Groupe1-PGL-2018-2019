@@ -27,7 +27,7 @@ public class ServerListener extends Thread{
     private SocketChannel clientChannel;
 
     /**
-     * Constructeur du ServerListenener
+     * Constructeur du ServerListener
      * @param port le port sur lequel les clients peuvent se connecter
      * @param messageToSend Lien vers la file des messages du ServerSender,
      *                      utilisé pour indiquer à chaque nouvelle room à quel endroit elle peut envoyer ses messages

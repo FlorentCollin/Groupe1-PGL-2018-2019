@@ -1,5 +1,9 @@
 package gui.utils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
@@ -11,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
+
 import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.Cell;
@@ -20,23 +25,22 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
+import logic.player.ai.Strategy;
 import logic.shop.Shop;
 import org.mockito.Mockito;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /** Classe utilisé pour charger et convertir une map TMX en Board **/
 //TODO NEED XML VALIDATOR FOR VALIDATE THE XML FILE
 
 public class Map {
 
-    private TiledMap map;
-    private HexagonalTiledMapRenderer tiledMapRenderer;
-    private TiledMapTileLayer cells;
-    private TiledMapTileSet tileSet;
-    private Board board;
-    private int numberOfPlayers;
+    protected TiledMap map;
+    protected HexagonalTiledMapRenderer tiledMapRenderer;
+    protected TiledMapTileLayer cells;
+    protected TiledMapTileSet tileSet;
+    protected Board board;
+    protected int numberOfPlayers;
+    protected Constructor<?> constructor;
 
     /**
      * Méthode qui permet de charger un monde du jeu
@@ -60,6 +64,7 @@ public class Map {
             generateDistricts();
             generateItems(xml_element);
             addWaterCells(xml_element);
+            checkAI(xml_element);
 
         }
         return board;
@@ -68,7 +73,7 @@ public class Map {
     /**
      * Si aucune application libgdx n'a été crée, on initialise une fausse application
      * On n'a besoin de cette méthode pour le serveur par exemple.
-     * Le serveur ne gérant pas de GUI, libgdx n'est pas initialisé et il est impossible d'avoir accès à Gdx.files
+     * Le serveur ne gérant pas de GUI, libgdx n'est pas initialisé et il est impossible d'avoir accès à Gdx.files
      * Source : https://www.badlogicgames.com/forum/viewtopic.php?f=11&t=17805#
      */
     private void loadLibgdx() {
@@ -79,8 +84,32 @@ public class Map {
         //Lancement de l'application et initialisation des paramètres Gdx.
         new HeadlessApplication(new EmptyApplication(), config);
     }
-    //TODO REFACTOR la méthode pour utiliser la variable dans Tiled
-    private void addWaterCells(XmlReader.Element xmlElement) {
+    
+    protected void checkAI(XmlReader.Element xmlElement) {
+    	XmlReader.Element ais = xmlElement.getChildByName("ais");
+    	for(int i = 0; i < ais.getChildCount(); i++) {
+    		XmlReader.Element ai = ais.getChild(i);
+    		int nPlayer = Integer.parseInt(ai.getAttribute("soldierNumber"));
+    		Class<?> strategyClass = getStrategy(ai.getAttribute("strategy"));
+    		try {
+				constructor = strategyClass.getConstructor();
+			} catch (NoSuchMethodException | SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		Strategy strategy = null;
+			try {
+				strategy = (Strategy) constructor.newInstance();
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		board.changeToAI(nPlayer, strategy);
+    	}
+    }
+    
+    protected void addWaterCells(XmlReader.Element xmlElement) {
     	XmlReader.Element waterCells = xmlElement.getChildByName("waterCells");
     	for(int i = 0; i < waterCells.getChildCount(); i++) {
     		XmlReader.Element waterCell = waterCells.getChild(i);
@@ -113,9 +142,9 @@ public class Map {
      */
     private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-        Player[] players = new Player[numberOfPlayers];
-        for (int i = 0; i < numberOfPlayers; i++) { //Création des différents joueurs
-            players[i] = new Player();
+        ArrayList<Player> players = new ArrayList<>();
+        for (int i = 0; i < numberOfPlayers; i++) {
+            players.add(new Player());
         }
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
         int height = Integer.parseInt(xmlElement.getAttribute("height"));
@@ -137,8 +166,8 @@ public class Map {
                 TiledMapTileLayer.Cell cell = cells.getCell(i, Math.abs(cells.getHeight()-1 - j));
                 MapProperties properties = cell.getTile().getProperties();
                 int nPlayer = (int) properties.get("player");
-                if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre)
-                    District district = new District(board.getPlayers()[nPlayer - 1]);
+                if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre
+                    District district = new District(board.getPlayers().get(nPlayer - 1));
                     district.addCell(board.getCell(i,j));
                     board.addDistrict(district);
                     board.getCell(i, j).setDistrict(district);
@@ -165,12 +194,10 @@ public class Map {
             try {
                 //Cas spécifique le constructeur de base ne suffit pas. Un soldat doit avoir un level
                 if(itemClass.equals(Soldier.class)) {
-                    Constructor<?> constructor = itemClass.getConstructor(Player.class, SoldierLevel.class);
-                    //Récupération du niveau du soldat qui est stocké dans l'attribut "level"
+                    Constructor<?> constructor = itemClass.getConstructor(SoldierLevel.class);
                     int soldierLevel = Integer.parseInt(item.getAttribute("level"));
-                    Item newItem;
-                    //Création du soldat
-                    newItem = (Item) constructor.newInstance(cell.getDistrict().getPlayer(), SoldierLevel.values()[soldierLevel-1]);
+                    Item newItem = null;
+                    newItem = (Item) constructor.newInstance(SoldierLevel.values()[soldierLevel-1]);
                     cell.setItem(newItem);
                 } else {
                     Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
@@ -215,6 +242,16 @@ public class Map {
             Gdx.app.log("ERROR","A name of an Item is wrong in the xml file : " + str);
         }
         return null;
+    }
+    
+    protected Class<?> getStrategy(String strategy){
+    	try {
+    		return Class.forName("logic.player.ai."+strategy);
+    	}
+    	catch(ClassNotFoundException e) {
+    		System.out.println("ERROR : the strategy "+strategy+" didn't exist");
+    		return null;
+    	}
     }
 
     public TiledMap getMap() {
