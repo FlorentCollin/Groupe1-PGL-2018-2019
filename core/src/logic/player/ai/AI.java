@@ -24,7 +24,7 @@ public class AI extends Player{
 	 * */
 	public void play() {
 		strategy.play(board, districts);
-		board.nextPlayer();
+//		board.nextPlayer();
 	}
 	
 	public void addDistrict(District district) {
