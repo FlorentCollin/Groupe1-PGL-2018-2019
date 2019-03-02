@@ -1,9 +1,10 @@
 package logic.item;
 
 import logic.item.level.Level;
+import logic.item.level.SoldierLevel;
 
 public abstract class Item {
-	protected Level level;
+	protected SoldierLevel level;
     protected String type = getClass().getName();
 	
 	protected boolean movable = false;

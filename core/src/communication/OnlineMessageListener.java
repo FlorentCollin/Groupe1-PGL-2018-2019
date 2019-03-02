@@ -7,6 +7,8 @@ import logic.item.Capital;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.Tree;
+import logic.item.level.Level;
+import logic.item.level.SoldierLevel;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -29,13 +31,15 @@ public class OnlineMessageListener extends MessageListener{
         //TODO NEED SEE APACHE LICENSE 2.0
         //TODO THIS RUNTIMETYPEADAPTERFACTORY NEED TO BE ON A SIDE METHOD TO BE REUSE
         //Création du Gson modifié pour pouvoir, désérializer des items selon leur classe respective
-        RuntimeTypeAdapterFactory<Item> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
+        RuntimeTypeAdapterFactory<Item> itemTypeAdapter = RuntimeTypeAdapterFactory
                 .of(Item.class, "type")
                 .registerSubtype(Capital.class, Capital.class.getName())
                 .registerSubtype(Soldier.class, Soldier.class.getName())
                 .registerSubtype(Tree.class, Tree.class.getName());
-
-        gson = new GsonBuilder().registerTypeAdapterFactory(runtimeTypeAdapterFactory).create();
+        RuntimeTypeAdapterFactory<Level> levelTypeAdapter = RuntimeTypeAdapterFactory
+                .of(Level.class, "type")
+                .registerSubtype(SoldierLevel.class, SoldierLevel.class.getName());
+        gson = new GsonBuilder().registerTypeAdapterFactory(itemTypeAdapter).registerTypeAdapterFactory(levelTypeAdapter).create();
     }
 
     @Override
