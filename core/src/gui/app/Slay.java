@@ -3,6 +3,7 @@ package gui.app;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import communication.CreateRoomMessage;
 import gui.graphics.screens.*;
 import gui.settings.InitSettings;
 import gui.settings.UserSettings;
@@ -74,13 +75,21 @@ public class Slay extends Game {
             }
             nextScreen = onlineMenuScreen;
         } else if(screen == CreateRoomMenuScreen.class) {
-            if(onlineMenuScreen == null) {
-                createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage());
+            if(createRoomMenuScreen == null) {
+                createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage(), false);
             }
             nextScreen = createRoomMenuScreen;
         }
 		this.setScreen(nextScreen);
+	}
 
+	public void changeScreen(InGameScreen gameScreen) {
+		this.mainMenuScreen = null;
+		this.settingsMenuScreen = null;
+		this.shortcutsMenuScreen = null;
+		this.onlineMenuScreen = null;
+		this.createRoomMenuScreen = null;
+		this.setScreen(gameScreen);
 	}
 
 	public UserSettings getUserSettings() {

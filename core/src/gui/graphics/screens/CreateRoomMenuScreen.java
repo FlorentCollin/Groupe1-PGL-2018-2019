@@ -3,16 +3,27 @@ package gui.graphics.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
+import communication.Message;
+import communication.OfflineMessageSender;
+import communication.OnlineMessageListener;
+import communication.OnlineMessageSender;
 import gui.app.Slay;
+import roomController.Room;
 
+import javax.sound.sampled.Line;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
@@ -21,9 +32,17 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
     private final Table table;
     private final TextButton createRoomButton;
+    private final Slider playersSlider, aiSlider;
+    private final SelectBox<String> mapSelectBox;
+    private final ButtonGroup<TextButton> naturalGroup;
+    private Boolean online;
 
-    public CreateRoomMenuScreen(Slay parent, Stage stage) {
+    private HashMap<String, String> nameToFileName;
+    private HashMap<String, XmlReader.Element> nameToXml;
+
+    public CreateRoomMenuScreen(Slay parent, Stage stage, boolean online) {
         super(parent, stage, "CREATE ROOM");
+        this.online = online;
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
 
@@ -38,9 +57,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         Label playersSliderNumber = new Label("1", labelStyle);
         Label aiSliderNumber = new Label("0", labelStyle);
 
-        Slider playersSlider = new Slider(1, 6, 1, false, uiSkin);
-        playersSlider.setValue(1);
-        Slider aiSlider = new Slider(0, 5, 1, false, uiSkin);
+        playersSlider = new Slider(1, 2, 1, false, uiSkin);
+        aiSlider = new Slider(0, 1, 1, false, uiSkin);
         playersSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 playersSliderNumber.setText((int)playersSlider.getValue());
@@ -65,12 +83,19 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
         selectBoxStyle.font = textFont;
         selectBoxStyle.listStyle.font = textFont;
-        SelectBox mapSelectBox = new SelectBox(selectBoxStyle);
+        mapSelectBox = new SelectBox<>(selectBoxStyle);
 
-        ArrayList<XmlReader.Element> worldsXml = getWorldsXml();
-        Array<String> worldsNames = getWorldsName(worldsXml);
+        Array<String> worldsNames = initWorldsNames();
         mapSelectBox.setItems(worldsNames);
-        mapSelectBox.setSelected(worldsNames.get(0));
+        mapSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
+                int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
+                playersSlider.setRange(1, maxValue);
+                aiSlider.setRange(0, maxValue - 1);
+            }
+        });
 
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
@@ -78,7 +103,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         TextButton naturalOn = new TextButton("ON", textButtonStyle);
         naturalOn.setChecked(true);
 
-        ButtonGroup<TextButton> naturalGroup = new ButtonGroup<>(naturalOn, naturalOff);
+        naturalGroup = new ButtonGroup<>(naturalOn, naturalOff);
         naturalGroup.setMaxCheckCount(1);
         naturalGroup.setMinCheckCount(1);
         naturalGroup.setUncheckLast(true);
@@ -86,6 +111,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         createRoomButton = new TextButton("Create Room", textButtonStyle);
         createRoomButton.setX(stage.getWidth() - createRoomButton.getWidth());
         createRoomButton.setY(stage.getHeight() / 10);
+        createRoomButton.addListener(createRoomListener());
         stage.addActor(createRoomButton);
 
         Table scrollTable = new Table();
@@ -106,9 +132,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         scrollTable.add(new Label("Naturals Disasters", labelStyle)).align(Align.left);
         scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
         scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
-//        scrollTable.setDebug(true);
 
-        //TODO
+        //TODO COMMENT
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
         table = new Table();
@@ -118,17 +143,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
         stage.addActor(table);
 
-        mapSelectBox.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                for(XmlReader.Element xmlElement : worldsXml) {
-                    if(xmlElement.getAttribute("name") == mapSelectBox.getSelected()) {
-                        int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-                        Cell cell = scrollTable.getCell(playersSlider);
-                    }
-                }
-            }
-        });
 
     }
 
@@ -154,28 +168,57 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     public void resume() {
     }
 
-    private ArrayList<XmlReader.Element> getWorldsXml() {
-        ArrayList<XmlReader.Element> worldsXml = new ArrayList<>();
+    private Array<String> initWorldsNames() {
         FileHandle dirHandle = Gdx.files.internal("worlds");
         XmlReader xml = new XmlReader();
+        nameToFileName = new HashMap<>();
+        nameToXml = new HashMap<>();
+        Array<String> worldsNames = new Array<>();
         for(FileHandle file : dirHandle.list()) {
             if(file.extension().equals("xml")) {
-                XmlReader.Element xml_element = xml.parse(file);
-                worldsXml.add(xml_element);
+                XmlReader.Element xmlElement = xml.parse(file);
+                String worldName = xmlElement.getAttribute("name");
+                worldsNames.add(worldName);
+                nameToFileName.put(worldName, file.nameWithoutExtension());
+                nameToXml.put(worldName, xmlElement);
             }
-        }
-        return worldsXml;
-    }
-
-    private Array<String> getWorldsName(ArrayList<XmlReader.Element> worldsXml) {
-        Array<String> worldsNames = new Array<>();
-        for(XmlReader.Element xmlElement : worldsXml) {
-            worldsNames.add(xmlElement.getAttribute("name"));
         }
         return worldsNames;
     }
 
-    private void addPlayersSliderListener(Slider playersSlider) {
-        
+    private boolean isNaturalDisastersOn() {
+        TextButton button = naturalGroup.getChecked();
+        return button.getText().equals("ON");
+
+    }
+
+    private ClickListener createRoomListener() {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                LinkedBlockingQueue<Message> messagesQueue = new LinkedBlockingQueue<>();
+                String world = nameToFileName.get(mapSelectBox.getSelected());
+                InGameScreen gameScreen;
+                if (online) { //TODO
+                    OnlineMessageSender messageSender = new OnlineMessageSender();
+                    OnlineMessageListener messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
+                    messageListener.start();
+
+                } else {
+                    Room room = new Room(world, isNaturalDisastersOn(), messagesQueue);
+                    OfflineMessageSender messageSender = new OfflineMessageSender(messagesQueue);
+                    room.start();
+                    while (room.getBoard() == null) { //TODO MODIFY THIS PART
+                        try {
+                            Thread.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender);
+                    parent.changeScreen(gameScreen);
+                }
+            }
+        };
     }
 }

@@ -45,7 +45,7 @@ public class Map {
      * @param loadTmxRenderer true s'il faut charger le TmxRenderer, false sinon
      * @return Le board initialisé si loadBoard == true, null sinon
      */
-    public Board load(String worldName, boolean loadBoard, boolean loadTmxRenderer) {
+    public Board load(String worldName, boolean loadBoard, boolean loadTmxRenderer, boolean naturalDisasters) {
         XmlReader xml = new XmlReader();
         //Si l'application qui à été lancé n'est pas une application Libgdx, alors on charge une fausse application
         //Pour charger toutes les variables contenus dans Gdx.files et autres.
@@ -56,7 +56,7 @@ public class Map {
         XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
         generateTmxMap(xml_element, loadTmxRenderer);
         if(loadBoard) {
-            generateBoard(xml_element);
+            generateBoard(xml_element, naturalDisasters);
             generateDistricts();
             generateItems(xml_element);
             addWaterCells(xml_element);
@@ -111,7 +111,7 @@ public class Map {
      * Méthode qui génère le board
      * @param xmlElement l'xmlElement contenant les informations du monde
      */
-    private void generateBoard(XmlReader.Element xmlElement) {
+    private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
         Player[] players = new Player[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) { //Création des différents joueurs
@@ -119,7 +119,10 @@ public class Map {
         }
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
         int height = Integer.parseInt(xmlElement.getAttribute("height"));
-        board = new Board(width, height, players, new NaturalDisastersController(), new Shop());
+        if (naturalDisasters)
+            board = new Board(width, height, players, new NaturalDisastersController(), new Shop());
+        else
+            board = new Board(width, height, players, new Shop());
     }
 
     /**

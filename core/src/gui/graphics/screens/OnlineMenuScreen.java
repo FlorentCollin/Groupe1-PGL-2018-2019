@@ -36,7 +36,7 @@ public class OnlineMenuScreen extends SubMenuScreen{
            @Override
            public void clicked(InputEvent event, float x, float y) {
                System.out.println("Send Message CreateRoom ");
-               messageSender.send(new CreateRoomMessage("g1_World1"));
+               messageSender.send(new CreateRoomMessage("g1_World1", true));
            }
         });
         joinRoom = new TextButton("Join Room", textButtonStyle);
@@ -56,7 +56,7 @@ public class OnlineMenuScreen extends SubMenuScreen{
     public void render(float delta) {
         super.render(delta);
         if(messageListener.getBoard() != null) {
-            parent.setScreen(new InGameScreen(parent,"g1_World1", messageSender, messageListener));
+            parent.setScreen(new InGameScreen(parent,"g1_World1", messageListener.getBoard(), messageSender, messageListener));
         }
     }
 

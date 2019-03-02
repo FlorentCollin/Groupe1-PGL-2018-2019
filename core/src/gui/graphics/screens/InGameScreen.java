@@ -47,21 +47,24 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private MessageSender messageSender;
     private Room room;
 
-
-    public InGameScreen(Slay parent, String mapName, MessageSender messageSender, MessageListener messageListener) {
+    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender) {
         super(parent);
         this.messageSender = messageSender;
-        this.messageListener = messageListener;
-        board = messageListener.getBoard();
+        this.board = board;
 
+        //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
-        map.load(mapName, true,true);
+        map.load(mapName, false,true, true);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
+    }
 
+    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
+        this(parent, mapName, board, messageSender);
+        this.messageListener = messageListener;
     }
 
     @Override
@@ -71,6 +74,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         changeModifiedCells();
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
+        } else {
+            unselectCells();
         }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
@@ -186,6 +191,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.ENTER) {
             messageSender.send(new TextMessage("nextPlayer"));
+        } else if(keycode == Input.Keys.ESCAPE) {
+            parent.changeScreen(MainMenuScreen.class);
         }
         return false;
     }

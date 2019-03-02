@@ -37,9 +37,8 @@ public abstract class BasicScreen implements Screen {
         //Chargement du skin spécifique pour les boutons.
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         generateStage();
-        generateFont(stage.getWidth());
+        generateFont();
         ratio = Constants.getRatio(stage.getWidth());
-
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
     }
@@ -49,8 +48,7 @@ public abstract class BasicScreen implements Screen {
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         this.stage = stage;
         ratio = Constants.getRatio(stage.getWidth());
-        generateFont(stage.getWidth());
-
+        generateFont();
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         this.stage.draw();
     }
@@ -83,7 +81,7 @@ public abstract class BasicScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
     }
 
-    protected void generateFont(float stageWidth) {
+    protected void generateFont() {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 42;
