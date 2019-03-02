@@ -47,6 +47,9 @@ public class Board{
 		memories = new ArrayList<>();
 		memories.add(new ArrayList<>());
 		fullIn();
+		for(District district : districts) {
+			generateCapital(district);			
+		}
 	}
 	
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -59,6 +62,9 @@ public class Board{
 		memories = new ArrayList<>();
 		memories.add(new ArrayList<>());
 		fullIn();
+		for(District district : districts) {
+			generateCapital(district);			
+		}
 	}
 	
 	/**
@@ -102,6 +108,9 @@ public class Board{
 //		if(selectedCell != null && shop.getSelectedItem() != null) {
 			if(isInPossibleMove(possibleMove(selectedCell.getDistrict()), cell)) {
 				if(cell.getItem() == null) { // Si cell ne contient aucun item on peut toujours se placer dessus
+					conquerForNewItem(cell);
+				}
+				if(cell.getItem() instanceof Tree) {
 					conquerForNewItem(cell);
 				}
 				else if(isOnOwnTerritory(cell)) { // Si la cellule appartient déjà au joueur
@@ -647,6 +656,7 @@ public class Board{
 	
 	public void addDistrict(District district) {
 		districts.add(district);
+		generateCapital(district);
 	}
 
 	public ArrayList<District> getDistricts() {
@@ -767,8 +777,19 @@ public class Board{
 		for(District district : districts) {
 			if(district.getCells().size() == 0) {
 				emptyDistricts.add(district);
+				if(district.getPlayer() instanceof AI) {
+					((AI)district.getPlayer()).removeDistrict(district);
+				}
 			}
 		}
 		districts.removeAll(emptyDistricts);
+	}
+	
+	public void checkCapitals() {
+		for(District district : districts) {
+			if(district.getCapital() == null) {
+				generateCapital(district);
+			}
+		}
 	}
 }
