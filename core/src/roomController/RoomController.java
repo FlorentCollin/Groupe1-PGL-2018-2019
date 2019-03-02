@@ -27,12 +27,11 @@ public class RoomController {
     /**
      * Méthode utilisé par un client pour ouvrir une nouvelle Room
      * @param creatorClient
-     * @return
      */
-    public void createRoom(Client creatorClient, String worldName) {
+    public void createRoom(Client creatorClient, String worldName, boolean isNaturalDisastersOn) {
         //Création d'un lien vers une file de messages pour pouvoir transmettre des messages des clients vers cette room
         LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>();
-        Room room = new Room(worldName, messagesFrom, messagesToSend);
+        Room room = new Room(worldName, isNaturalDisastersOn, messagesFrom, messagesToSend);
         //Mise à jour des hashMaps
         rooms.put(creatorClient, room);
         roomQueue.put(room, messagesFrom);
@@ -63,7 +62,8 @@ public class RoomController {
     public void manageMessage(Client client, Message message) {
         if(message instanceof CreateRoomMessage) {
             System.out.println("Creating Room");
-            createRoom(client, ((CreateRoomMessage) message).getRoomName());
+            CreateRoomMessage createRoomMessage = (CreateRoomMessage) message;
+            createRoom(client, createRoomMessage.getWorldName(), createRoomMessage.isNaturalDisastersOn());
         } else if(message instanceof JoinRoomMessage) { //TODO Need refactoring
             Client aClient = rooms.keySet().iterator().next();
             Room room = rooms.get(aClient);

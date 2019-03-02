@@ -27,10 +27,14 @@ public class Room extends Thread {
         return messagesFrom;
     }
 
-    public Room(String worldName, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
+    public Room(String worldName, boolean naturalDisasters, LinkedBlockingQueue<Message> messagesFrom) {
         Map map = new Map();
-        board = map.load(worldName, true, false);
+        board = map.load(worldName, true, false, naturalDisasters);
         this.messagesFrom = messagesFrom;
+    }
+
+    public Room(String worldName, boolean naturalDisasters, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
+        this(worldName, naturalDisasters, messagesFrom);
         this.messagesToSend = messagesToSend;
     }
 
@@ -46,19 +50,21 @@ public class Room extends Thread {
                 //Récupération du message du client
                 Message message = messagesFrom.take();
                 executeMessage(message);
-                //Si le board à changé alors il faut notifier les clients des changements.
-                if(board.hasChanged()) { //TODO NEED REFACTORING when offline we don't need to send message
-                    UpdateMessage updateMessage;
-                    if(board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
-                        Cell selectedCell = board.getSelectedCell();
-                        updateMessage = new UpdateMessage(board.getDistricts(),board.getPlayers(),
-                                board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
-                    } else { //Création d'un UpdateMessage sans selectedCell
-                        updateMessage = new UpdateMessage(board.getDistricts(),
-                                board.getPlayers(), board.getActivePlayerNumber());
+                if(messagesToSend != null) {
+                    //Si le board à changé alors il faut notifier les clients des changements.
+                    if(board.hasChanged()) { //TODO NEED REFACTORING when offline we don't need to send message
+                        UpdateMessage updateMessage;
+                        if(board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
+                            Cell selectedCell = board.getSelectedCell();
+                            updateMessage = new UpdateMessage(board.getDistricts(),board.getPlayers(),
+                                    board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
+                        } else { //Création d'un UpdateMessage sans selectedCell
+                            updateMessage = new UpdateMessage(board.getDistricts(),
+                                    board.getPlayers(), board.getActivePlayerNumber());
+                        }
+                        updateMessage.setClients(clients); //Ajout des clients au message
+                        messagesToSend.put(updateMessage); //Envoie du message
                     }
-                    updateMessage.setClients(clients); //Ajout des clients au message
-                    messagesToSend.put(updateMessage); //Envoie du message
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -92,9 +98,15 @@ public class Room extends Thread {
         try {
             InitMessage initMessage = new InitMessage(board);
             initMessage.setClients(Arrays.asList(client));
-            messagesToSend.put(initMessage);
+            if(messagesToSend != null) {
+                messagesToSend.put(initMessage);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }

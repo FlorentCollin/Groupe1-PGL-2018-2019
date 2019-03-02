@@ -2,13 +2,19 @@ package communication;
 
 public class CreateRoomMessage extends Message {
 
-    private String roomName;
+    private String worldName;
+    private boolean isNaturalDisastersOn;
 
-    public CreateRoomMessage(String roomName) {
-        this.roomName = roomName;
+    public CreateRoomMessage(String worldName, boolean isNaturalDisastersOn) {
+        this.worldName = worldName;
+        this.isNaturalDisastersOn = isNaturalDisastersOn;
     }
 
-    public String getRoomName() {
-        return roomName;
+    public String getWorldName() {
+        return worldName;
+    }
+
+    public boolean isNaturalDisastersOn() {
+        return isNaturalDisastersOn;
     }
 }
