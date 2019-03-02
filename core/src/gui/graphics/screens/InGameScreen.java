@@ -1,19 +1,28 @@
 package gui.graphics.screens;
 
 
+import static gui.utils.Constants.N_TILES;
+
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+
 import gui.app.Slay;
 import gui.utils.Map;
+import gui.utils.MyMap;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
@@ -22,10 +31,6 @@ import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
-
-import java.util.ArrayList;
-
-import static gui.utils.Constants.N_TILES;
 
 public class InGameScreen extends BasicScreen implements InputProcessor {
 
@@ -42,7 +47,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
-        map = new Map();
+        map = new MyMap();
         board = map.load(mapName);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
@@ -169,21 +174,26 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         else if(keycode == Input.Keys.ESCAPE) {
         	Gdx.app.exit();
         }
+        else if(keycode == Input.Keys.P) {
+        	System.out.println("size : "+board.getPlayers().size());
+        	for(Player player : board.getPlayers()) {
+        		System.out.println(player);
+        	}
+        }
         if(board.getSelectedCell() != null) {
 	        if(keycode == Input.Keys.NUMPAD_1) {
 	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
-	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
 	        }
 	        else if(keycode == Input.Keys.NUMPAD_2) {
 	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level2), board.getSelectedCell().getDistrict());
-	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
 	        }
 	        else if(keycode == Input.Keys.NUMPAD_3) {
 	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level3), board.getSelectedCell().getDistrict());
-	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
 	        }
 	        else if(keycode == Input.Keys.NUMPAD_4) {
 	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level4), board.getSelectedCell().getDistrict());
+	        }
+	        if(board.getShop().getSelectedItem() != null) {
 	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
 	        }
         }
