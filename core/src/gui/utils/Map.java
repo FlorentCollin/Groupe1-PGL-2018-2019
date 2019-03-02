@@ -29,13 +29,13 @@ import logic.shop.Shop;
 
 public class Map {
 
-    private TiledMap map;
-    private HexagonalTiledMapRenderer tiledMapRenderer;
-    private TiledMapTileLayer cells;
-    private TiledMapTileSet tileSet;
-    private Board board;
-    private int numberOfPlayers;
-    private Constructor<?> constructor;
+    protected TiledMap map;
+    protected HexagonalTiledMapRenderer tiledMapRenderer;
+    protected TiledMapTileLayer cells;
+    protected TiledMapTileSet tileSet;
+    protected Board board;
+    protected int numberOfPlayers;
+    protected Constructor<?> constructor;
 
     public  Board load(String worldName) {
         XmlReader xml = new XmlReader();
@@ -50,7 +50,7 @@ public class Map {
         return board;
     }
     
-    private void checkAI(XmlReader.Element xmlElement) {
+    protected void checkAI(XmlReader.Element xmlElement) {
     	XmlReader.Element ais = xmlElement.getChildByName("ais");
     	for(int i = 0; i < ais.getChildCount(); i++) {
     		XmlReader.Element ai = ais.getChild(i);
@@ -74,7 +74,7 @@ public class Map {
     	}
     }
     
-    private void addWaterCells(XmlReader.Element xmlElement) {
+    protected void addWaterCells(XmlReader.Element xmlElement) {
     	XmlReader.Element waterCells = xmlElement.getChildByName("waterCells");
     	for(int i = 0; i < waterCells.getChildCount(); i++) {
     		XmlReader.Element waterCell = waterCells.getChild(i);
@@ -84,7 +84,7 @@ public class Map {
     	}
     }
     
-    private void generateTmxMap(XmlReader.Element xmlElement) {
+    protected void generateTmxMap(XmlReader.Element xmlElement) {
         String worldTmx = xmlElement.getAttribute("map");
         map = new TmxMapLoader().load("worlds/" + worldTmx + ".tmx");
         tiledMapRenderer = new HexagonalTiledMapRenderer(map);
@@ -92,7 +92,7 @@ public class Map {
         tileSet = map.getTileSets().getTileSet("hex");
     }
 
-    private void generateBoard(XmlReader.Element xmlElement) {
+    protected void generateBoard(XmlReader.Element xmlElement) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
@@ -101,7 +101,7 @@ public class Map {
         board = new Board(cells.getWidth(), cells.getHeight(), players, new NaturalDisastersController(), new Shop());
     }
 
-    private void generateDistricts() {
+    protected void generateDistricts() {
         //TODO Méthode qui génère les district dans board
         for (int i = 0; i < cells.getWidth(); i++) {
             for (int j = 0; j < cells.getHeight(); j++) {
@@ -122,7 +122,7 @@ public class Map {
     /**
      * Ajout aux districts leurs capitals respectives
      * */
-    private void checkCapitals() {
+    protected void checkCapitals() {
     	for(int i=0; i<board.getColumns(); i++) {
     		for(int j=0; j<board.getRows(); j++) {
     			if(board.getCell(i, j).getItem() instanceof Capital) {
@@ -132,7 +132,7 @@ public class Map {
     	}
     }
 
-    private void generateItems(XmlReader.Element xmlElement) {
+    protected void generateItems(XmlReader.Element xmlElement) {
         XmlReader.Element items = xmlElement.getChildByName("items");
         for (int i = 0; i < items.getChildCount(); i++) {
             XmlReader.Element item = items.getChild(i);
@@ -185,7 +185,7 @@ public class Map {
         return null;
     }
     
-    private Class<?> getStrategy(String strategy){
+    protected Class<?> getStrategy(String strategy){
     	try {
     		return Class.forName("logic.player.ai."+strategy);
     	}
