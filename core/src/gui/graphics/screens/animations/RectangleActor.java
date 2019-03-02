@@ -1,4 +1,4 @@
-package gui.utils;
+package gui.graphics.screens.animations;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

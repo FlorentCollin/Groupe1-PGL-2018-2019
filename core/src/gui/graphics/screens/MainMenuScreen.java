@@ -1,6 +1,5 @@
 package gui.graphics.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
 import gui.utils.Constants;
-import gui.utils.RectangleActor;
+import gui.graphics.screens.animations.RectangleActor;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
@@ -117,8 +116,6 @@ public class MainMenuScreen extends MenuScreen {
                 parent.dispose();
             }
         });
-
-
 
     }
 

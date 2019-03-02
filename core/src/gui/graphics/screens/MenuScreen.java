@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import gui.app.Slay;
-import gui.utils.RectangleActor;
+import gui.graphics.screens.animations.RectangleActor;
 
 /**
  * Classe abstraite, parents de tous les menus
