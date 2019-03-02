@@ -34,7 +34,7 @@ public abstract class BasicScreen implements Screen {
 
     public BasicScreen(Slay parent) {
         this.parent = parent;
-        //Chargement du skin spécifique pour les boutons.
+        //Chargement du skin spécifique pour l'interface graphique
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         generateStage();
         generateFont();
@@ -82,6 +82,7 @@ public abstract class BasicScreen implements Screen {
     }
 
     protected void generateFont() {
+        //Génération des différentes polices utilisées dans le jeu
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 42;
@@ -100,7 +101,7 @@ public abstract class BasicScreen implements Screen {
         parameter.size = 28;
         textFont = generator.generateFont(parameter);
 
-
+        //Application d'un filtre qui permet de resize et d'éviter la pixellisation
         defaultFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

@@ -21,6 +21,11 @@ public abstract class MenuScreen extends BasicScreen {
         super(parent, stage);
     }
 
+    /**
+     * Méthode qui génère le petit Titre du menu visible en haut à gauche
+     * @param name le nom du menu à afficher
+     * @return le groupe contenant le Titre du menu et le petit carré à sa gauche
+     */
     protected HorizontalGroup generateMenuNameGroup(String name) {
         Label.LabelStyle textStyle = uiSkin.get(Label.LabelStyle.class);
         textStyle.font = defaultFont;
@@ -38,6 +43,11 @@ public abstract class MenuScreen extends BasicScreen {
         return horizontalGroup;
     }
 
+    /**
+     * Méthode qui génère la flèche situé en haut à gauche d'un sous-menu pour permettre à l'utilisateur
+     * de revenir au menu précédent
+     * @return l'image contenant la flèche contenant la flèche
+     */
     protected ImageButton generateArrowButton() {
         ImageButton arrowButton = new ImageButton(uiSkin, "arrow");
         arrowButton.setTransform(true);
