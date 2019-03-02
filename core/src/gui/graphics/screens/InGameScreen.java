@@ -47,7 +47,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public InGameScreen(Slay parent, String mapName) {
         super(parent);
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
-        map = new MyMap();
+        map = new Map();
         board = map.load(mapName);
         cells = map.getCells();
         //Calcule de la grandeur de la carte
@@ -280,26 +280,36 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private void selectCells(ArrayList<Cell> cellsArray) {
         unselectCells();
         selectedCells = cellsArray;
+        int numberPlayer;
         for(Cell cell : selectedCells) {
+        	numberPlayer = -1;
+        	if(cell.getDistrict() != null) {        		
+        		numberPlayer = board.getPlayers().indexOf(cell.getDistrict().getPlayer());
+        	}
             int[] pos = board.getPosition(cell);
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
             // Récupération de la cellule dans la mapTmx
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à sélectionner.
-            tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() + N_TILES));
+            tmxCell.setTile(getSelectTile(map.getTileSet(), numberPlayer));
         }
     }
 
     private void unselectCells() {
+    	int numberPlayer = -1;
         for (Cell selectedCell : selectedCells) {
+        	if(selectedCell.getDistrict() != null) {
+        		numberPlayer = board.getPlayers().indexOf(selectedCell.getDistrict().getPlayer());
+        	}
             int[] pos = board.getPosition(selectedCell);
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(pos[0], pos[1]));
             // Récupération de la cellule dans la mapTmx
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à désélectionner.
-            tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() - N_TILES));
+            tmxCell.setTile(getTile(map.getTileSet(), numberPlayer));
+            numberPlayer = -1;
         }
         selectedCells = new ArrayList<>();
     }
@@ -316,17 +326,49 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                             playerNumber = k;
                             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
                             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
-                            if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
-                                unselectCells();
-                                tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
-                                break;
-                            }
+                            tmxCell.setTile(getTile(map.getTileSet(), playerNumber));
+//                            if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
+//                                unselectCells();
+//                                tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
+//                                
+//                                break;
+//                            }
                         }
                     }
                 }
             }
 
         }
+    }
+    
+    private TiledMapTile getSelectTile(TiledMapTileSet tileSet, int playerNumber) {
+    	TiledMapTile tile;
+    	MapProperties properties;
+    	for(int i=0; i<tileSet.size(); i++) {
+    		tile = tileSet.getTile(i);
+    		if(tile != null) {
+    			properties = tile.getProperties();
+    			if((int)properties.get("player") == playerNumber+1 && (boolean)properties.get("isSelection")) {
+    				return tile;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    private TiledMapTile getTile(TiledMapTileSet tileSet, int playerNumber) {
+    	TiledMapTile tile;
+    	MapProperties properties;
+    	for(int i=0; i<tileSet.size(); i++) {
+    		tile = tileSet.getTile(i);
+    		if(tile != null) {
+    			properties = tile.getProperties();
+    			if((int)properties.get("player") == playerNumber+1 && !(boolean)properties.get("isSelection")) {
+    				return tile;
+    			}
+    		}
+    	}
+    	return null;
     }
 
     public OffsetCoords tmxToBoardCoords(OffsetCoords tmxCoords) {
