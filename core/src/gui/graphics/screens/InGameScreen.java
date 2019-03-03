@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -18,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.google.gson.Gson;
 import communication.*;
 import gui.Hud;
 import gui.app.Slay;
@@ -26,13 +23,11 @@ import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
-import logic.board.District;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
-import logic.shop.Shop;
 import roomController.Room;
 
 import java.util.ArrayList;
@@ -52,7 +47,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private ArrayList<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
     private Hud hud;
-    private InputMultiplexer multiplexer;
 
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
@@ -79,7 +73,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         addListener(shop.soldierLvl2, new Soldier(SoldierLevel.level2));
         addListener(shop.soldierLvl3, new Soldier(SoldierLevel.level3));
         addListener(shop.soldierLvl4, new Soldier(SoldierLevel.level4));
-        multiplexer = new InputMultiplexer();
+        InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud);
         multiplexer.addProcessor(this);
         Gdx.input.setInputProcessor(multiplexer);
@@ -102,9 +96,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
-//        hud.getViewport().apply();
-//        hud.act(delta);
-//        hud.draw();
+        hud.getViewport().apply();
+        hud.act(delta);
+        hud.draw();
     }
 
     @Override
@@ -167,7 +161,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         actor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println(item);
+                messageSender.send(new ShopMessage(item));
             }
         });
     }
@@ -230,36 +224,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         } else if(keycode == Input.Keys.ESCAPE) {
             parent.changeScreen(MainMenuScreen.class);
         }
-        else if(keycode == Input.Keys.Z) {
-        	board.undo();
-        }
-        else if(keycode == Input.Keys.ESCAPE) {
-        	Gdx.app.exit();
-        }
-        else if(keycode == Input.Keys.P) {
-        	System.out.println("size : "+board.getPlayers().size());
-        	for(Player player : board.getPlayers()) {
-        		System.out.println(player);
-        	}
-        }
-        if(board.getSelectedCell() != null) {
-	        if(keycode == Input.Keys.NUMPAD_1 || keycode == Input.Keys.Z) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
-	        }
-	        else if(keycode == Input.Keys.NUMPAD_2 || keycode == Input.Keys.NUM_2) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level2), board.getSelectedCell().getDistrict());
-	        }
-	        else if(keycode == Input.Keys.NUMPAD_3 || keycode == Input.Keys.NUM_3) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level3), board.getSelectedCell().getDistrict());
-	        }
-	        else if(keycode == Input.Keys.NUMPAD_4 || keycode == Input.Keys.NUM_4) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level4), board.getSelectedCell().getDistrict());
-	        }
-	        if(board.getShop().getSelectedItem() != null) {
-	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
-	        }
-        }
-        return false;
+        return true;
     }
 
     @Override

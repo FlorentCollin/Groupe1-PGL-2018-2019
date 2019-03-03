@@ -81,7 +81,9 @@ public class Room extends Thread {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        }  else if(message instanceof TextMessage) {
+        } else if(message instanceof ShopMessage) {
+            board.setShopItem(((ShopMessage) message).getItem());
+        } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
             if(textMessage.getMessage().equals("nextPlayer")) {
                 board.nextPlayer();

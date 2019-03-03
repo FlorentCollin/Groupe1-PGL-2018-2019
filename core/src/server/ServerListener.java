@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import communication.Message;
+import gui.utils.GsonInit;
 import roomController.RoomController;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class ServerListener extends Thread{
      * @throws IOException
      */
     public ServerListener(int port, LinkedBlockingQueue<Message> messageToSend) throws IOException {
-        gson = new Gson();
+        gson = GsonInit.initGson();
         roomController = new RoomController(messageToSend);
         this.messageToSend = messageToSend;
         serverChannel = ServerSocketChannel.open(); //Ouverture du serveur

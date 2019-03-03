@@ -98,6 +98,12 @@ public class Board{
 	public void changeToWaterCell(int i, int j) {
 		board[i][j] = new WaterCell(i,j);
 	}
+
+	public void setShopItem(Item item) {
+		if(selectedCell != null) {
+			shop.setSelectedItem(item, selectedCell.getDistrict());
+		}
+	}
 	
 	/**
 	 * Permet de placer un item sur une cellule du plateau
@@ -393,6 +399,7 @@ public class Board{
 	    hasChanged = true;
 		checkDistricts();
 		checkWinner();
+		selectedCell = null;
 		if(winner == null) {
 			memories.add(new ArrayList<Memory>());
 			shop.removeSelection();
@@ -800,15 +807,6 @@ public class Board{
 	    return hasChanged;
     }
 
-    public District getDistrictById(int id) {
-        for(District district : districts) {
-            if(district.getId() == id) {
-                return district;
-            }
-        }
-        return null;
-    }
-
     public void updateBoard(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {
         this.districts = districts;
         this.players = players;
@@ -824,20 +822,5 @@ public class Board{
                 }
             }
         }
-    }
-
-
-    public Object getObject(int id, Class<?> className) {
-        if(className.equals(District.class)) {
-            return getDistrictById(id);
-        }
-        return null;
-    }
-
-    public Object getObject(int x, int y, Class<?> className) {
-        if(className.equals(Cell.class)) {
-            return getCell(x, y);
-        }
-        return null;
     }
 }

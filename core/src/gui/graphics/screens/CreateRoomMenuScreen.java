@@ -33,9 +33,12 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
     private final Table table;
     private final TextButton createRoomButton;
-    private final Slider playersSlider, aiSlider;
+    private final Slider aiSlider;
     private final SelectBox<String> mapSelectBox;
     private final ButtonGroup<TextButton> naturalGroup;
+    private Table scrollTable;
+    private ArrayList<Label> iaNames = new ArrayList<>();
+    private ArrayList<SelectBox<String>> iaStrat = new ArrayList<>();
     private Boolean online;
 
     private HashMap<String, String> nameToFileName;
@@ -55,29 +58,12 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         mapName.appendText("name of the room");
 
 
-        Label playersSliderNumber = new Label("1", labelStyle);
         Label aiSliderNumber = new Label("0", labelStyle);
 
-        playersSlider = new Slider(1, 2, 1, false, uiSkin);
         aiSlider = new Slider(0, 1, 1, false, uiSkin);
-        playersSlider.addListener(new ChangeListener() {
-            public void changed(ChangeEvent event, Actor actor) {
-                playersSliderNumber.setText((int)playersSlider.getValue());
-                //On change le PlayerSlider si le nombre de players
-                // et le nombre d'ia est supérieur au nombre max de joueurs
-                if(aiSlider.getValue() + playersSlider.getValue() > playersSlider.getMaxValue()) {
-                    aiSlider.setValue(aiSlider.getValue()-1);
-                }
-            }
-        });
         aiSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 aiSliderNumber.setText((int)aiSlider.getValue());
-                //On change le PlayerSlider si le nombre de players
-                // et le nombre d'ia est supérieur au nombre max de joueurs
-                if(playersSlider.getValue() + aiSlider.getValue() > playersSlider.getMaxValue()) {
-                    playersSlider.setValue(playersSlider.getValue()-1);
-                }
             }
         });
 
@@ -113,25 +99,22 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         createRoomButton.addListener(createRoomListener());
         stage.addActor(createRoomButton);
 
-        Table scrollTable = new Table();
+        scrollTable = new Table();
         scrollTable.add(new Label("Name", labelStyle)).align(Align.left);
         scrollTable.add(mapName).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
         scrollTable.add(new Label("Map", labelStyle)).align(Align.left);
         scrollTable.add(mapSelectBox).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
-        scrollTable.add(new Label("Numbers of Players", labelStyle)).align(Align.left);
-        scrollTable.add(playersSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
-        scrollTable.add(playersSliderNumber).pad(PAD).align(Align.left);
+        scrollTable.add(new Label("Naturals Disasters", labelStyle)).align(Align.left);
+        scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
+        scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
         scrollTable.row();
         scrollTable.add(new Label("Numbers of AI", labelStyle)).align(Align.left);
         scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
         scrollTable.add(aiSliderNumber).pad(PAD).align(Align.left);
         scrollTable.row();
-        scrollTable.add(new Label("Naturals Disasters", labelStyle)).align(Align.left);
-        scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
-        scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
-
+        addIA();
         //TODO COMMENT
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
@@ -140,8 +123,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
         table.add(scroller).fillX().expand().align(Align.topLeft);
         stage.addActor(table);
-
-
     }
 
     @Override
@@ -223,7 +204,15 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private void changeSliderSize() {
         XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
         int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-        playersSlider.setRange(1, maxValue);
         aiSlider.setRange(0, maxValue - 1);
+    }
+
+    private void addIA() {
+        Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle.font = defaultFont;
+        Label iaName = new Label("AI#" + (iaNames.size()+1), labelStyle);
+        iaNames.add(iaName);
+        scrollTable.add(iaName).align(Align.left);
+        scrollTable.row();
     }
 }
