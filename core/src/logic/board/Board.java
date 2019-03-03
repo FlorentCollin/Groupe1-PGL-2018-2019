@@ -687,6 +687,7 @@ public class Board{
 	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
 	 * */
 	public void play(Cell cell) {
+		hasChanged = true;
 		if(selectedCell != null) {
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
