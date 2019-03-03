@@ -33,5 +33,5 @@
     	<ai soldierNumber="2" strategy="RandomStrategy" />
     	<ai soldierNumber="1" strategy="RandomStrategy" />
     </ais>
-    
+
 </world>

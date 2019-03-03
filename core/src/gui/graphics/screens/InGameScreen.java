@@ -3,18 +3,24 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.google.gson.Gson;
 import communication.*;
+import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
@@ -26,6 +32,7 @@ import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
+import logic.shop.Shop;
 import roomController.Room;
 
 import java.util.ArrayList;
@@ -44,6 +51,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private TextureAtlas itemsSkin;
     private ArrayList<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
+    private Hud hud;
+    private InputMultiplexer multiplexer;
 
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
@@ -55,7 +64,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super(parent);
         this.messageSender = messageSender;
         this.board = board;
-
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
@@ -64,6 +72,17 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
+
+        hud = new Hud(this, itemsSkin);
+        Hud.Shop shop = hud.getShop();
+        addListener(shop.soldierLvl1, new Soldier(SoldierLevel.level1));
+        addListener(shop.soldierLvl2, new Soldier(SoldierLevel.level2));
+        addListener(shop.soldierLvl3, new Soldier(SoldierLevel.level3));
+        addListener(shop.soldierLvl4, new Soldier(SoldierLevel.level4));
+        multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(hud);
+        multiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
@@ -74,7 +93,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     @Override
     public void render(float delta) {
         super.render(delta);
-        camera.update();
         changeModifiedCells();
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
@@ -84,11 +102,17 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
+//        hud.getViewport().apply();
+//        hud.act(delta);
+//        hud.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
+        hud.getViewport().update(width, height, true);
+        hud.getBatch().setProjectionMatrix(hud.getCamera().combined);
+
     }
 
     private void renderItems() {
@@ -137,7 +161,15 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.update();
         stage = new Stage(fillViewport);
-        Gdx.input.setInputProcessor(this);
+    }
+
+    private void addListener(Actor actor, Item item) {
+        actor.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println(item);
+            }
+        });
     }
 
     private Vector3 getMouseLoc() {

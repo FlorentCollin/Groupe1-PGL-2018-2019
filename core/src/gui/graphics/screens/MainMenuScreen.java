@@ -56,7 +56,7 @@ public class MainMenuScreen extends MenuScreen {
         //Création du rectangle qui apparait en dessous des bouttons lors que
         // la souris de l'utilisateur se trouve sur un boutton
         underlineActor = new RectangleActor();
-        underlineActor.setSize(0, 10 * Constants.getRatio(stage.getWidth()));
+        underlineActor.setSize(0, 10 * Constants.getRatioY(stage.getHeight()));
         underlineActor.setColor(Color.WHITE);
         stage.addActor(underlineActor);
 

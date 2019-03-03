@@ -2,6 +2,7 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -90,12 +91,10 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         mapSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
-                int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-                playersSlider.setRange(1, maxValue);
-                aiSlider.setRange(0, maxValue - 1);
+                changeSliderSize();
             }
         });
+        changeSliderSize();
 
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
@@ -136,11 +135,10 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         //TODO COMMENT
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
-        table = new Table();
+        table = new Table(uiSkin);
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
         table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
         table.add(scroller).fillX().expand().align(Align.topLeft);
-
         stage.addActor(table);
 
 
@@ -220,5 +218,12 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 }
             }
         };
+    }
+
+    private void changeSliderSize() {
+        XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
+        int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
+        playersSlider.setRange(1, maxValue);
+        aiSlider.setRange(0, maxValue - 1);
     }
 }
