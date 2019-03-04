@@ -94,8 +94,10 @@ public abstract class AbstractStrategy implements Strategy {
 	protected void buy(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
 		SoldierLevel level = bestSoldier(fromCell);
-		board.getShop().setSelectedItem(new Soldier(level), fromCell.getDistrict());
-		board.play(toCell);
+		if(level != null) {
+			board.getShop().setSelectedItem(new Soldier(level), fromCell.getDistrict());
+			board.play(toCell);
+		}
 	}
 	
 	private SoldierLevel bestSoldier(Cell cell) {
