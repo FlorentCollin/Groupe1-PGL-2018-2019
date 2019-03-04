@@ -19,7 +19,7 @@ public class Room extends Thread {
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
     private ArrayList<Client> clients = new ArrayList<>();
-    private Board board;
+    private volatile Board board;
 
     private AtomicBoolean running = new AtomicBoolean(false);
 

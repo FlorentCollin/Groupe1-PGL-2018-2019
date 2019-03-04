@@ -25,7 +25,7 @@ public class Board{
 	private ArrayList<District> districts;
 	private Shop shop;
 	private NaturalDisastersController naturalDisastersController;
-	private Cell selectedCell, firstCell;
+	private volatile Cell selectedCell, firstCell;
 	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
 	private ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
     private boolean hasChanged;
@@ -176,7 +176,7 @@ public class Board{
 	 * Permet de déplacer un item d'une cellule à l'autre
 	 * @param toCell la cellule de destination
 	 * */
-	public void move(Cell toCell) {
+	public synchronized void move(Cell toCell) {
 //		if(selectedCell != null && selectedCell.getItem() != null && selectedCell.getItem().getMode().isMovable() && selectedCell.getItem().canMove()) {
 		if(selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {//Il faut vérifier que l'item de la cellule est déplaçable et qu'il peut encore être déplacé
 			if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
@@ -198,7 +198,7 @@ public class Board{
 					if(toCell.getItem() instanceof Capital) {
 						generateCapital(toCell.getDistrict());
 						conquer(toCell);
-					} else if(toCell.getItem() instanceof Tree || toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
+					} else if(toCell.getItem() instanceof Tree || (toCell.getItem().getLevel() != null && toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0)){
 						conquer(toCell);
 					}
 				}
@@ -280,12 +280,12 @@ public class Board{
 	 * @param cell la cellule où se trouve l'item
 	 * @return les cellules sur lesquelles peut se déplacer l'item
 	 * */
-	public ArrayList<Cell> possibleMove(Cell cell) {
+	public synchronized ArrayList<Cell> possibleMove(Cell cell) {
 		ArrayList<Cell> possible = new ArrayList<>();
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
-			for (int i = 0; i < cell.getItem().getMaxMove() - 1; i++) {
+			for (int i = 0; i < cell.getItem().getMaxMove(); i++) {
 				subAround.clear();
 				for (Cell c : around) {
 					if (c.getDistrict() == cell.getDistrict() && (c.getItem() == null
@@ -294,6 +294,8 @@ public class Board{
 						subAround.addAll(getNeighbors(c));
 					}
 				}
+				if(cell.getItem() == null)
+				    break;
 				around.addAll(subAround);
 			}
 			for (Cell c : around) {
@@ -314,7 +316,7 @@ public class Board{
 	 * @param district le district d'où le soldat a été acheté
 	 * @return les cellules sur lesquelles peut être placé le nouvel item
 	 * */
-	public ArrayList<Cell> possibleMove(District district){
+	public synchronized ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<>();
 		for(Cell c : district.getCells()) {
 			if(possible.indexOf(c) == -1) {
@@ -695,7 +697,7 @@ public class Board{
 	 * Permet de jouer un tour
 	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
 	 * */
-	public void play(Cell cell) {
+	public synchronized void play(Cell cell) {
 		if(selectedCell != null) {
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);

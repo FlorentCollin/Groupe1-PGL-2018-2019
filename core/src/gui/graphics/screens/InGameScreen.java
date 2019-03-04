@@ -47,7 +47,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private float worldHeight;
     private TiledMapTileLayer cells;
     private TiledMapTileLayer selectedLayer;
-    private volatile Board board;
+    private Board board;
     private TextureAtlas itemsSkin;
     private ArrayList<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
@@ -94,6 +94,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public void render(float delta) {
         super.render(delta);
         changeModifiedCells();
+
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
         }
