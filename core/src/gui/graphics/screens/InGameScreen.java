@@ -3,24 +3,28 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.google.gson.Gson;
 import communication.*;
+import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
-import logic.board.District;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
@@ -29,6 +33,8 @@ import logic.player.Player;
 import roomController.Room;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static gui.utils.Constants.N_TILES;
@@ -40,10 +46,12 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private float worldWith; // ?
     private float worldHeight;
     private TiledMapTileLayer cells;
+    private TiledMapTileLayer selectedLayer;
     private volatile Board board;
     private TextureAtlas itemsSkin;
     private ArrayList<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
+    private Hud hud;
 
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
@@ -55,15 +63,26 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super(parent);
         this.messageSender = messageSender;
         this.board = board;
-
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map();
         map.load(mapName, false, true, true);
         cells = map.getCells();
+        selectedLayer = map.getSelectedCells();
         //Calcule de la grandeur de la carte
         worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
+
+        hud = new Hud(this, itemsSkin);
+        Hud.Shop shop = hud.getShop();
+        addListener(shop.soldierLvl1, new Soldier(SoldierLevel.level1));
+        addListener(shop.soldierLvl2, new Soldier(SoldierLevel.level2));
+        addListener(shop.soldierLvl3, new Soldier(SoldierLevel.level3));
+        addListener(shop.soldierLvl4, new Soldier(SoldierLevel.level4));
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(hud);
+        multiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
@@ -74,21 +93,24 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     @Override
     public void render(float delta) {
         super.render(delta);
-        camera.update();
         changeModifiedCells();
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
-        } else {
-            unselectCells();
         }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
+        hud.getViewport().apply();
+        hud.act(delta);
+        hud.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
+        hud.getViewport().update(width, height, true);
+        hud.getBatch().setProjectionMatrix(hud.getCamera().combined);
+
     }
 
     private void renderItems() {
@@ -137,7 +159,15 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.update();
         stage = new Stage(fillViewport);
-        Gdx.input.setInputProcessor(this);
+    }
+
+    private void addListener(Actor actor, Item item) {
+        actor.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(item));
+            }
+        });
     }
 
     private Vector3 getMouseLoc() {
@@ -198,36 +228,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         } else if(keycode == Input.Keys.ESCAPE) {
             parent.changeScreen(MainMenuScreen.class);
         }
-        else if(keycode == Input.Keys.Z) {
-        	board.undo();
-        }
-        else if(keycode == Input.Keys.ESCAPE) {
-        	Gdx.app.exit();
-        }
-        else if(keycode == Input.Keys.P) {
-        	System.out.println("size : "+board.getPlayers().size());
-        	for(Player player : board.getPlayers()) {
-        		System.out.println(player);
-        	}
-        }
-        if(board.getSelectedCell() != null) {
-	        if(keycode == Input.Keys.NUMPAD_1 || keycode == Input.Keys.Z) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
-	        }
-	        else if(keycode == Input.Keys.NUMPAD_2 || keycode == Input.Keys.NUM_2) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level2), board.getSelectedCell().getDistrict());
-	        }
-	        else if(keycode == Input.Keys.NUMPAD_3 || keycode == Input.Keys.NUM_3) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level3), board.getSelectedCell().getDistrict());
-	        }
-	        else if(keycode == Input.Keys.NUMPAD_4 || keycode == Input.Keys.NUM_4) {
-	        	board.getShop().setSelectedItem(new Soldier(SoldierLevel.level4), board.getSelectedCell().getDistrict());
-	        }
-	        if(board.getShop().getSelectedItem() != null) {
-	        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
-	        }
-        }
-        return false;
+        return true;
     }
 
     @Override
@@ -275,8 +276,10 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 	// Ne s'applique que si la case appartient au joueur
                 	// Ainsi il voit directement avec quelles cases il peut interagir
                     if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                        cells.setOpacity(0.7f);
                         selectCells(cell.getDistrict().getCells());
                     } else {
+                        cells.setOpacity(1f);
                         unselectCells();
                     }
                 }
@@ -309,10 +312,11 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         for(Cell cell : selectedCells) {
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
-            // Récupération de la cellule dans la mapTmx
+            // Récupération de la cellule dans la
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+            TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à sélectionner.
-            tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() + N_TILES));
+            tmxSelectedCell.setTile(map.getTileSetSelected().getTile(tmxCell.getTile().getId()+N_TILES));
         }
     }
 
@@ -321,9 +325,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(selectedCell.getX(),selectedCell.getY()));
             // Récupération de la cellule dans la mapTmx
-            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
-            // On change la tile (l'image) de la cellule à désélectionner.
-            tmxCell.setTile(map.getTileSet().getTile(tmxCell.getTile().getId() - N_TILES));
+            TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
+            // On change la tile (l'image) de la cellule à sélectionner.
+            tmxSelectedCell.setTile(null);
         }
         selectedCells = new ArrayList<>();
     }
@@ -341,7 +345,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
                             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                             if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
-                                unselectCells();
                                 tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
                                 break;
                             }

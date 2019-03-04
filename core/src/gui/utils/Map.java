@@ -37,7 +37,9 @@ public class Map {
     protected TiledMap map;
     protected HexagonalTiledMapRenderer tiledMapRenderer;
     protected TiledMapTileLayer cells;
+    protected TiledMapTileLayer selectedCells;
     protected TiledMapTileSet tileSet;
+    protected TiledMapTileSet tileSetSelected;
     protected Board board;
     protected int numberOfPlayers;
     protected Constructor<?> constructor;
@@ -133,7 +135,15 @@ public class Map {
             tiledMapRenderer = new HexagonalTiledMapRenderer(map);
         }
         cells = (TiledMapTileLayer) map.getLayers().get("background"); //cellules
+        selectedCells = (TiledMapTileLayer) map.getLayers().get("selectedTiles");
         tileSet = map.getTileSets().getTileSet("hex"); //le tileset des hexagones
+        tileSetSelected = map.getTileSets().getTileSet("hexSelected");
+
+        for (int i = 0; i < selectedCells.getWidth(); i++) {
+            for (int j = 0; j < selectedCells.getHeight(); j++) {
+                selectedCells.setCell(i,j, new TiledMapTileLayer.Cell());
+            }
+        }
     }
 
     /**
@@ -269,5 +279,13 @@ public class Map {
 
     public TiledMapTileLayer getCells() {
         return cells;
+    }
+
+    public TiledMapTileLayer getSelectedCells() {
+        return selectedCells;
+    }
+
+    public TiledMapTileSet getTileSetSelected() {
+        return tileSetSelected;
     }
 }

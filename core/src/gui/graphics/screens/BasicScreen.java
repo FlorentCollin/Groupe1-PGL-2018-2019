@@ -34,11 +34,11 @@ public abstract class BasicScreen implements Screen {
 
     public BasicScreen(Slay parent) {
         this.parent = parent;
-        //Chargement du skin spécifique pour les boutons.
+        //Chargement du skin spécifique pour l'interface graphique
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         generateStage();
         generateFont();
-        ratio = Constants.getRatio(stage.getWidth());
+        ratio = Constants.getRatioX(stage.getWidth());
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
     }
@@ -47,7 +47,7 @@ public abstract class BasicScreen implements Screen {
         this.parent = parent;
         uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         this.stage = stage;
-        ratio = Constants.getRatio(stage.getWidth());
+        ratio = Constants.getRatioX(stage.getWidth());
         generateFont();
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         this.stage.draw();
@@ -57,6 +57,7 @@ public abstract class BasicScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(16/255,16/255f,16/255f,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.getViewport().apply();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
     }
@@ -82,6 +83,7 @@ public abstract class BasicScreen implements Screen {
     }
 
     protected void generateFont() {
+        //Génération des différentes polices utilisées dans le jeu
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 42;
@@ -100,7 +102,7 @@ public abstract class BasicScreen implements Screen {
         parameter.size = 28;
         textFont = generator.generateFont(parameter);
 
-
+        //Application d'un filtre qui permet de resize et d'éviter la pixellisation
         defaultFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -116,5 +118,25 @@ public abstract class BasicScreen implements Screen {
     @Override
     public void resume() {
 
+    }
+
+    public BitmapFont getDefaultFont() {
+        return defaultFont;
+    }
+
+    public BitmapFont getDefaultFontTitle() {
+        return defaultFontTitle;
+    }
+
+    public BitmapFont getDefaultFontItalic() {
+        return defaultFontItalic;
+    }
+
+    public BitmapFont getTextFont() {
+        return textFont;
+    }
+
+    public Skin getUiSkin() {
+        return uiSkin;
     }
 }

@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class UserShortcuts {
 
     private HashMap<String, Integer[]> shortcuts;
-    private String[] shortcutsName = new String[] {"Move cam up", "Move cam down", "Move came left", "Move came right",
+    private String[] shortcutsName = new String[] {"Move camera up", "Move camera down", "Move camera left", "Move camera right",
                                                     "Menu", "End turn"};
 
     public UserShortcuts() {
