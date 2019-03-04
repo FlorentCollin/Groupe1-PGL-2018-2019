@@ -13,12 +13,18 @@ import logic.player.Player;
 public class District {
 	private Player player;
 	private int gold;
-	private Cell capital;
+	private transient Cell capital;
 	private ArrayList<Cell> cells;
+
+	public static int globalId = 0;
+	private int id;
 	
 	public District(Player player) {
-		cells = new ArrayList<Cell>();
+		cells = new ArrayList<>();
 		this.player = player;
+
+		globalId++;
+		id = globalId;
 	}
 	
 	public void addCell(Cell cell) {
@@ -26,7 +32,8 @@ public class District {
 			cells.add(cell);
 		}
 	}
-	
+
+	//TODO supprimer cette méthode
 	/**
 	 * Permet d'ajouter au district toutes les cellules d'un autre district
 	 * @param district le district dont on souhaite obtenir les cellules
@@ -48,7 +55,7 @@ public class District {
 	}
 	
 	public void addCapital(Cell cell) {
-		if(cells.indexOf(cell) >= 0) { // On v�rifie que la cellule appartient bien au district
+		if(cells.indexOf(cell) >= 0) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
 		}
@@ -105,5 +112,8 @@ public class District {
 	public Cell getCapital() {
 		return capital;
 	}
-	
+
+    public int getId() {
+        return id;
+    }
 }

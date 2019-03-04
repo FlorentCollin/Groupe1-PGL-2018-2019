@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Classe qui gère les paramètres utilisateurs. Si l'utilisateur lance lance l'application pour la première fois
+ * Classe qui gère les raccourcis utilisateurs. Si l'utilisateur lance lance l'application pour la première fois
  * des paramètres par défaut lui son attribués
  */
 public class UserShortcuts {
 
     private HashMap<String, Integer[]> shortcuts;
-    private String[] shortcutsName = new String[] {"Move cam up", "Move cam down", "Move came left", "Move came right",
+    private String[] shortcutsName = new String[] {"Move camera up", "Move camera down", "Move camera left", "Move camera right",
                                                     "Menu", "End turn"};
 
     public UserShortcuts() {
         shortcuts = new HashMap<>();
+        //Raccourcis par défaut
         shortcuts.put(shortcutsName[0], new Integer[]{Input.Keys.W, Input.Keys.Z});
         shortcuts.put(shortcutsName[1], new Integer[]{Input.Keys.S, null});
         shortcuts.put(shortcutsName[2], new Integer[]{Input.Keys.Q, Input.Keys.A});

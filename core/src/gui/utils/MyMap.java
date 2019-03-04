@@ -29,18 +29,18 @@ public class MyMap extends Map{
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public Board load(String worldName) {
-		XmlReader xml = new XmlReader();
-		XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
-		generateTmxMap(xml_element);
-		players = new ArrayList<>();
-		board = new Board(cells.getWidth(), cells.getHeight(), players, new NaturalDisastersController(), new Shop());
-		generate(xml_element);
-		generateItems(xml_element);
-		board.checkCapitals();
-		return board;
-	}
+//	@Override
+//	public Board load(String worldName) {
+//		XmlReader xml = new XmlReader();
+//		XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
+//		generateTmxMap(xml_element);
+//		players = new ArrayList<>();
+//		board = new Board(cells.getWidth(), cells.getHeight(), players, new NaturalDisastersController(), new Shop());
+//		generate(xml_element);
+//		generateItems(xml_element);
+//		board.checkCapitals();
+//		return board;
+//	}
 	
 //	private void generateTmxMap(XmlReader.Element xmlElement) {
 //        String worldTmx = xmlElement.getAttribute("map");
