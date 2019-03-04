@@ -706,6 +706,7 @@ public class Board{
 				move(cell);
 			}
 			selectedCell = null;
+			shop.removeSelection();
 		}
 		else if(cell != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() == players.get(activePlayer)){
 			selectedCell = cell;
