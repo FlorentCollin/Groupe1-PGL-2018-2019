@@ -328,7 +328,7 @@ public class Board{
 	 * @param item l'item que l'on souhaite placer
 	 * @return la liste des cellules autour de cell pour lesquels c'est possible
 	 * */
-	private ArrayList<Cell> getNeighbors(Cell cell){
+	public ArrayList<Cell> getNeighbors(Cell cell){
 		ArrayList<Cell> around = new ArrayList<Cell>();
 		int x = getPosition(cell)[0];
 		int y = getPosition(cell)[1];
