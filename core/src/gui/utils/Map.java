@@ -65,7 +65,6 @@ public class Map {
             generateBoard(xml_element, naturalDisasters);
             generateDistricts();
             generateItems(xml_element);
-            addWaterCells(xml_element);
             checkAI(xml_element);
 
         }
@@ -108,16 +107,6 @@ public class Map {
 				e.printStackTrace();
 			}
     		board.changeToAI(nPlayer, strategy);
-    	}
-    }
-    
-    protected void addWaterCells(XmlReader.Element xmlElement) {
-    	XmlReader.Element waterCells = xmlElement.getChildByName("waterCells");
-    	for(int i = 0; i < waterCells.getChildCount(); i++) {
-    		XmlReader.Element waterCell = waterCells.getChild(i);
-    		int x = Integer.parseInt(waterCell.getAttribute("x"));
-    		int y = Integer.parseInt(waterCell.getAttribute("y"));
-    		board.changeToWaterCell(x, y);
     	}
     }
 
@@ -201,33 +190,31 @@ public class Map {
             //Récupération de la cellule où il faut placer l'item
             Cell cell = board.getCell(Integer.parseInt(item.getAttribute("x")),
                     Integer.parseInt(item.getAttribute("y")));
-            if(cell.getItem() == null) {
-	            try {
-	                //Cas spécifique le constructeur de base ne suffit pas. Un soldat doit avoir un level
-	                if(itemClass.equals(Soldier.class)) {
-	                    Constructor<?> constructor = itemClass.getConstructor(SoldierLevel.class);
-	                    int soldierLevel = Integer.parseInt(item.getAttribute("level"));
-	                    Item newItem = null;
-	                    newItem = (Item) constructor.newInstance(SoldierLevel.values()[soldierLevel-1]);
-	                    cell.setItem(newItem);
-	                } else {
-	                    Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
-	                    cell.setItem((Item) constructor.newInstance());
-	                }
-	                if(itemClass.equals(Capital.class)) {
-	                    cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
-	                    cell.getDistrict().addCapital(cell);
-	                }
-	                //TODO
-	            } catch (InstantiationException e) {
-	                e.printStackTrace();
-	            } catch (IllegalAccessException e) {
-	                e.printStackTrace();
-	            } catch (InvocationTargetException e) {
-	                e.printStackTrace();
-	            } catch (NoSuchMethodException e) {
-	                e.printStackTrace();
-	            }
+            try {
+                //Cas spécifique le constructeur de base ne suffit pas. Un soldat doit avoir un level
+                if(itemClass.equals(Soldier.class)) {
+                    Constructor<?> constructor = itemClass.getConstructor(SoldierLevel.class);
+                    int soldierLevel = Integer.parseInt(item.getAttribute("level"));
+                    Item newItem = null;
+                    newItem = (Item) constructor.newInstance(SoldierLevel.values()[soldierLevel-1]);
+                    cell.setItem(newItem);
+                } else {
+                    Constructor<?> constructor = itemClass.getConstructors()[0]; //Constructeur de base
+                    cell.setItem((Item) constructor.newInstance());
+                }
+                if(itemClass.equals(Capital.class)) {
+                    cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
+                    cell.getDistrict().addCapital(cell);
+                }
+                //TODO
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
             }
         }
     }

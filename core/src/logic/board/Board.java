@@ -667,7 +667,6 @@ public class Board{
 	
 	public void addDistrict(District district) {
 		districts.add(district);
-		generateCapital(district);
 	}
 
 	public ArrayList<District> getDistricts() {
@@ -708,7 +707,7 @@ public class Board{
 			}
 			selectedCell = null;
 		}
-		else if(cell.getDistrict() != null && cell.getDistrict().getPlayer() == players.get(activePlayer)){
+		else if(cell != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() == players.get(activePlayer)){
 			selectedCell = cell;
 		}
 	}
