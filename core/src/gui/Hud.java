@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import gui.graphics.screens.BasicScreen;
 import gui.utils.Constants;
-import logic.board.District;
 
 /**
  * Classe représentant l'HUD in game qui contient notamment le shop ainsi que le nom du joueur actif.
@@ -28,6 +27,8 @@ public class Hud extends Stage {
         this.uiSkin = parent.getUiSkin();
         this.itemSkin = itemSkin;
         shop = new Shop();
+        DistrictGold districtGold = new DistrictGold();
+        districtGold.addActorsToStage(this);
         shop.addActorsToStage(this);
     }
 
@@ -82,9 +83,18 @@ public class Hud extends Stage {
     }
 
     public class DistrictGold {
-        
-        public DistrictGold() {
 
+        private final Image gold;
+
+        public DistrictGold() {
+            gold = new Image(itemSkin.createSprite("Coins"));
+            gold.setScale(0.25f);
+        }
+
+        public void addActorsToStage(Hud hud) {
+            gold.setPosition(hud.getWidth() / 2, hud.getHeight() - gold.getHeight()*gold.getScaleY());
+            gold.setDebug(true);
+            hud.addActor(gold);
         }
     }
 }
