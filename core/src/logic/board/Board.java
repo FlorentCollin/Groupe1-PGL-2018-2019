@@ -285,7 +285,7 @@ public class Board{
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
-			for (int i = 0; i < cell.getItem().getMaxMove() - 1; i++) {
+			for (int i = 0; i < cell.getItem().getMaxMove(); i++) {
 				subAround.clear();
 				for (Cell c : around) {
 					if (c.getDistrict() == cell.getDistrict() && (c.getItem() == null
@@ -303,7 +303,8 @@ public class Board{
 					}
 				}
 			}
-		} else {
+		} 
+		else {
 		    possible.add(cell);
         }
 		return possible;
@@ -376,7 +377,7 @@ public class Board{
 			if(!cell.getItem().isImprovable()) {
 				return true;
 			}
-			else if(cell.getItem().getLevel().compareTo(item) <= 0) {
+			else if(item != null && cell.getItem().getLevel().compareTo(item) <= 0) {
 				return true;
 			}
 		}
