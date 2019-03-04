@@ -4,6 +4,7 @@ package gui.graphics.screens;
 import static gui.utils.Constants.N_TILES;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.Gdx;
@@ -54,7 +55,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private TiledMapTileLayer selectedLayer;
     private Board board;
     private TextureAtlas itemsSkin;
-    private ArrayList<Cell> selectedCells = new ArrayList<>();
+    private List<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
     private Hud hud;
 
@@ -80,10 +81,26 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
         hud = new Hud(this, itemsSkin);
         Hud.Shop shop = hud.getShop();
-        addListener(shop.soldierLvl1, new Soldier(SoldierLevel.level1));
-        addListener(shop.soldierLvl2, new Soldier(SoldierLevel.level2));
-        addListener(shop.soldierLvl3, new Soldier(SoldierLevel.level3));
-        addListener(shop.soldierLvl4, new Soldier(SoldierLevel.level4));
+        shop.soldierLvl1.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level1)));}
+        });
+        shop.soldierLvl2.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level2)));}
+        });
+        shop.soldierLvl3.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level3)));}
+        });
+        shop.soldierLvl4.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level4)));}
+        });
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud);
         multiplexer.addProcessor(this);
@@ -170,14 +187,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         stage = new Stage(fillViewport);
     }
 
-    private void addListener(Actor actor, Item item) {
-        actor.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                messageSender.send(new ShopMessage(item));
-            }
-        });
-    }
 
     private Vector3 getMouseLoc() {
         mouseLoc.x = Gdx.input.getX();
@@ -285,9 +294,11 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 	// Ne s'applique que si la case appartient au joueur
                 	// Ainsi il voit directement avec quelles cases il peut interagir
                     if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                        hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
                         cells.setOpacity(0.9f);
                         selectCells(cell.getDistrict().getCells());
                     } else {
+                        hud.getDistrictInfo().goldLabel.setText("");
                         cells.setOpacity(1f);
                         unselectCells();
                     }
@@ -315,7 +326,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     }
 
     //TODO Reformater le code pour ne faire plus qu'une seule méthode
-    private void selectCells(ArrayList<Cell> cellsArray) {
+    private void selectCells(List<Cell> cellsArray) {
         unselectCells();
         selectedCells = cellsArray;
         int numberPlayer;

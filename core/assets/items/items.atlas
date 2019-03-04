@@ -11,7 +11,7 @@ Capital
   orig: 256, 222
   offset: 0, 0
   index: -1
-Coins
+Coin
   rotate: false
   xy: 2, 226
   size: 256, 256

@@ -1,54 +1,61 @@
 
 uiskin.png
-size: 512,512
+size: 1024,512
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 arrow
   rotate: false
-  xy: 434, 419
+  xy: 488, 353
   size: 75, 75
   orig: 75, 75
   offset: 0, 0
   index: -1
 cursor
   rotate: false
-  xy: 434, 397
+  xy: 482, 8
   size: 4, 20
   orig: 4, 20
   offset: 0, 0
   index: -1
 default-button-checked
   rotate: false
-  xy: 103, 328
+  xy: 332, 297
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-uncheck
   rotate: false
-  xy: 103, 440
+  xy: 1, 374
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
+info-background
+  rotate: false
+  xy: 1, 430
+  size: 668, 80
+  orig: 668, 80
+  offset: 0, 0
+  index: -1
 selectBox
   rotate: false
-  xy: 103, 216
+  xy: 332, 241
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-background
   rotate: false
-  xy: 103, 384
+  xy: 1, 318
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-selection
   rotate: false
-  xy: 103, 272
+  xy: 1, 262
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
@@ -62,21 +69,21 @@ selection
   index: -1
 shop-background
   rotate: false
-  xy: 1, 14
+  xy: 671, 30
   size: 100, 480
   orig: 100, 480
   offset: 0, 0
   index: -1
 slider
   rotate: false
-  xy: 1, 4
+  xy: 1, 20
   size: 453, 8
   orig: 453, 8
   offset: 0, 0
   index: -1
 slider-button
   rotate: false
-  xy: 103, 190
+  xy: 456, 4
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
