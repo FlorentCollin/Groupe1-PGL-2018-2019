@@ -305,14 +305,10 @@ public class Board{
 					}
 				}
 			}
-<<<<<<< HEAD
 		} 
 		else {
 		    possible.add(cell);
         }
-=======
-		}
->>>>>>> master
 		return possible;
 	}
 	
