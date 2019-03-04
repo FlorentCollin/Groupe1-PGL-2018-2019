@@ -531,9 +531,17 @@ public class Board{
 		for(Cell c : newDistrict.getCells()) {
 			oldDistrict.removeCell(c);
 		}
-		generateCapital(newDistrict);
-		if(district.getPlayer() instanceof AI) {
-			((AI) district.getPlayer()).addDistrict(newDistrict);
+		if(newDistrict.getCells().size() == 1) {
+			districts.remove(newDistrict);
+			for(Cell c : newDistrict.getCells()) {
+				c.setDistrict(null);
+			}
+		}
+		else {
+			generateCapital(newDistrict);
+			if(district.getPlayer() instanceof AI) {
+				((AI) district.getPlayer()).addDistrict(newDistrict);
+			}
 		}
 	}
 	
@@ -786,10 +794,13 @@ public class Board{
 	private void checkDistricts() {
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
-			if(district.getCells().size() == 0) {
+			if(district.getCells().size() == 1) {
 				emptyDistricts.add(district);
 				if(district.getPlayer() instanceof AI) {
 					((AI)district.getPlayer()).removeDistrict(district);
+				}
+				for(Cell c : district.getCells()) {
+					c.setDistrict(null);
 				}
 			}
 		}
