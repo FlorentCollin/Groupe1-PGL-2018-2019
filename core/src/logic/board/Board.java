@@ -305,7 +305,8 @@ public class Board{
 					}
 				}
 			}
-		} else {
+		} 
+		else {
 		    possible.add(cell);
         }
 		return possible;
@@ -337,7 +338,7 @@ public class Board{
 	 * @param item l'item que l'on souhaite placer
 	 * @return la liste des cellules autour de cell pour lesquels c'est possible
 	 * */
-	private ArrayList<Cell> getNeighbors(Cell cell){
+	public ArrayList<Cell> getNeighbors(Cell cell){
 		ArrayList<Cell> around = new ArrayList<>();
 		int x = cell.getX();
 		int y = cell.getY();
@@ -378,7 +379,7 @@ public class Board{
 			if(!cell.getItem().isImprovable()) {
 				return true;
 			}
-			else if(cell.getItem().getLevel().compareTo(item) <= 0) {
+			else if(item != null && cell.getItem().getLevel().compareTo(item) <= 0) {
 				return true;
 			}
 		}

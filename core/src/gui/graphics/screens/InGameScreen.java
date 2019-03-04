@@ -1,6 +1,11 @@
 package gui.graphics.screens;
 
 
+import static gui.utils.Constants.N_TILES;
+
+import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -8,17 +13,24 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import communication.*;
+
+import communication.Message;
+import communication.MessageListener;
+import communication.MessageSender;
+import communication.PlayMessage;
+import communication.ShopMessage;
+import communication.TextMessage;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -31,13 +43,6 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import roomController.Room;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import static gui.utils.Constants.N_TILES;
 
 public class InGameScreen extends BasicScreen implements InputProcessor {
 
@@ -310,6 +315,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private void selectCells(ArrayList<Cell> cellsArray) {
         unselectCells();
         selectedCells = cellsArray;
+        int numberPlayer;
         for(Cell cell : selectedCells) {
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
@@ -317,15 +323,20 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à sélectionner.
+
             tmxSelectedCell.setTile(map.getTileSetSelected().getTile(tmxCell.getTile().getId()+N_TILES));
+
         }
     }
 
     private void unselectCells() {
+    	int numberPlayer = -1;
         for (Cell selectedCell : selectedCells) {
+
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(selectedCell.getX(),selectedCell.getY()));
             // Récupération de la cellule dans la mapTmx
+
             TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
             // On change la tile (l'image) de la cellule à sélectionner.
             tmxSelectedCell.setTile(null);
@@ -355,6 +366,36 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             }
 
         }
+    }
+    
+    private TiledMapTile getSelectTile(TiledMapTileSet tileSet, int playerNumber) {
+    	TiledMapTile tile;
+    	MapProperties properties;
+    	for(int i=0; i<tileSet.size(); i++) {
+    		tile = tileSet.getTile(i);
+    		if(tile != null) {
+    			properties = tile.getProperties();
+    			if((int)properties.get("player") == playerNumber+1 && (boolean)properties.get("isSelection")) {
+    				return tile;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    private TiledMapTile getTile(TiledMapTileSet tileSet, int playerNumber) {
+    	TiledMapTile tile;
+    	MapProperties properties;
+    	for(int i=0; i<tileSet.size(); i++) {
+    		tile = tileSet.getTile(i);
+    		if(tile != null) {
+    			properties = tile.getProperties();
+    			if((int)properties.get("player") == playerNumber+1 && !(boolean)properties.get("isSelection")) {
+    				return tile;
+    			}
+    		}
+    	}
+    	return null;
     }
 
     public OffsetCoords tmxToBoardCoords(OffsetCoords tmxCoords) {
