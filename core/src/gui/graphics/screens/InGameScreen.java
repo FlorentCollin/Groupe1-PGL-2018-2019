@@ -103,6 +103,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
         }
+        if(board.getShop().getSelectedItem() != null && board.getSelectedCell() != null) {
+        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+        }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
