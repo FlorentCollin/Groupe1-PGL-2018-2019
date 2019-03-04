@@ -303,9 +303,7 @@ public class Board{
 					}
 				}
 			}
-		} else {
-		    possible.add(cell);
-        }
+		}
 		return possible;
 	}
 	
