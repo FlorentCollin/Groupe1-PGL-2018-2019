@@ -164,6 +164,9 @@ public class Map {
                 //En bas à gauche tandis que le board lui à son origine centré en haut à gauche.
                 TiledMapTileLayer.Cell cell = cells.getCell(i, Math.abs(cells.getHeight()-1 - j));
                 MapProperties properties = cell.getTile().getProperties();
+                if(!(boolean) properties.get("available")) { //On change la cellule pour une cellule d'eau si la cellule n'est pas accesible
+                    board.changeToWaterCell(i, j);
+                }
                 int nPlayer = (int) properties.get("player");
                 if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre
                     District district = new District(board.getPlayers().get(nPlayer - 1));
