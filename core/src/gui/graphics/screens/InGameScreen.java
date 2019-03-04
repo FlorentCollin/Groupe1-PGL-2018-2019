@@ -285,7 +285,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 	// Ne s'applique que si la case appartient au joueur
                 	// Ainsi il voit directement avec quelles cases il peut interagir
                     if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
-                        cells.setOpacity(0.7f);
+                        cells.setOpacity(0.9f);
                         selectCells(cell.getDistrict().getCells());
                     } else {
                         cells.setOpacity(1f);

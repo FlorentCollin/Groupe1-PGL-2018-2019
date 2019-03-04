@@ -3,21 +3,15 @@ package gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import gui.graphics.screens.BasicScreen;
 import gui.utils.Constants;
-import logic.item.Item;
+import logic.board.District;
 
 /**
  * Classe représentant l'HUD in game qui contient notamment le shop ainsi que le nom du joueur actif.
@@ -84,6 +78,13 @@ public class Hud extends Stage {
         public void addActorsToStage(Hud hud) {
             table.setPosition(hud.getWidth() - width, hud.getHeight() / 2 - height / 2);
             hud.addActor(table);
+        }
+    }
+
+    public class DistrictGold {
+        
+        public DistrictGold() {
+
         }
     }
 }
