@@ -134,7 +134,9 @@ public class Board{
 				else {
 					// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
 					if(cell.getItem() instanceof Capital) {
-						generateCapital(cell.getDistrict());
+						if(cell.getDistrict().getCells().size() > 1) {
+							generateCapital(cell.getDistrict());
+						}
 						conquerForNewItem(cell);
 					}
 					// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
@@ -197,7 +199,9 @@ public class Board{
 				}
 				else {
 					if(toCell.getItem() instanceof Capital) {
-						generateCapital(toCell.getDistrict());
+						if(toCell.getDistrict().getCells().size() > 1) {							
+							generateCapital(toCell.getDistrict());
+						}
 						conquer(toCell);
 					} else if(toCell.getItem() instanceof Tree || toCell.getItem() instanceof Tomb || (toCell.getItem().getLevel() != null && toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0)){
 						conquer(toCell);
