@@ -22,7 +22,7 @@ public class Board{
 	private Cell[][] board;
 	private int columns, rows, activePlayer;
 	private ArrayList<Player> players;
-	private ArrayList<District> districts;
+	private volatile ArrayList<District> districts;
 	private Shop shop;
 	private NaturalDisastersController naturalDisastersController;
 	private volatile Cell selectedCell, firstCell;
@@ -176,7 +176,7 @@ public class Board{
 	 * Permet de déplacer un item d'une cellule à l'autre
 	 * @param toCell la cellule de destination
 	 * */
-	public synchronized void move(Cell toCell) {
+	public void move(Cell toCell) {
 //		if(selectedCell != null && selectedCell.getItem() != null && selectedCell.getItem().getMode().isMovable() && selectedCell.getItem().canMove()) {
 		if(selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {//Il faut vérifier que l'item de la cellule est déplaçable et qu'il peut encore être déplacé
 			if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
@@ -280,12 +280,12 @@ public class Board{
 	 * @param cell la cellule où se trouve l'item
 	 * @return les cellules sur lesquelles peut se déplacer l'item
 	 * */
-	public synchronized ArrayList<Cell> possibleMove(Cell cell) {
+	public ArrayList<Cell> possibleMove(Cell cell) {
 		ArrayList<Cell> possible = new ArrayList<>();
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
-			for (int i = 0; i < cell.getItem().getMaxMove(); i++) {
+			for (int i = 0; i < cell.getItem().getMaxMove() - 1; i++) {
 				subAround.clear();
 				for (Cell c : around) {
 					if (c.getDistrict() == cell.getDistrict() && (c.getItem() == null
@@ -317,19 +317,22 @@ public class Board{
 	 * @param district le district d'où le soldat a été acheté
 	 * @return les cellules sur lesquelles peut être placé le nouvel item
 	 * */
-	public synchronized ArrayList<Cell> possibleMove(District district){
+	public ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<>();
-		for(Cell c : district.getCells()) {
-			if(possible.indexOf(c) == -1) {
-				possible.add(c);
-			}
-			for(Cell c1 : getNeighbors(c)) {
-				if(canGoOn(c1, shop.getSelectedItem()) && possible.indexOf(c1) == -1) {
-					possible.add(c1);
+		synchronized (district.getCells()) {
+			for(Cell c : district.getCells()) {
+				if(possible.indexOf(c) == -1) {
+					possible.add(c);
+				}
+				for(Cell c1 : getNeighbors(c)) {
+					if(canGoOn(c1, shop.getSelectedItem()) && possible.indexOf(c1) == -1) {
+						possible.add(c1);
+					}
 				}
 			}
+			return possible;
+
 		}
-		return possible;
 	}
 	
 	/**
@@ -406,7 +409,7 @@ public class Board{
 		checkWinner();
 		selectedCell = null;
 		if(winner == null) {
-			memories.add(new ArrayList<Memory>());
+			memories.add(new ArrayList<>());
 			shop.removeSelection();
 			activePlayer = (activePlayer + 1)%(players.size());
 			generateTree();
@@ -629,6 +632,7 @@ public class Board{
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
+		System.out.println(district);
 		int i = rand.nextInt(district.getCells().size());
 		while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
 			visited.add(district.getCells().get(i));
@@ -705,7 +709,7 @@ public class Board{
 	 * Permet de jouer un tour
 	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
 	 * */
-	public synchronized void play(Cell cell) {
+	public void play(Cell cell) {
 		if(selectedCell != null) {
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
@@ -801,6 +805,7 @@ public class Board{
 				}
 				for(Cell c : district.getCells()) {
 					c.setDistrict(null);
+					c.removeItem();
 				}
 			}
 		}

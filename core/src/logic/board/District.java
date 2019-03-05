@@ -1,6 +1,9 @@
 package logic.board;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import logic.board.cell.Cell;
 import logic.item.Capital;
@@ -14,13 +17,13 @@ public class District {
 	private Player player;
 	private int gold;
 	private transient Cell capital;
-	private ArrayList<Cell> cells;
+	private volatile List<Cell> cells;
 
 	public static int globalId = 0;
 	private int id;
 	
 	public District(Player player) {
-		cells = new ArrayList<>();
+		cells = Collections.synchronizedList(new ArrayList<>());
 		this.player = player;
 
 		globalId++;
@@ -93,7 +96,7 @@ public class District {
 		}
 	}
 	
-	public ArrayList<Cell> getCells() {
+	public List<Cell> getCells() {
 		return this.cells;
 	}
 

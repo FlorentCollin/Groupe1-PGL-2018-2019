@@ -4,6 +4,7 @@ package gui.graphics.screens;
 import static gui.utils.Constants.N_TILES;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.Gdx;
@@ -54,7 +55,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private TiledMapTileLayer selectedLayer;
     private Board board;
     private TextureAtlas itemsSkin;
-    private ArrayList<Cell> selectedCells = new ArrayList<>();
+    private List<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
     private Hud hud;
 
@@ -80,10 +81,26 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
         hud = new Hud(this, itemsSkin);
         Hud.Shop shop = hud.getShop();
-        addListener(shop.soldierLvl1, new Soldier(SoldierLevel.level1));
-        addListener(shop.soldierLvl2, new Soldier(SoldierLevel.level2));
-        addListener(shop.soldierLvl3, new Soldier(SoldierLevel.level3));
-        addListener(shop.soldierLvl4, new Soldier(SoldierLevel.level4));
+        shop.soldierLvl1.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level1)));}
+        });
+        shop.soldierLvl2.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level2)));}
+        });
+        shop.soldierLvl3.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level3)));}
+        });
+        shop.soldierLvl4.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level4)));}
+        });
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud);
         multiplexer.addProcessor(this);
@@ -149,10 +166,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                         sprite = itemsSkin.createSprite(item.getClass().getSimpleName());
                     }
                         if(sprite != null) {
+                            if(!item.canMove()) { //On change l'opacité du sprite si l'item ne peut plus bouger
+                                stage.getBatch().setColor(1,1,1,0.5f);
+                            } else {
+                                stage.getBatch().setColor(1,1,1,1);
+                            }
                             stage.getBatch().begin();
                             Vector2 pos = TransformCoords.hexToPixel(i, j+1, (int) cells.getTileWidth() / 2);
                             pos.y = Math.abs(worldHeight - pos.y); // inversion de l'axe y
                             stage.getBatch().draw(sprite, pos.x, pos.y);
+
                             stage.getBatch().end();
                         }
                 }
@@ -170,14 +193,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         stage = new Stage(fillViewport);
     }
 
-    private void addListener(Actor actor, Item item) {
-        actor.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                messageSender.send(new ShopMessage(item));
-            }
-        });
-    }
 
     private Vector3 getMouseLoc() {
         mouseLoc.x = Gdx.input.getX();
@@ -285,9 +300,11 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 	// Ne s'applique que si la case appartient au joueur
                 	// Ainsi il voit directement avec quelles cases il peut interagir
                     if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
-                        cells.setOpacity(0.7f);
+                        hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
+                        cells.setOpacity(0.9f);
                         selectCells(cell.getDistrict().getCells());
                     } else {
+                        hud.getDistrictInfo().goldLabel.setText("");
                         cells.setOpacity(1f);
                         unselectCells();
                     }
@@ -315,7 +332,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     }
 
     //TODO Reformater le code pour ne faire plus qu'une seule méthode
-    private void selectCells(ArrayList<Cell> cellsArray) {
+    private void selectCells(List<Cell> cellsArray) {
         unselectCells();
         selectedCells = cellsArray;
         int numberPlayer;
@@ -351,20 +368,22 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {
                 Cell cell = board.getCell(i,j);
+                OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
+                TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                 if(cell.getDistrict() != null) {
                     int playerNumber;
                     Player player = cell.getDistrict().getPlayer();
                     for (int k = 0; k < board.getPlayers().size(); k++) {
                         if(player == board.getPlayers().get(k)) {
                             playerNumber = k;
-                            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
-                            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                             if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
                                 tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
                                 break;
                             }
                         }
                     }
+                } else if ((int)tmxCell.getTile().getProperties().get("player") != 0) {
+                    tmxCell.setTile(map.getTileSet().getTile(3));
                 }
             }
 

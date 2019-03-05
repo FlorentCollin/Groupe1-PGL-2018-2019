@@ -3,26 +3,18 @@ package gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.Scaling;
 import gui.graphics.screens.BasicScreen;
 import gui.utils.Constants;
-import logic.item.Item;
 
 /**
  * Classe représentant l'HUD in game qui contient notamment le shop ainsi que le nom du joueur actif.
  */
 public class Hud extends Stage {
+    private final DistrictInfo districtInfo;
     protected BasicScreen parent;
     protected Skin uiSkin;
     protected TextureAtlas itemSkin;
@@ -34,11 +26,17 @@ public class Hud extends Stage {
         this.uiSkin = parent.getUiSkin();
         this.itemSkin = itemSkin;
         shop = new Shop();
+        districtInfo = new DistrictInfo();
+        districtInfo.addActorsToStage(this);
         shop.addActorsToStage(this);
     }
 
     public Shop getShop() {
         return shop;
+    }
+
+    public DistrictInfo getDistrictInfo() {
+        return districtInfo;
     }
 
     /**
@@ -72,7 +70,8 @@ public class Hud extends Stage {
             scrollTable.row();
             scrollTable.add(soldierLvl4).maxHeight(height/4);
             //TODO COMMENT
-            ScrollPane scroller = new ScrollPane(scrollTable);
+            ScrollPane scroller;
+            scroller = new ScrollPane(scrollTable);
             scroller.setScrollingDisabled(true, false);
             table = new Table(uiSkin);
             table.setBackground("shop-background");
@@ -83,6 +82,37 @@ public class Hud extends Stage {
 
         public void addActorsToStage(Hud hud) {
             table.setPosition(hud.getWidth() - width, hud.getHeight() / 2 - height / 2);
+            hud.addActor(table);
+        }
+    }
+
+    public class DistrictInfo {
+
+        private final float width, height;
+        private final Table table;
+        public Label goldLabel;
+
+        public DistrictInfo() {
+            //Définition de la taille du shop
+            Image background = new Image(uiSkin.getDrawable("info-background"));
+            width = background.getWidth() * Constants.getRatioX(Gdx.graphics.getWidth());
+            height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
+            Image gold = new Image(itemSkin.createSprite("Coin"));
+            Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+            labelStyle.font = parent.getTextFont();
+
+            goldLabel = new Label("", labelStyle);
+            gold.setScaling(Scaling.fit);
+            //TODO COMMENT
+            table = new Table(uiSkin);
+            table.setSize(width, height);
+            table.setBackground("info-background");
+            table.add(goldLabel).expandX().pad(10).align(Align.right);
+            table.add(gold).maxWidth(50).align(Align.right).pad(10);
+        }
+
+        public void addActorsToStage(Hud hud) {
+            table.setPosition(hud.getWidth() - width, 0);
             hud.addActor(table);
         }
     }

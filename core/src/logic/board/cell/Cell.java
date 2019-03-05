@@ -5,7 +5,7 @@ import logic.item.Item;
 
 public class Cell {
 	private int x,y;
-	private Item item; // si null alors il n'y a pas d'item actuellement sur la cellule
+	private volatile Item item; // si null alors il n'y a pas d'item actuellement sur la cellule
 	private transient District district; // si null alors n'appartient actuellement à aucun district
 
 //	private int numberOfAdjacentWaterCell; //?
