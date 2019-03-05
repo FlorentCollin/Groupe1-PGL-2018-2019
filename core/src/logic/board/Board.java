@@ -1,10 +1,14 @@
 package logic.board;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
 import logic.item.Capital;
 import logic.item.Item;
+import logic.item.Tomb;
 import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
@@ -12,9 +16,6 @@ import logic.player.ai.AI;
 import logic.player.ai.Strategy;
 import logic.shop.Shop;
 import memory.Memory;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 
 
@@ -137,7 +138,7 @@ public class Board{
 						conquerForNewItem(cell);
 					}
 					// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
-					else if(cell.getItem() instanceof Tree || cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
+					else if(cell.getItem() instanceof Tree || cell.getItem() instanceof Tomb || cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
 						conquerForNewItem(cell);
 					}
 				}
@@ -198,7 +199,7 @@ public class Board{
 					if(toCell.getItem() instanceof Capital) {
 						generateCapital(toCell.getDistrict());
 						conquer(toCell);
-					} else if(toCell.getItem() instanceof Tree || (toCell.getItem().getLevel() != null && toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0)){
+					} else if(toCell.getItem() instanceof Tree || toCell.getItem() instanceof Tomb || (toCell.getItem().getLevel() != null && toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0)){
 						conquer(toCell);
 					}
 				}
@@ -408,9 +409,9 @@ public class Board{
 		checkDistricts();
 		checkWinner();
 		selectedCell = null;
+		shop.removeSelection();
 		if(winner == null) {
 			memories.add(new ArrayList<>());
-			shop.removeSelection();
 			activePlayer = (activePlayer + 1)%(players.size());
 			generateTree();
 			for(District district : districts) {
@@ -520,10 +521,8 @@ public class Board{
 	 * @param district le district à diviser
 	 * */
 	private void split(District district) {
-		District oldDistrict = district;
-		District newDistrict = new District(oldDistrict.getPlayer());
-		districts.add(newDistrict);
-		for(Cell c : oldDistrict.getCells()) {
+		District newDistrict = new District(district.getPlayer());
+		for(Cell c : district.getCells()) {
 			visited.clear();
 			firstCell = c;
 			if(numberOfWayToCapital(c)==0) {
@@ -532,16 +531,27 @@ public class Board{
 			}
 		}
 		for(Cell c : newDistrict.getCells()) {
-			oldDistrict.removeCell(c);
+			district.removeCell(c);
 		}
-		if(newDistrict.getCells().size() == 1) {
-			districts.remove(newDistrict);
+		if(newDistrict.getCells().size() <= 1) {
 			for(Cell c : newDistrict.getCells()) {
 				c.setDistrict(null);
+				c.removeItem();
+			}
+		}
+		if(district.getCells().size() <= 1) {
+			for(Cell c : newDistrict.getCells()) {
+				c.setDistrict(null);
+				c.removeItem();
+			}
+			districts.remove(district);
+			if(district.getPlayer() instanceof AI) {
+				((AI) district.getPlayer()).removeDistrict(district);
 			}
 		}
 		else {
 			generateCapital(newDistrict);
+			districts.add(newDistrict);
 			if(district.getPlayer() instanceof AI) {
 				((AI) district.getPlayer()).addDistrict(newDistrict);
 			}
@@ -632,7 +642,6 @@ public class Board{
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
-		System.out.println(district);
 		int i = rand.nextInt(district.getCells().size());
 		while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
 			visited.add(district.getCells().get(i));
@@ -753,16 +762,18 @@ public class Board{
 	}
 	
 	private void checkWinner() {
-		ArrayList<Player> alivePlayers = new ArrayList<>();
+		ArrayList<Player> deadPlayers = new ArrayList<>();
 		for(Player player : players) {
-			if(canYetPlay(player)) {
-				alivePlayers.add(player);
+			if(!canYetPlay(player)) {
+				deadPlayers.add(player);
 			}
 		}
-		if(alivePlayers.size() == 1) {
-			winner = alivePlayers.get(0);
+		players.removeAll(deadPlayers);
+		if(players.size() == 1) {
+			winner = players.get(0);
 		}
 		
+		//TO REDO
 		int[] nCells = new int[players.size()];
 		int playerNumber;
 		Player currentPlayer;
@@ -798,14 +809,14 @@ public class Board{
 	private void checkDistricts() {
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
-			if(district.getCells().size() == 1) {
+			if(district.getCells().size() <= 1) {
 				emptyDistricts.add(district);
-				if(district.getPlayer() instanceof AI) {
-					((AI)district.getPlayer()).removeDistrict(district);
-				}
 				for(Cell c : district.getCells()) {
 					c.setDistrict(null);
 					c.removeItem();
+				}
+				if(district.getPlayer() instanceof AI) {
+					((AI)district.getPlayer()).removeDistrict(district);
 				}
 			}
 		}
