@@ -166,10 +166,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                         sprite = itemsSkin.createSprite(item.getClass().getSimpleName());
                     }
                         if(sprite != null) {
+                            if(!item.canMove()) { //On change l'opacité du sprite si l'item ne peut plus bouger
+                                stage.getBatch().setColor(1,1,1,0.5f);
+                            } else {
+                                stage.getBatch().setColor(1,1,1,1);
+                            }
                             stage.getBatch().begin();
                             Vector2 pos = TransformCoords.hexToPixel(i, j+1, (int) cells.getTileWidth() / 2);
                             pos.y = Math.abs(worldHeight - pos.y); // inversion de l'axe y
                             stage.getBatch().draw(sprite, pos.x, pos.y);
+
                             stage.getBatch().end();
                         }
                 }
@@ -362,20 +368,22 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {
                 Cell cell = board.getCell(i,j);
+                OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
+                TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                 if(cell.getDistrict() != null) {
                     int playerNumber;
                     Player player = cell.getDistrict().getPlayer();
                     for (int k = 0; k < board.getPlayers().size(); k++) {
                         if(player == board.getPlayers().get(k)) {
                             playerNumber = k;
-                            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
-                            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                             if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
                                 tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
                                 break;
                             }
                         }
                     }
+                } else if ((int)tmxCell.getTile().getProperties().get("player") != 0) {
+                    tmxCell.setTile(map.getTileSet().getTile(3));
                 }
             }
 

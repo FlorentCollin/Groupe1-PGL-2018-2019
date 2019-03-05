@@ -805,6 +805,7 @@ public class Board{
 				}
 				for(Cell c : district.getCells()) {
 					c.setDistrict(null);
+					c.removeItem();
 				}
 			}
 		}

@@ -44,15 +44,16 @@ public class Room extends Thread {
 
     @Override
     public void run() {
+        Thread.currentThread().setName("Room");
         running.set(true);
         while(running.get()) {
             try {
                 //Récupération du message du client
                 Message message = messagesFrom.take();
                 executeMessage(message);
-                if(messagesToSend != null) {
+                if(messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
                     //Si le board à changé alors il faut notifier les clients des changements.
-                    if(board.hasChanged()) { //TODO NEED REFACTORING when offline we don't need to send message
+                    if(board.hasChanged()) {
                         UpdateMessage updateMessage;
                         if(board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
                             Cell selectedCell = board.getSelectedCell();
