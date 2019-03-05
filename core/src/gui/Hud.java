@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import gui.graphics.screens.BasicScreen;
 import gui.utils.Constants;
+import logic.item.level.SoldierLevel;
 
 /**
  * Classe représentant l'HUD in game qui contient notamment le shop ainsi que le nom du joueur actif.
@@ -55,27 +56,41 @@ public class Hud extends Stage {
             Image background = new Image(uiSkin.getDrawable("shop-background"));
             width = background.getWidth() * Constants.getRatioX(Gdx.graphics.getWidth());
             height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
+
+            Image gold = new Image(itemSkin.createSprite("Coin"));
+            gold.setScaling(Scaling.fit);
+            Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+            labelStyle.font = parent.getTextFont();
+            Label soldierLvl1Price = new Label(Integer.toString(SoldierLevel.level1.getPrice()), labelStyle);
             //Création des objets accessibles dans le shop
-            soldierLvl1 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl1")));
-            soldierLvl2 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl2")));
-            soldierLvl3 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl3")));
-            soldierLvl4 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl4")));
+            soldierLvl1 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl1_big")));
+            soldierLvl2 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl2_big")));
+            soldierLvl3 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl3_big")));
+            soldierLvl4 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl4_big")));
+            soldierLvl1.setScaling(Scaling.fit);
+            soldierLvl2.setScaling(Scaling.fit);
+            soldierLvl3.setScaling(Scaling.fit);
+            soldierLvl4.setScaling(Scaling.fit);
             Table scrollTable = new Table();
             //Ajout des objets achetables dans le shop
-            scrollTable.add(soldierLvl1).maxHeight(height/4);
+            scrollTable.add(soldierLvl1Price).height(height/8).padLeft(5);
+            scrollTable.add(gold).height(height/8);
             scrollTable.row();
-            scrollTable.add(soldierLvl2).maxHeight(height/4);
+            scrollTable.add(soldierLvl1).maxHeight(height/4).padRight(10).padLeft(10).colspan(2);
             scrollTable.row();
-            scrollTable.add(soldierLvl3).maxHeight(height/4);
+            scrollTable.add(soldierLvl2).maxHeight(height/4).padRight(10).padLeft(10).colspan(2);
             scrollTable.row();
-            scrollTable.add(soldierLvl4).maxHeight(height/4);
+            scrollTable.add(soldierLvl3).maxHeight(height/4).padRight(10).padLeft(10).colspan(2);
+            scrollTable.row();
+            scrollTable.add(soldierLvl4).maxHeight(height/4).padRight(10).padLeft(10).colspan(2);
             //TODO COMMENT
             ScrollPane scroller;
             scroller = new ScrollPane(scrollTable);
             scroller.setScrollingDisabled(true, false);
+
             table = new Table(uiSkin);
             table.setBackground("shop-background");
-            table.add(scroller).fillX().expand().align(Align.topLeft);
+            table.add(scroller).fillX().expand().align(Align.topLeft).padTop(5).padBottom(5);
             table.setSize(width, height);
 
         }
@@ -98,11 +113,11 @@ public class Hud extends Stage {
             width = background.getWidth() * Constants.getRatioX(Gdx.graphics.getWidth());
             height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
             Image gold = new Image(itemSkin.createSprite("Coin"));
+            gold.setScaling(Scaling.fit);
             Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
             labelStyle.font = parent.getTextFont();
 
             goldLabel = new Label("", labelStyle);
-            gold.setScaling(Scaling.fit);
             //TODO COMMENT
             table = new Table(uiSkin);
             table.setSize(width, height);

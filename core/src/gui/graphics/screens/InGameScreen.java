@@ -76,7 +76,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         cells = map.getCells();
         selectedLayer = map.getSelectedCells();
         //Calcule de la grandeur de la carte
-        worldWith = (cells.getWidth()/2) * cells.getTileWidth() + (cells.getWidth() / 2) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
+        worldWith = (cells.getWidth() / 2f) * cells.getTileWidth() + (cells.getWidth() / 2f) * (cells.getTileWidth() / 2) + cells.getTileWidth()/4;
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
         hud = new Hud(this, itemsSkin);
@@ -102,8 +102,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level4)));}
         });
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(hud);
         multiplexer.addProcessor(this);
+        multiplexer.addProcessor(hud);
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -193,7 +193,11 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         stage = new Stage(fillViewport);
     }
 
-
+    private Vector3 getHudMouseLoc() {
+        mouseLoc.x = Gdx.input.getX();
+        mouseLoc.y = Gdx.input.getY();
+        return hud.getViewport().unproject(mouseLoc);
+    }
     private Vector3 getMouseLoc() {
         mouseLoc.x = Gdx.input.getX();
         mouseLoc.y = Gdx.input.getY();
@@ -267,6 +271,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(hud.hit(getHudMouseLoc().x, getHudMouseLoc().y, true) != null)
+            return false;
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
@@ -282,12 +288,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if(hud.hit(getHudMouseLoc().x, getHudMouseLoc().y, true) != null)
+            return false;
         camera.translate(-Gdx.input.getDeltaX()*camera.zoom, Gdx.input.getDeltaY()*camera.zoom);
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        if(hud.hit(screenX, screenY, true) != null)
+            return false;
         //Cette méthode va lorsqu'on passe la souris sur un district montrer ce district
         if(board.getSelectedCell() == null) { // On vérifie qu'aucune cellule n'a été sélectionnée pour une action dans le board
             // car sinon on ne doit pas montrer le district
@@ -317,6 +327,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
+        if(hud.hit(getHudMouseLoc().x, getHudMouseLoc().y, true) != null)
+            return false;
         if(amount == -1) {
         	if(camera.zoom - 0.2 >= 0) {
         		camera.zoom -= 0.2;
@@ -404,27 +416,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     	}
     	return null;
     }
-    
-    private TiledMapTile getTile(TiledMapTileSet tileSet, int playerNumber) {
-    	TiledMapTile tile;
-    	MapProperties properties;
-    	for(int i=0; i<tileSet.size(); i++) {
-    		tile = tileSet.getTile(i);
-    		if(tile != null) {
-    			properties = tile.getProperties();
-    			if((int)properties.get("player") == playerNumber+1 && !(boolean)properties.get("isSelection")) {
-    				return tile;
-    			}
-    		}
-    	}
-    	return null;
-    }
 
-    public OffsetCoords tmxToBoardCoords(OffsetCoords tmxCoords) {
-        return new OffsetCoords(tmxCoords.col, Math.abs(cells.getHeight()-1 - tmxCoords.row));
-    }
-
-    public OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {
+    private OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {
         return new OffsetCoords(boardCoords.col, Math.abs(cells.getHeight()-1 - boardCoords.row));
     }
 }
