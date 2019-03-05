@@ -40,7 +40,7 @@ public class RandomStrategy extends AbstractStrategy{
 				}
 				else {
 					randomCell = randomCell(district.getCapital(), possibleMoves);
-					buy(district.getCapital(), board);
+					buy(district.getCapital(), randomCell, board);
 				}
 			}
 		}
