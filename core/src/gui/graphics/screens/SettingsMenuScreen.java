@@ -70,10 +70,17 @@ public class SettingsMenuScreen extends SubMenuScreen {
         selectBoxStyle.listStyle.font = textFont;
         SelectBox<String> languageSelectBox = new SelectBox<>(selectBoxStyle);
         languageSelectBox.setItems("English", "Français");
+        if(parent.getUserSettings().getLanguage().equals("fr")) {
+            languageSelectBox.setSelected("Français");
+        }
         languageSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                parent.getUserSettings().setLanguage(languageSelectBox.getSelected().toLowerCase().substring(0,2));
+                String language = languageSelectBox.getSelected().toLowerCase().substring(0,2);
+                parent.getUserSettings().setLanguage(language);
+                Language.setLanguage(language);
+                parent.clearScreen();
+                parent.changeScreen(MainMenuScreen.class);
             }
         });
 

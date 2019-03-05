@@ -90,12 +90,16 @@ public class Slay extends Game {
 	}
 
 	public void changeScreen(InGameScreen gameScreen) {
+		clearScreen();
+		this.setScreen(gameScreen);
+	}
+
+	public void clearScreen() {
 		this.mainMenuScreen = null;
 		this.settingsMenuScreen = null;
 		this.shortcutsMenuScreen = null;
 		this.onlineMenuScreen = null;
 		this.createRoomMenuScreen = null;
-		this.setScreen(gameScreen);
 	}
 
 	public UserSettings getUserSettings() {
