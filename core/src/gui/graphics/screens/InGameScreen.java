@@ -59,8 +59,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private FillViewport fillViewport;
     private Hud hud;
 
-    private LinkedBlockingQueue<Message> messagesFrom;
-    private LinkedBlockingQueue<Message> messagesToSend;
     private MessageListener messageListener;
     private MessageSender messageSender;
     private Room room;

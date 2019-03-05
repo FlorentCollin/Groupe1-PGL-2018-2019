@@ -5,3 +5,5 @@ out
 *.class
 .gradle/
 .gradle/4.6/fileHashes/fileHashes.lock
+core/assets/settings/userShortcuts.json
+core/assets/settings/userSettings.json

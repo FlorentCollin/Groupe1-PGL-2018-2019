@@ -17,6 +17,7 @@ import communication.OfflineMessageSender;
 import communication.OnlineMessageListener;
 import communication.OnlineMessageSender;
 import gui.app.Slay;
+import gui.utils.Language;
 import roomController.Room;
 
 import javax.sound.sampled.Line;
@@ -45,7 +46,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private HashMap<String, XmlReader.Element> nameToXml;
 
     public CreateRoomMenuScreen(Slay parent, Stage stage, boolean online) {
-        super(parent, stage, "CREATE ROOM");
+        super(parent, stage, Language.bundle.get("createRoom"));
         this.online = online;
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
@@ -55,7 +56,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         textFont.getData().padLeft = -10;
 
         TextField mapName = new TextField("", textFieldStyle);
-        mapName.appendText("name of the room");
+        mapName.appendText(Language.bundle.get("nameOfTheRoom"));
 
 
         Label aiSliderNumber = new Label("0", labelStyle);
@@ -93,24 +94,24 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         naturalGroup.setMinCheckCount(1);
         naturalGroup.setUncheckLast(true);
 
-        createRoomButton = new TextButton("Create Room", textButtonStyle);
+        createRoomButton = new TextButton(Language.bundle.get("createRoom"), textButtonStyle);
         createRoomButton.setX(stage.getWidth() - createRoomButton.getWidth());
         createRoomButton.setY(stage.getHeight() / 10);
         createRoomButton.addListener(createRoomListener());
         stage.addActor(createRoomButton);
 
         scrollTable = new Table();
-        scrollTable.add(new Label("Name", labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("nameMap"), labelStyle)).align(Align.left);
         scrollTable.add(mapName).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
-        scrollTable.add(new Label("Map", labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("map"), labelStyle)).align(Align.left);
         scrollTable.add(mapSelectBox).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
-        scrollTable.add(new Label("Naturals Disasters", labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("naturalDisasters"), labelStyle)).align(Align.left);
         scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
         scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
         scrollTable.row();
-        scrollTable.add(new Label("Numbers of AI", labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("numberOfAI"), labelStyle)).align(Align.left);
         scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
         scrollTable.add(aiSliderNumber).pad(PAD).align(Align.left);
         scrollTable.row();

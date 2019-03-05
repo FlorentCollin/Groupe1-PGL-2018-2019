@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
+import gui.utils.Language;
 
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
@@ -18,6 +19,7 @@ import static gui.utils.Constants.PAD;
 public class SettingsMenuScreen extends SubMenuScreen {
     private Table table;
     private Label windowMode;
+    private Label language;
     private Label musicLevel;
     private Label soundLevel;
     private Slider musicSlider;
@@ -27,22 +29,22 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
 
     public SettingsMenuScreen(Slay parent, Stage stage) {
-        super(parent, stage, "SETTINGS");
+        super(parent, stage, Language.bundle.get("settings"));
         //Style des Label
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
 
         //Création des différents labels
-        windowMode = new Label("Window Mode", labelStyle);
-        windowMode.setAlignment(Align.left);
-        musicLevel = new Label("Music", labelStyle);
-        soundLevel = new Label("Sound", labelStyle);
+        windowMode = new Label(Language.bundle.get("windowMode"), labelStyle);
+        language = new Label(Language.bundle.get("language"), labelStyle);
+        musicLevel = new Label(Language.bundle.get("music"), labelStyle);
+        soundLevel = new Label(Language.bundle.get("sound"), labelStyle);
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
         //Création des différents boutons.
-        TextButton fullScreen = new TextButton("fullscreen", textButtonStyle);
+        TextButton fullScreen = new TextButton(Language.bundle.get("fullscreen"), textButtonStyle);
         fullScreen.setChecked(parent.getUserSettings().isFullScreen());
-        TextButton windowed = new TextButton("windowed", textButtonStyle);
+        TextButton windowed = new TextButton(Language.bundle.get("windowed"), textButtonStyle);
         windowed.setChecked(!parent.getUserSettings().isFullScreen());
 
         fullScreen.addListener(new ClickListener() {
@@ -60,6 +62,18 @@ public class SettingsMenuScreen extends SubMenuScreen {
                 if(windowed.isChecked() && parent.getUserSettings().isFullScreen()) {
                     parent.getUserSettings().setFullScreen(false);
                 }
+            }
+        });
+
+        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
+        selectBoxStyle.font = textFont;
+        selectBoxStyle.listStyle.font = textFont;
+        SelectBox<String> languageSelectBox = new SelectBox<>(selectBoxStyle);
+        languageSelectBox.setItems("English", "Français");
+        languageSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                parent.getUserSettings().setLanguage(languageSelectBox.getSelected().toLowerCase().substring(0,2));
             }
         });
 
@@ -95,6 +109,10 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(windowMode).expandX().align(Align.left);
         scrollTable.add(fullScreen).pad(PAD).align(Align.right);
         scrollTable.add(windowed).pad(PAD);
+        scrollTable.row();
+
+        scrollTable.add(language).expandX().align(Align.left);
+        scrollTable.add(languageSelectBox).pad(PAD).minWidth(fullScreen.getWidth());
         scrollTable.row();
 
         scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
