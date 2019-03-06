@@ -206,6 +206,7 @@ public class Map {
                     cell.setItem((Item) constructor.newInstance());
                 }
                 if(itemClass.equals(Capital.class)) {
+                	cell.getDistrict().removeCapital();
                     cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
                     cell.getDistrict().addCapital(cell);
                 }
