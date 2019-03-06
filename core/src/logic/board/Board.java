@@ -36,7 +36,7 @@ public class Board{
 	private final int[][][] directions = {
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
-	private ArrayList<ArrayList<Memory>> memories;
+	private ArrayList<Cell> neutralCells;
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
@@ -46,12 +46,8 @@ public class Board{
 		this.naturalDisastersController = naturalDisastersController;
 		this.districts = new ArrayList<>();
 		this.shop = shop;
-		memories = new ArrayList<>();
-		memories.add(new ArrayList<>());
 		fullIn();
-		for(District district : districts) {
-			generateCapital(district);			
-		}
+		neutralCells = new ArrayList<>();
 	}
 	
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -61,12 +57,8 @@ public class Board{
 		this.players = players;
 		this.districts = new ArrayList<>();
 		this.shop = shop;
-		memories = new ArrayList<>();
-		memories.add(new ArrayList<>());
 		fullIn();
-		for(District district : districts) {
-			generateCapital(district);			
-		}
+		neutralCells = new ArrayList<>();
 	}
 	
 	/**
@@ -120,6 +112,7 @@ public class Board{
 				}
 				if(cell.getItem() instanceof Tree) {
 					conquerForNewItem(cell);
+					cell.getDistrict().addGold(3);
 				}
 				else if(isOnOwnTerritory(cell)) { // Si la cellule appartient déjà au joueur
 					// Il faut que l'item soit de même instance que celui à ajouter
@@ -133,14 +126,11 @@ public class Board{
 				// L'item de la case doit être de niveau inférieur ou égal à celui que l'on souhaite placer
 				else {
 					// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
-					if(cell.getItem() instanceof Capital) {
-						if(cell.getDistrict().getCells().size() > 1) {
-							generateCapital(cell.getDistrict());
-						}
+					if(cell.getItem().getLevel() == null) {
 						conquerForNewItem(cell);
 					}
 					// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
-					else if(cell.getItem() instanceof Tree || cell.getItem() instanceof Tomb || cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
+					else if(cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
 						conquerForNewItem(cell);
 					}
 				}
@@ -153,9 +143,11 @@ public class Board{
 	 * @param cell la cellule à conquérir
 	 * */	
 	private void conquerForNewItem(Cell cell) {
-		memories.get(memories.size()-1).add(new Memory(cell, cell.getItem(), cell.getDistrict(), null));
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
+		}
+		if(cell.getItem() instanceof Capital) {
+			cell.getDistrict().removeCapital();
 		}
 		cell.setDistrict(selectedCell.getDistrict());
 		selectedCell.getDistrict().addCell(cell); //On ajoute la cellule conquise au district présélectionné
@@ -198,12 +190,10 @@ public class Board{
 					}
 				}
 				else {
-					if(toCell.getItem() instanceof Capital) {
-						if(toCell.getDistrict().getCells().size() > 1) {							
-							generateCapital(toCell.getDistrict());
-						}
+					if(toCell.getItem().getLevel() == null) {
 						conquer(toCell);
-					} else if(toCell.getItem() instanceof Tree || toCell.getItem() instanceof Tomb || (toCell.getItem().getLevel() != null && toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0)){
+					}
+					else if(toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
 						conquer(toCell);
 					}
 				}
@@ -410,19 +400,18 @@ public class Board{
 	 */
 	public void nextPlayer() {
 	    hasChanged = true;
-		checkDistricts();
+	    checkDistricts();
 		checkWinner();
 		selectedCell = null;
 		shop.removeSelection();
 		if(winner == null) {
-			memories.add(new ArrayList<>());
 			activePlayer = (activePlayer + 1)%(players.size());
 			generateTree();
 			for(District district : districts) {
 				if(district.getPlayer() == getActivePlayer()) {
 					district.calculateGold();
 					if(district.getGold() < 0) {
-						district.remove();
+						district.removeSoldiers();
 					}
 					else {
 						for(Cell c : district.getCells()) {
@@ -472,7 +461,7 @@ public class Board{
 	public void setSelectedCell(Cell selectedCell) {
 	    if(selectedCell == null) {
 	        this.selectedCell = null;
-        } else if(selectedCell.getDistrict().getPlayer() == getActivePlayer()) {
+        } else if(selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer() == getActivePlayer()) {
 			this.selectedCell = selectedCell;
 		}
 	    hasChanged = true;
@@ -518,6 +507,7 @@ public class Board{
 			((AI) smaller.getPlayer()).removeDistrict(smaller);
 		}
 		districts.remove(smaller);
+		checkDistricts();
 	}
 	
 	/**
@@ -534,32 +524,12 @@ public class Board{
 				c.setDistrict(newDistrict);
 			}
 		}
-		for(Cell c : newDistrict.getCells()) {
-			district.removeCell(c);
+		district.removeAll(newDistrict);
+		districts.add(newDistrict);
+		if(district.getPlayer() instanceof AI) {
+			((AI) district.getPlayer()).addDistrict(newDistrict);
 		}
-		if(newDistrict.getCells().size() <= 1) {
-			for(Cell c : newDistrict.getCells()) {
-				c.setDistrict(null);
-				c.removeItem();
-			}
-		}
-		if(district.getCells().size() <= 1) {
-			for(Cell c : newDistrict.getCells()) {
-				c.setDistrict(null);
-				c.removeItem();
-			}
-			districts.remove(district);
-			if(district.getPlayer() instanceof AI) {
-				((AI) district.getPlayer()).removeDistrict(district);
-			}
-		}
-		else {
-			generateCapital(newDistrict);
-			districts.add(newDistrict);
-			if(district.getPlayer() instanceof AI) {
-				((AI) district.getPlayer()).addDistrict(newDistrict);
-			}
-		}
+		checkDistricts();
 	}
 	
 	/**
@@ -679,7 +649,9 @@ public class Board{
 	 * @param cell la cellule conquise
 	 * */
 	private void conquer(Cell cell) {
-		memories.get(memories.size()-1).add(new Memory(cell, cell.getItem(), cell.getDistrict(), selectedCell));
+		if(cell.getItem() instanceof Capital) {
+			cell.getDistrict().removeCapital();
+		}
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
 		}
@@ -738,33 +710,6 @@ public class Board{
 		}
 	}
 	
-	public void undo() {
-		if(memories.size() > 0) {
-			ArrayList<Memory> memory = memories.get(memories.size()-1);
-			Cell cell, lastCell;
-			Item lastItem, currentItem;
-			District lastDistrict;
-			for(Memory mem : memory) {
-				cell = mem.getCell();
-				currentItem = cell.getItem();
-				lastItem = mem.getLastItem();
-				lastDistrict = mem.getLastDistrict();
-				lastCell = mem.getLastCell();
-				cell.getDistrict().removeCell(cell);
-				cell.setDistrict(lastDistrict);
-				cell.setItem(lastItem);
-				if(lastCell != null) {
-					lastCell.setItem(currentItem);
-				}
-				if(lastDistrict != null) {
-					lastDistrict.addCell(cell);
-					checkMerge(cell);
-					checkSplit(cell);
-				}
-			}
-		}
-	}
-	
 	private void checkWinner() {
 		ArrayList<Player> deadPlayers = new ArrayList<>();
 		for(Player player : players) {
@@ -775,20 +720,6 @@ public class Board{
 		players.removeAll(deadPlayers);
 		if(players.size() == 1) {
 			winner = players.get(0);
-		}
-		
-		//TO REDO
-		int[] nCells = new int[players.size()];
-		int playerNumber;
-		Player currentPlayer;
-		for(District district : districts) {
-			playerNumber = getIndex(district.getPlayer());
-			currentPlayer = players.get(playerNumber);
-			nCells[playerNumber] += district.getCells().size();
-			if(nCells[playerNumber] > rows*columns/100*80) {
-				winner = currentPlayer;
-				break;
-			}
 		}
 	}
 	
@@ -811,13 +742,15 @@ public class Board{
 	}
 	
 	private void checkDistricts() {
+		neutralCells.clear();
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
 			if(district.getCells().size() <= 1) {
 				emptyDistricts.add(district);
 				for(Cell c : district.getCells()) {
-					c.setDistrict(null);
+					c.removeDistrict();
 					c.removeItem();
+					neutralCells.add(c);
 				}
 				if(district.getPlayer() instanceof AI) {
 					((AI)district.getPlayer()).removeDistrict(district);
@@ -825,6 +758,7 @@ public class Board{
 			}
 		}
 		districts.removeAll(emptyDistricts);
+		checkCapitals();
 	}
 	
 	public void checkCapitals() {
@@ -858,5 +792,9 @@ public class Board{
                 }
             }
         }
+    }
+    
+    public ArrayList<Cell> getNeutralCells(){
+    	return neutralCells;
     }
 }
