@@ -41,7 +41,7 @@ public class District {
 	 * Permet d'ajouter au district toutes les cellules d'un autre district
 	 * @param district le district dont on souhaite obtenir les cellules
 	 * */
-	public void addAllCell(District district) {
+	public void addAll(District district) {
 		cells.addAll(district.getCells());
 	}
 	
@@ -49,7 +49,11 @@ public class District {
 		cells.remove(cells.indexOf(cell));
 	}
 	
-	public void remove() {
+	public void removeAll(District district) {
+		cells.removeAll(district.getCells());
+	}
+	
+	public void removeSoldiers() {
 		for(Cell c : cells) {
 			if(c.getItem() instanceof Soldier) {
 				c.setItem(new Tomb());
@@ -58,7 +62,7 @@ public class District {
 	}
 	
 	public void addCapital(Cell cell) {
-		if(cells.indexOf(cell) >= 0) { // On vérifie que la cellule appartient bien au district
+		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
 		}
@@ -67,6 +71,7 @@ public class District {
 	public void removeCapital() {
 		if(capital != null) {
 			capital.removeItem();
+			capital = null;
 		}
 	}
 	
