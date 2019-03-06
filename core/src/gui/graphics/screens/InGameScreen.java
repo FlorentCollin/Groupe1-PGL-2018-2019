@@ -116,6 +116,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public void render(float delta) {
         super.render(delta);
         changeModifiedCells();
+        neutral();
 
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
@@ -129,6 +130,28 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         hud.getViewport().apply();
         hud.act(delta);
         hud.draw();
+    }
+    
+    private void neutral() {
+    	OffsetCoords tmxCoords;
+    	TiledMapTile tile = getNeutralTile();
+    	TiledMapTileLayer.Cell tmxCell;
+    	for(Cell cell : board.getNeutralCells()) {
+    		tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
+    		tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+    		tmxCell.setTile(tile);
+    	}
+    }
+    
+    private TiledMapTile getNeutralTile() {
+    	TiledMapTile tile = null;
+    	for(int i = 0; i < map.getTileSet().size(); i++) {
+    		tile = map.getTileSet().getTile(i);
+    		if(tile != null && (int)tile.getProperties().get("player") == 0) {
+    			return tile;
+    		}
+    	}
+    	return null;
     }
 
     @Override
