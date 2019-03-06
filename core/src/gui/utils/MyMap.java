@@ -1,19 +1,14 @@
 package gui.utils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.XmlReader;
-
-import logic.board.Board;
 import logic.board.District;
-import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
-import logic.player.ai.Strategy;
-import logic.shop.Shop;
+import logic.player.ai.strategy.Strategy;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 public class MyMap extends Map{
 //	private TiledMap map;

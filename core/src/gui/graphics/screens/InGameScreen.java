@@ -4,6 +4,7 @@ package gui.graphics.screens;
 import static gui.utils.Constants.N_TILES;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -367,7 +368,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     //TODO Reformater le code pour ne faire plus qu'une seule méthode
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
-        selectedCells = cellsArray;
+        selectedCells = new ArrayList<>(cellsArray);
         int numberPlayer;
         for(Cell cell : selectedCells) {
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
