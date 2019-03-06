@@ -34,4 +34,8 @@ public class AI extends Player{
 	public void removeDistrict(District district) {
 		districts.remove(district);
 	}
+	
+	public ArrayList<District> getDistrcits(){
+		return districts;
+	}
 }

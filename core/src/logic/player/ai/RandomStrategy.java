@@ -26,7 +26,9 @@ public class RandomStrategy extends AbstractStrategy{
 			}
 			else {
 				randomCell = randomCell(cell, possibleMoves);
-				move(cell, randomCell, board);
+				if(randomCell != null) {
+					move(cell, randomCell, board);
+				}
 			}
 		}
 		
@@ -40,7 +42,9 @@ public class RandomStrategy extends AbstractStrategy{
 				}
 				else {
 					randomCell = randomCell(district.getCapital(), possibleMoves);
-					buy(district.getCapital(), randomCell, board);
+					if(randomCell != null) {
+						buy(district.getCapital(), randomCell, board);
+					}
 				}
 			}
 		}

@@ -85,12 +85,6 @@ public abstract class AbstractStrategy implements Strategy {
 		board.play(toCell);
 	}
 	
-	public void move(Cell fromCell, Board board) {
-		Cell toCell = getChoice(fromCell, board);
-		board.setSelectedCell(fromCell);
-		board.play(toCell);
-	}
-	
 	protected void buy(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
 		SoldierLevel level = bestSoldier(fromCell);
@@ -109,64 +103,6 @@ public abstract class AbstractStrategy implements Strategy {
 			}
 		}
 		return level;
-	}
-
-	public void buy(Cell cell, Board board) {
-		board.setSelectedCell(cell);
-		District district = cell.getDistrict();
-		Cell toCell;
-		if(district.getGold() > SoldierLevel.level1.getPrice()+SoldierLevel.level1.getSalary()) {
-			Item soldier = new Soldier(SoldierLevel.level1);
-			board.getShop().setSelectedItem(soldier, district);
-			toCell = getChoice(district, board);
-			board.play(toCell);
-		}
-	}
-	
-	protected Cell getChoice(Cell cell, Board board) {
-		Cell treeChoice = null;
-		Cell improveChoice = null;
-		Cell enemyChoice = null;
-		for(Cell c : board.possibleMove(cell)) {
-			if(c.getItem() instanceof Tree && treeChoice == null) {
-				treeChoice = c;
-			}
-			else if(c.getItem() != null && c.getItem().getClass().isInstance(cell.getItem()) && improveChoice == null) {
-				if(cell.getDistrict().getGold() - ((SoldierLevel)cell.getItem().getLevel()).getSalary()*10 > 0){
-					improveChoice = c;
-				}
-			}
-			else if(c.getDistrict() != null && c.getDistrict().getPlayer() != cell.getDistrict().getPlayer() && enemyChoice == null) {
-				enemyChoice = c;
-			}
-		}
-		if(treeChoice != null) {
-			return treeChoice;
-		}
-		else if(enemyChoice != null) {
-			return enemyChoice;
-		}
-		else if(improveChoice != null) {
-			return improveChoice;
-		}
-		return board.possibleMove(cell).get(rand.nextInt(board.possibleMove(cell).size()));
-	}
-	
-	protected Cell getChoice(District district, Board board) {
-		Cell treeChoice = null;
-		Cell emptyChoice = null;
-		for(Cell c : board.possibleMove(district)) {
-			if(c.getDistrict() == null) {
-				emptyChoice = c;
-			}
-			else if(c.getItem() instanceof Tree) {
-				treeChoice = c;
-			}
-		}
-		if(treeChoice != null) {
-			return treeChoice;
-		}
-		return emptyChoice;
 	}
 	
 	protected ArrayList<Cell> soldierCells(ArrayList<District> districts){
@@ -199,8 +135,11 @@ public abstract class AbstractStrategy implements Strategy {
 	
 	protected Cell randomCell(Cell cell, ArrayList<Cell> possibleMoves) {
 		int size = possibleMoves.size();
-		int r = rand.nextInt(size);
-		return possibleMoves.get(r);
+		if(size > 0) {
+			int r = rand.nextInt(size);
+			return possibleMoves.get(r);
+		}
+		return null;
 	}
 
 	@Override
