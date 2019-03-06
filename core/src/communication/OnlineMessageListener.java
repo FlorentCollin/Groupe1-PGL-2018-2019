@@ -1,15 +1,7 @@
 package communication;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import gui.utils.GsonInit;
-import logic.item.Capital;
-import logic.item.Item;
-import logic.item.Soldier;
-import logic.item.Tree;
-import logic.item.level.Level;
-import logic.item.level.SoldierLevel;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -34,6 +26,7 @@ public class OnlineMessageListener extends MessageListener{
 
     @Override
     public void run() {
+        Thread.currentThread().setName("OnlineMessageListener");
         running.set(true);
         //Boucle infinie tant que le client est connecté au serveur
         while(running.get() && clientChannel.isConnected()) {

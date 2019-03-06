@@ -3,12 +3,19 @@ package gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import gui.graphics.screens.BasicScreen;
+import gui.graphics.screens.animations.RectangleActor;
 import gui.utils.Constants;
+import logic.item.level.SoldierLevel;
+
+import java.util.ArrayList;
 
 /**
  * Classe représentant l'HUD in game qui contient notamment le shop ainsi que le nom du joueur actif.
@@ -55,29 +62,53 @@ public class Hud extends Stage {
             Image background = new Image(uiSkin.getDrawable("shop-background"));
             width = background.getWidth() * Constants.getRatioX(Gdx.graphics.getWidth());
             height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
+            ArrayList<Image> goldImages = new ArrayList<>();
+            for(int i = 0; i < 4; i++) {
+                Image gold = new Image(itemSkin.createSprite("Coin"));
+                gold.setScaling(Scaling.fit);
+                goldImages.add(gold);
+            }
+            Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+            labelStyle.font = parent.getTextFont();
+            Label soldierLvl1Price = new Label(Integer.toString(SoldierLevel.level1.getPrice()), labelStyle);
+            Label soldierLvl2Price = new Label(Integer.toString(SoldierLevel.level2.getPrice()), labelStyle);
+            Label soldierLvl3Price = new Label(Integer.toString(SoldierLevel.level3.getPrice()), labelStyle);
+            Label soldierLvl4Price = new Label(Integer.toString(SoldierLevel.level4.getPrice()), labelStyle);
             //Création des objets accessibles dans le shop
-            soldierLvl1 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl1")));
-            soldierLvl2 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl2")));
-            soldierLvl3 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl3")));
-            soldierLvl4 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl4")));
+            soldierLvl1 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl1_big")));
+            soldierLvl2 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl2_big")));
+            soldierLvl3 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl3_big")));
+            soldierLvl4 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl4_big")));
+            soldierLvl1.setScaling(Scaling.fit);
+            soldierLvl2.setScaling(Scaling.fit);
+            soldierLvl3.setScaling(Scaling.fit);
+            soldierLvl4.setScaling(Scaling.fit);
             Table scrollTable = new Table();
             //Ajout des objets achetables dans le shop
-            scrollTable.add(soldierLvl1).maxHeight(height/4);
-            scrollTable.row();
-            scrollTable.add(soldierLvl2).maxHeight(height/4);
-            scrollTable.row();
-            scrollTable.add(soldierLvl3).maxHeight(height/4);
-            scrollTable.row();
-            scrollTable.add(soldierLvl4).maxHeight(height/4);
+            addSoldier(scrollTable, soldierLvl1Price, goldImages.get(0), soldierLvl1);
+            addSoldier(scrollTable, soldierLvl2Price, goldImages.get(1), soldierLvl2);
+            addSoldier(scrollTable, soldierLvl3Price, goldImages.get(2), soldierLvl3);
+            addSoldier(scrollTable, soldierLvl4Price, goldImages.get(3), soldierLvl4);
             //TODO COMMENT
             ScrollPane scroller;
-            scroller = new ScrollPane(scrollTable);
+            scroller = new ScrollPane(scrollTable, uiSkin);
             scroller.setScrollingDisabled(true, false);
+            scroller.setScrollbarsVisible(true);
+            scroller.setFadeScrollBars(false);
+
             table = new Table(uiSkin);
             table.setBackground("shop-background");
-            table.add(scroller).fillX().expand().align(Align.topLeft);
+            table.add(scroller).fillX().expand().align(Align.topLeft).padTop(3).padBottom(3);
             table.setSize(width, height);
 
+        }
+
+        private void addSoldier(Table scrollTable, Label soldierPrice, Image gold, Image soldier) {
+            scrollTable.add(soldier).maxHeight(height/4).padRight(10).padLeft(10).colspan(2);
+            scrollTable.row();
+            scrollTable.add(soldierPrice).maxHeight(10).padLeft(5).padRight(5).padBottom(20);
+            scrollTable.add(gold).maxHeight(height/8).padRight(1).padBottom(20);
+            scrollTable.row();
         }
 
         public void addActorsToStage(Hud hud) {
@@ -98,11 +129,11 @@ public class Hud extends Stage {
             width = background.getWidth() * Constants.getRatioX(Gdx.graphics.getWidth());
             height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
             Image gold = new Image(itemSkin.createSprite("Coin"));
+            gold.setScaling(Scaling.fit);
             Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
             labelStyle.font = parent.getTextFont();
 
             goldLabel = new Label("", labelStyle);
-            gold.setScaling(Scaling.fit);
             //TODO COMMENT
             table = new Table(uiSkin);
             table.setSize(width, height);

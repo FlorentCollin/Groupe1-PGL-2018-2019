@@ -9,11 +9,13 @@ import com.badlogic.gdx.Gdx;
 public class UserSettings {
 
     private boolean fullScreen;
+    private String language;
     private int musicLevel;
     private int soundLevel;
 
     public UserSettings() {
         setFullScreen(false);
+        setLanguage("en");
         setMusicLevel(100);
         setSoundLevel(100);
     }
@@ -46,5 +48,13 @@ public class UserSettings {
 
     public boolean isFullScreen() {
         return fullScreen;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }
