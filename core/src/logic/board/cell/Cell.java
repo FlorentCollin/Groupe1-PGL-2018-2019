@@ -36,6 +36,10 @@ public class Cell {
 		return this.district;
 	}
 	
+	public void removeDistrict() {
+		district = null;
+	}
+	
 	public void removeItem() {
 		item = null;
 	}
