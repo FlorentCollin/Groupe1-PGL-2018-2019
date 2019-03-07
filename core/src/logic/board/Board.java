@@ -50,7 +50,7 @@ public class Board{
 		memories.add(new ArrayList<>());
 		fullIn();
 		for(District district : districts) {
-			generateCapital(district);			
+			generateCapital(district);
 		}
 	}
 	
@@ -838,7 +838,9 @@ public class Board{
     }
 
     public boolean hasChanged() {
-	    return hasChanged;
+		boolean ret = hasChanged;
+		hasChanged = false;
+	    return ret;
     }
 
     public void updateBoard(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {

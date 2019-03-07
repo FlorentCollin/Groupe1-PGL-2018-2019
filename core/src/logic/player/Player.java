@@ -11,7 +11,6 @@ public class Player {
 	private Color color;
 	protected ArrayList<Soldier> soldiers;
 
-	public static int globalId = 0;
 	private int id;
 	
 	public Player() {

@@ -27,9 +27,4 @@
       <item type="Tree" x="12" y="14" />
       <item type="Tree" x="18" y="9" />
     </items>
-    <ais>
-    	<ai soldierNumber="2" strategy="RandomStrategy" />
-    	<ai soldierNumber="1" strategy="RandomStrategy" />
-    </ais>
-
 </world>
