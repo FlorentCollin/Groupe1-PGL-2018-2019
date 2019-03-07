@@ -642,20 +642,22 @@ public class Board{
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
-		int i = rand.nextInt(district.getCells().size());
-		while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
-			visited.add(district.getCells().get(i));
-			i = rand.nextInt(district.getCells().size());
-		}
-		if(visited.size() == district.getCells().size()) {
-			for(Cell c : district.getCells()) {
-				if(c.getItem() instanceof Tree) {
-					i = district.getCells().indexOf(c);
-				}
-			}
-		}
-		Cell cell = district.getCells().get(i);
-		district.addCapital(cell);
+        synchronized (district.getCells()) {
+            int i = rand.nextInt(district.getCells().size());
+            while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
+                visited.add(district.getCells().get(i));
+                i = rand.nextInt(district.getCells().size());
+            }
+            if(visited.size() == district.getCells().size()) {
+                for(Cell c : district.getCells()) {
+                    if(c.getItem() instanceof Tree) {
+                        i = district.getCells().indexOf(c);
+                    }
+                }
+            }
+            Cell cell = district.getCells().get(i);
+            district.addCapital(cell);
+        }
 	}
 	
 	/**

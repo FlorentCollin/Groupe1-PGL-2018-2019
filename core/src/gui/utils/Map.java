@@ -143,7 +143,10 @@ public class Map {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
-            players.add(new Player());
+            Player newPlayer = new Player();
+            //Ajout de l'id du player
+            newPlayer.setId(i+1); //Car i=0 correspond aux cellules neutres
+            players.add(newPlayer);
         }
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
         int height = Integer.parseInt(xmlElement.getAttribute("height"));
