@@ -33,6 +33,7 @@ public class District {
 	public void addCell(Cell cell) {
 		if(cells.indexOf(cell) == -1) {
 			cells.add(cell);
+			cell.setDistrict(this); // Mise à jour du district pour la cellule ajoutée
 		}
 	}
 
@@ -47,6 +48,9 @@ public class District {
 	
 	public void removeCell(Cell cell) {
 		cells.remove(cells.indexOf(cell));
+		if(cell == capital) {
+			removeCapital();
+		}
 	}
 	
 	public void removeAll(District district) {
