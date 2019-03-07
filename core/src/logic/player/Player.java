@@ -17,8 +17,6 @@ public class Player {
 	public Player() {
 		/*Dans le cas où le joueur ne stipule rien 
 		 * ou est une ia*/
-		globalId++;
-		id = globalId;
 		soldiers =  new ArrayList<>();
 	}
 	
@@ -51,5 +49,9 @@ public class Player {
 
     public int getId() {
 	    return id;
+    }
+
+    public void setId(int id) {
+	    this.id = id;
     }
 }
