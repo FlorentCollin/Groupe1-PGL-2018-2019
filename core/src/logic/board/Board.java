@@ -82,6 +82,7 @@ public class Board{
 	
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
+		ai.setId(players.get(nPlayer).getId());
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(nPlayer)) {
 				ai.addDistrict(district);

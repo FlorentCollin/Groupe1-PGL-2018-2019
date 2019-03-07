@@ -1,12 +1,6 @@
 package gui.graphics.screens;
 
 
-import static gui.utils.Constants.N_TILES;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -20,18 +14,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-
-import communication.Message;
-import communication.MessageListener;
-import communication.MessageSender;
-import communication.PlayMessage;
-import communication.ShopMessage;
-import communication.TextMessage;
+import communication.*;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -44,6 +31,11 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import roomController.Room;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static gui.utils.Constants.N_TILES;
 
 public class InGameScreen extends BasicScreen implements InputProcessor {
 
@@ -345,7 +337,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
         selectedCells = cellsArray;
-        int numberPlayer;
         for(Cell cell : selectedCells) {
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
@@ -360,7 +351,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     }
 
     private void unselectCells() {
-    	int numberPlayer = -1;
         for (Cell selectedCell : selectedCells) {
 
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
@@ -373,46 +363,28 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         }
         selectedCells = new ArrayList<>();
     }
+
     //Mdr c'est le code le plus dégeux que j'ai jamais fais de toute ma vie, mais c'est juste pour tester le jeu
     private void changeModifiedCells() {
+        //On parcours la map à la recherche de cellules qui ont changées de joueurs
         for (int i = 0; i < board.getColumns(); i++) {
             for (int j = 0; j < board.getRows(); j++) {
-                Cell cell = board.getCell(i,j);
-                OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i,j));
+                Cell cell = board.getCell(i, j);
+                OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(i, j));
                 TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
-                if(cell.getDistrict() != null) {
-                    int playerNumber;
+                if (cell.getDistrict() != null) {
                     Player player = cell.getDistrict().getPlayer();
-                    for (int k = 0; k < board.getPlayers().size(); k++) {
-                        if(player == board.getPlayers().get(k)) {
-                            playerNumber = k;
-                            if(tmxCell.getTile().getId()-1 != playerNumber && tmxCell.getTile().getId()-1-N_TILES != playerNumber) {
-                                tmxCell.setTile(map.getTileSet().getTile(playerNumber+1));
-                                break;
-                            }
-                        }
+                    //Si la cellule à changé de joueur on change la couleur de la cellule
+                    if (tmxCell.getTile().getId() != player.getId()) {
+                        tmxCell.setTile(map.getTileSet().getTile(player.getId()));
                     }
-                } else if ((int)tmxCell.getTile().getProperties().get("player") != 0) {
+                    //Sinon c'est que la cellule est un territoire neutre
+                } else if ((int) tmxCell.getTile().getProperties().get("player") != 0) {
                     tmxCell.setTile(map.getTileSet().getTile(3));
                 }
             }
 
         }
-    }
-    
-    private TiledMapTile getSelectTile(TiledMapTileSet tileSet, int playerNumber) {
-    	TiledMapTile tile;
-    	MapProperties properties;
-    	for(int i=0; i<tileSet.size(); i++) {
-    		tile = tileSet.getTile(i);
-    		if(tile != null) {
-    			properties = tile.getProperties();
-    			if((int)properties.get("player") == playerNumber+1 && (boolean)properties.get("isSelection")) {
-    				return tile;
-    			}
-    		}
-    	}
-    	return null;
     }
 
     private OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {
