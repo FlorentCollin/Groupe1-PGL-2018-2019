@@ -13,7 +13,7 @@ import logic.item.Tree;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
-import logic.player.ai.Strategy;
+import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
 import memory.Memory;
 
@@ -103,39 +103,36 @@ public class Board{
 	 * @parm cell la cellule sur laquelle placer le nouvel item
 	 * */
 	public void placeNewItem(Cell cell){
-		// Pour placer une nouvel item il faut d'abord séléctionner une cellule du district depuis lequel on souhaite acheter
-		// Ensuite il faut séléctionner la cellule sur laquelle on souhaite placer l'item
-//		if(selectedCell != null && shop.getSelectedItem() != null) {
-			if(isInPossibleMove(possibleMove(selectedCell.getDistrict()), cell)) {
-				if(cell.getItem() == null) { // Si cell ne contient aucun item on peut toujours se placer dessus
-					conquerForNewItem(cell);
-				}
-				if(cell.getItem() instanceof Tree) {
-					conquerForNewItem(cell);
-					cell.getDistrict().addGold(3);
-				}
-				else if(isOnOwnTerritory(cell)) { // Si la cellule appartient déjà au joueur
-					// Il faut que l'item soit de même instance que celui à ajouter
-					// Mais aussi de même niveau et non maxé
-					// Ainsi on peut améliorer
-					if(cell.getItem().isImprovable() && isSameItem(cell, shop.getSelectedItem()) && cell.getItem().getLevel().isNotMax()) {
-						fusionForNewItem(cell);
-					}
-				}
-				// Le joueur souhaite se placer sur une case ennemie non vide
-				// L'item de la case doit être de niveau inférieur ou égal à celui que l'on souhaite placer
-				else {
-					// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
-					if(cell.getItem().getLevel() == null) {
-						conquerForNewItem(cell);
-					}
-					// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
-					else if(cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
-						conquerForNewItem(cell);
-					}
+		//TO REDO !!!!!!!!!!!!
+		if(isInPossibleMove(possibleMove(selectedCell.getDistrict()), cell)) {
+			if(cell.getItem() == null) { // Si cell ne contient aucun item on peut toujours se placer dessus
+				conquerForNewItem(cell);
+			}
+			if(cell.getItem() instanceof Tree) {
+				conquerForNewItem(cell);
+				cell.getDistrict().addGold(3);
+			}
+			else if(isOnOwnTerritory(cell)) { // Si la cellule appartient déjà au joueur
+				// Il faut que l'item soit de même instance que celui à ajouter
+				// Mais aussi de même niveau et non maxé
+				// Ainsi on peut améliorer
+				if(cell.getItem().isImprovable() && isSameItem(cell, shop.getSelectedItem()) && cell.getItem().getLevel().isNotMax()) {
+					fusionForNewItem(cell);
 				}
 			}
-//		}
+			// Le joueur souhaite se placer sur une case ennemie non vide
+			// L'item de la case doit être de niveau inférieur ou égal à celui que l'on souhaite placer
+			else {
+				// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
+				if(cell.getItem().getLevel() == null) {
+					conquerForNewItem(cell);
+				}
+				// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
+				else if(cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
+					conquerForNewItem(cell);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -146,10 +143,6 @@ public class Board{
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
 		}
-		if(cell.getItem() instanceof Capital) {
-			cell.getDistrict().removeCapital();
-		}
-		cell.setDistrict(selectedCell.getDistrict());
 		selectedCell.getDistrict().addCell(cell); //On ajoute la cellule conquise au district présélectionné
 		updateCellForNewItem(cell); 
 		checkMerge(cell);
@@ -164,7 +157,6 @@ public class Board{
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
 		shop.buy(cell.getDistrict());
-		setSelectedCell(null);
 	}
 	
 	/**
@@ -172,7 +164,7 @@ public class Board{
 	 * @param toCell la cellule de destination
 	 * */
 	public void move(Cell toCell) {
-//		if(selectedCell != null && selectedCell.getItem() != null && selectedCell.getItem().getMode().isMovable() && selectedCell.getItem().canMove()) {
+		//TO REDO
 		if(selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {//Il faut vérifier que l'item de la cellule est déplaçable et qu'il peut encore être déplacé
 			if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
 				if(toCell.getItem() == null) {
@@ -289,8 +281,9 @@ public class Board{
 						subAround.addAll(getNeighbors(c));
 					}
 				}
-				if(cell.getItem() == null)
+				if(cell.getItem() == null) {
 				    break;
+				}
 				around.addAll(subAround);
 			}
 			for (Cell c : around) {
