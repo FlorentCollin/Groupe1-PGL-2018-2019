@@ -20,7 +20,7 @@ public class Room extends Thread {
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
     private ArrayList<Client> clients = new ArrayList<>();
-    private Board board;
+    private final Board board;
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
@@ -56,21 +56,23 @@ public class Room extends Thread {
             try {
                 //Récupération du message du client
                 Message message = messagesFrom.take();
-                executeMessage(message);
-                if(messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
-                    //Si le board à changé alors il faut notifier les clients des changements.
-                    if(board.hasChanged()) {
-                        UpdateMessage updateMessage;
-                        if(board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
-                            Cell selectedCell = board.getSelectedCell();
-                            updateMessage = new UpdateMessage(board.getDistricts(),board.getPlayers(),
-                                    board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
-                        } else { //Création d'un UpdateMessage sans selectedCell
-                            updateMessage = new UpdateMessage(board.getDistricts(),
-                                    board.getPlayers(), board.getActivePlayerNumber());
+                synchronized (board) {
+                    executeMessage(message);
+                    if (messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
+                        //Si le board à changé alors il faut notifier les clients des changements.
+                        if (board.hasChanged()) {
+                            UpdateMessage updateMessage;
+                            if (board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
+                                Cell selectedCell = board.getSelectedCell();
+                                updateMessage = new UpdateMessage(board.getDistricts(), board.getPlayers(),
+                                        board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
+                            } else { //Création d'un UpdateMessage sans selectedCell
+                                updateMessage = new UpdateMessage(board.getDistricts(),
+                                        board.getPlayers(), board.getActivePlayerNumber());
+                            }
+                            updateMessage.setClients(clients); //Ajout des clients au message
+                            messagesToSend.put(updateMessage); //Envoie du message
                         }
-                        updateMessage.setClients(clients); //Ajout des clients au message
-                        messagesToSend.put(updateMessage); //Envoie du message
                     }
                 }
             } catch (InterruptedException e) {

@@ -298,7 +298,6 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<>();
-		synchronized (district.getCells()) {
 			for(Cell c : district.getCells()) {
 				if(possible.indexOf(c) == -1 && canGoOn(c, shop.getSelectedItem())) {
 					possible.add(c);
@@ -311,7 +310,7 @@ public class Board{
 			}
 			return possible;
 
-		}
+
 	}
 	
 	/**
@@ -403,13 +402,11 @@ public class Board{
 					}
 					else {
 						district.refreshSoldiers();
-						synchronized (district.getCells()) {
 							for (Cell c : district.getCells()) {
 								if (c.getItem() != null && c.getItem().isMovable()) {
 									c.getItem().setHasMoved(false);
 								}
 							}
-						}
 					}
 				}
 			}
@@ -471,7 +468,7 @@ public class Board{
 		smaller.removeCapital();
 		bigger.addAll(smaller);
 		removeDistrict(smaller);
-		checkDistricts();
+//		checkDistricts();
 	}
 	
 	/**
@@ -480,7 +477,6 @@ public class Board{
 	 * */
 	private void split(District district) {
 		District newDistrict = new District(district.getPlayer());
-		synchronized (district.getCells()) {
 			for (Cell c : district.getCells()) {
 				visited.clear();
 				firstCell = c;
@@ -489,7 +485,6 @@ public class Board{
 					c.setDistrict(newDistrict);
 				}
 			}
-		}
 		district.removeAll(newDistrict);
 		addDistrict(newDistrict);
 		checkDistricts();
@@ -505,7 +500,7 @@ public class Board{
 				visited.clear();
 				firstCell = c;
 				if(numberOfWayToCapital(c) == 0) {
-					split(c.getDistrict());
+ 					split(c.getDistrict());
 				}
 			}
 		}
@@ -579,7 +574,6 @@ public class Board{
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
-        synchronized (district.getCells()) { // what?
             int i = rand.nextInt(district.getCells().size());
             while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
                 visited.add(district.getCells().get(i));
@@ -593,7 +587,6 @@ public class Board{
 	            Cell cell = district.getCells().get(i);
 	            district.addCapital(cell);
             }
-        }
 	}
 	
 	private void removeDistrict(District district) {
@@ -708,7 +701,6 @@ public class Board{
 		neutralCells.clear();
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
-			synchronized (district.getCells()) {
 				if (district.getCells().size() <= 1) {
 					emptyDistricts.add(district);
 					for (Cell c : district.getCells()) {
@@ -717,7 +709,6 @@ public class Board{
 						neutralCells.add(c);
 					}
 				}
-			}
 		}
 		for(District district : emptyDistricts) {
 			removeDistrict(district);
@@ -748,7 +739,6 @@ public class Board{
         this.players = players;
         this.activePlayer = activePlayer;
         for (District district : districts) {
-			synchronized (district.getCells()) {
 				for (Cell cell : district.getCells()) {
 					board[cell.getX()][cell.getY()] = cell;
 					cell.setDistrict(district);
@@ -758,7 +748,6 @@ public class Board{
 						players.set(i, district.getPlayer());
 					}
 				}
-			}
         }
     }
     

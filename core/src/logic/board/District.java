@@ -18,7 +18,7 @@ public class District {
 	private int id;
 
 	public District(Player player) {
-		cells = Collections.synchronizedList(new ArrayList<>());
+		cells = new ArrayList<>();
 		this.player = player;
 
 		globalId++;

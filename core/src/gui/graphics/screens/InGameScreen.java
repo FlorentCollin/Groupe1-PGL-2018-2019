@@ -1,12 +1,6 @@
 package gui.graphics.screens;
 
 
-import static gui.utils.Constants.N_TILES;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -22,12 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-
-import communication.MessageListener;
-import communication.MessageSender;
-import communication.PlayMessage;
-import communication.ShopMessage;
-import communication.TextMessage;
+import communication.*;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -39,8 +28,12 @@ import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
-import logic.player.ai.AI;
 import roomController.Room;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static gui.utils.Constants.N_TILES;
 
 public class InGameScreen extends BasicScreen implements InputProcessor {
 
@@ -50,7 +43,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private float worldHeight;
     private TiledMapTileLayer cells;
     private TiledMapTileLayer selectedLayer;
-    private Board board;
+    private final Board board;
     private TextureAtlas itemsSkin;
     private List<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
@@ -112,11 +105,13 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super.render(delta);
         changeModifiedCells();
         neutral();
-        if(board.getSelectedCell() != null) {
-            selectCells(board.possibleMove(board.getSelectedCell()));
-        }
-        if(board.getShop().getSelectedItem() != null && board.getSelectedCell() != null) {
-        	selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+        synchronized (board) {
+            if (board.getSelectedCell() != null) {
+                selectCells(board.possibleMove(board.getSelectedCell()));
+            }
+            if (board.getShop().getSelectedItem() != null && board.getSelectedCell() != null) {
+                selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+            }
         }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
@@ -314,31 +309,32 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        if(hud.hit(screenX, screenY, true) != null)
+        if (hud.hit(screenX, screenY, true) != null)
             return false;
         //Cette méthode va lorsqu'on passe la souris sur un district montrer ce district
-        if(board.getSelectedCell() == null) { // On vérifie qu'aucune cellule n'a été sélectionnée pour une action dans le board
-            // car sinon on ne doit pas montrer le district
-            OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
-            //On vérifie que les coordonnées sont bien dans les limites de la cartes
-            if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
-                    && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
-                Cell cell = board.getCell(boardCoords.col, boardCoords.row);
-                if(cell != null) {
-                	// Ne s'applique que si la case appartient au joueur
-                	// Ainsi il voit directement avec quelles cases il peut interagir
-                    if(cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
-                        hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
-                        cells.setOpacity(0.9f);
-                        selectCells(cell.getDistrict().getCells());
-                    } else {
-                        hud.getDistrictInfo().goldLabel.setText("");
-                        cells.setOpacity(1f);
-                        unselectCells();
+        synchronized (board) {
+            if (board.getSelectedCell() == null) { // On vérifie qu'aucune cellule n'a été sélectionnée pour une action dans le board
+                // car sinon on ne doit pas montrer le district
+                OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
+                //On vérifie que les coordonnées sont bien dans les limites de la cartes
+                if (boardCoords.col >= 0 && boardCoords.col < board.getColumns()
+                        && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
+                    Cell cell = board.getCell(boardCoords.col, boardCoords.row);
+                    if (cell != null) {
+                        // Ne s'applique que si la case appartient au joueur
+                        // Ainsi il voit directement avec quelles cases il peut interagir
+                        if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                            hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
+                            cells.setOpacity(0.9f);
+                            selectCells(cell.getDistrict().getCells());
+                        } else {
+                            hud.getDistrictInfo().goldLabel.setText("");
+                            cells.setOpacity(1f);
+                            unselectCells();
+                        }
                     }
                 }
             }
-
         }
         return true;
     }
