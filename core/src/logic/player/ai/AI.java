@@ -1,12 +1,11 @@
 package logic.player.ai;
 
-import java.util.ArrayList;
-
 import logic.board.Board;
 import logic.board.District;
-import logic.board.cell.Cell;
-import logic.item.Soldier;
 import logic.player.Player;
+import logic.player.ai.strategy.Strategy;
+
+import java.util.ArrayList;
 
 public class AI extends Player{
 	private transient Strategy strategy;
@@ -33,5 +32,9 @@ public class AI extends Player{
 	
 	public void removeDistrict(District district) {
 		districts.remove(district);
+	}
+	
+	public ArrayList<District> getDistrcits(){
+		return districts;
 	}
 }

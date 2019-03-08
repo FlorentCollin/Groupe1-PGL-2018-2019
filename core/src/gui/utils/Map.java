@@ -25,7 +25,7 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
-import logic.player.ai.Strategy;
+import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
 import org.mockito.Mockito;
 
@@ -206,6 +206,7 @@ public class Map {
                     cell.setItem((Item) constructor.newInstance());
                 }
                 if(itemClass.equals(Capital.class)) {
+                	cell.getDistrict().removeCapital();
                     cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
                     cell.getDistrict().addCapital(cell);
                 }
@@ -248,7 +249,7 @@ public class Map {
     
     protected Class<?> getStrategy(String strategy){
     	try {
-    		return Class.forName("logic.player.ai."+strategy);
+    		return Class.forName("logic.player.ai.strategy."+strategy);
     	}
     	catch(ClassNotFoundException e) {
     		System.out.println("ERROR : the strategy "+strategy+" didn't exist");

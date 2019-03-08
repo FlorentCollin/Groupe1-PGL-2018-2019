@@ -1,4 +1,4 @@
-package logic.player.ai;
+package logic.player.ai.strategy;
 
 import java.util.ArrayList;
 

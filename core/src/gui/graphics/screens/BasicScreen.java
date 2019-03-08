@@ -20,12 +20,13 @@ import gui.utils.Constants;
 public abstract class BasicScreen implements Screen {
     protected Stage stage;
     protected Slay parent;
-    protected BitmapFont defaultFontTitle;
-    protected BitmapFont defaultFont;
-    protected BitmapFont defaultFontItalic;
-    protected BitmapFont logoFont;
-    protected BitmapFont textFont;
-    protected Skin uiSkin;
+    protected static boolean init = false;
+    protected static BitmapFont defaultFontTitle;
+    protected static BitmapFont defaultFont;
+    protected static BitmapFont defaultFontItalic;
+    protected static BitmapFont logoFont;
+    protected static BitmapFont textFont;
+    protected static Skin uiSkin;
     protected FreeTypeFontGenerator generator;
     protected FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     protected float ratio;
@@ -35,9 +36,9 @@ public abstract class BasicScreen implements Screen {
     public BasicScreen(Slay parent) {
         this.parent = parent;
         //Chargement du skin spécifique pour l'interface graphique
-        uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         generateStage();
-        generateFont();
+        if (!init)
+            init();
         ratio = Constants.getRatioX(stage.getWidth());
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
@@ -45,17 +46,23 @@ public abstract class BasicScreen implements Screen {
 
     public BasicScreen(Slay parent, Stage stage) {
         this.parent = parent;
-        uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         this.stage = stage;
         ratio = Constants.getRatioX(stage.getWidth());
+        if (!init)
+            init();
         generateFont();
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         this.stage.draw();
     }
 
+    public void init() {
+        uiSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        generateFont();
+    }
+
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(16/255,16/255f,16/255f,1);
+        Gdx.gl.glClearColor(16 / 255, 16 / 255f, 16 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getViewport().apply();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));

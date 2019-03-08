@@ -2,12 +2,17 @@ package gui.app;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.I18NBundle;
 import communication.CreateRoomMessage;
 import gui.graphics.screens.*;
 import gui.settings.InitSettings;
 import gui.settings.UserSettings;
 import gui.settings.UserShortcuts;
+import gui.utils.Language;
+
+import java.util.Locale;
 
 import static gui.utils.Constants.USER_SETTINGS_FILE;
 import static gui.utils.Constants.USER_SHORTCUTS_FILE;
@@ -27,10 +32,11 @@ public class Slay extends Game {
 
     @Override
 	public void create () {
-		mainMenuScreen = new MainMenuScreen(this);
 		userSettings = InitSettings.init(USER_SETTINGS_FILE, UserSettings.class);
 		userSettings.init();
 		userShortcuts = InitSettings.init(USER_SHORTCUTS_FILE, UserShortcuts.class);
+		Language.setLanguage(userSettings.getLanguage());
+		mainMenuScreen = new MainMenuScreen(this);
 		this.setScreen(mainMenuScreen);
 	}
 
@@ -84,12 +90,16 @@ public class Slay extends Game {
 	}
 
 	public void changeScreen(InGameScreen gameScreen) {
+		clearScreen();
+		this.setScreen(gameScreen);
+	}
+
+	public void clearScreen() {
 		this.mainMenuScreen = null;
 		this.settingsMenuScreen = null;
 		this.shortcutsMenuScreen = null;
 		this.onlineMenuScreen = null;
 		this.createRoomMenuScreen = null;
-		this.setScreen(gameScreen);
 	}
 
 	public UserSettings getUserSettings() {
