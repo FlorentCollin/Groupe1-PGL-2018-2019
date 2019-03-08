@@ -4,7 +4,7 @@ import communication.*;
 import gui.utils.Map;
 import logic.board.Board;
 import logic.board.cell.Cell;
-import logic.player.ai.RandomStrategy;
+import logic.player.ai.strategy.RandomStrategy;
 import server.Client;
 
 import java.util.ArrayList;
