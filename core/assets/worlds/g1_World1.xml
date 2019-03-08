@@ -27,13 +27,5 @@
       <item type="Tree" x="12" y="14" />
       <item type="Tree" x="18" y="9" />
     </items>
-<<<<<<< HEAD
-=======
-    <ais>
-    	<ai soldierNumber="2" strategy="RandomStrategy" />
-    	<ai soldierNumber="1" strategy="RandomStrategy" />
-        <ai soldierNumber="0" strategy="RandomStrategy" />
-    </ais>
 
->>>>>>> master
 </world>
