@@ -9,10 +9,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
 
@@ -34,6 +31,7 @@ import org.mockito.Mockito;
 
 public class Map {
 
+    private XmlReader.Element xmlElement;
     protected TiledMap map;
     protected HexagonalTiledMapRenderer tiledMapRenderer;
     protected TiledMapTileLayer cells;
@@ -44,14 +42,8 @@ public class Map {
     protected int numberOfPlayers;
     protected Constructor<?> constructor;
 
-    /**
-     * Méthode qui permet de charger un monde du jeu
-     * @param worldName Le nom du monde à charger
-     * @param loadBoard true s'il faut charger le board, false sinon
-     * @param loadTmxRenderer true s'il faut charger le TmxRenderer, false sinon
-     * @return Le board initialisé si loadBoard == true, null sinon
-     */
-    public Board load(String worldName, boolean loadBoard, boolean loadTmxRenderer, boolean naturalDisasters) {
+
+    public Map(String worldName) {
         XmlReader xml = new XmlReader();
         //Si l'application qui à été lancé n'est pas une application Libgdx, alors on charge une fausse application
         //Pour charger toutes les variables contenus dans Gdx.files et autres.
@@ -59,15 +51,26 @@ public class Map {
             loadLibgdx();
         }
         //Création du parseur xml et on récupère le xml_element contenant les informations du monde
-        XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
-        generateTmxMap(xml_element, loadTmxRenderer);
-        if(loadBoard) {
-            generateBoard(xml_element, naturalDisasters);
-            generateDistricts();
-            generateItems(xml_element);
-
+        xmlElement = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
+    }
+    /**
+     * Méthode qui permet de charger un monde du jeu
+     * @param loadTmxRenderer true s'il faut charger le TmxRenderer, false sinon
+     * @param naturalDisasters true s'il l'extension natural disasters est activé, false sinon
+     * @return Le board initialisé si loadBoard == true, null sinon
+     */
+    public Board loadBoard(boolean loadTmxRenderer, boolean naturalDisasters, ArrayList<String> playersName) {
+        if(cells == null) {
+            generateTmxMap(xmlElement, loadTmxRenderer);
         }
+            generateBoard(xmlElement, naturalDisasters, playersName);
+            generateDistricts();
+            generateItems(xmlElement);
         return board;
+    }
+
+    public void loadTmx() {
+        generateTmxMap(xmlElement, true);
     }
 
     /**
@@ -114,11 +117,11 @@ public class Map {
      * Méthode qui génère le board
      * @param xmlElement l'xmlElement contenant les informations du monde
      */
-    private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters) {
+    private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters, ArrayList<String> playersName) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
-            Player newPlayer = new Player();
+            Player newPlayer = new Player(playersName.get(i));
             //Ajout de l'id du player
             newPlayer.setId(i+1); //Car i=0 correspond aux cellules neutres
             players.add(newPlayer);
