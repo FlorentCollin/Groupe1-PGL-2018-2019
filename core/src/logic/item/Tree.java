@@ -1,7 +1,7 @@
 package logic.item;
 
-public class Tree extends Item{
+public class Tree extends DestroyableItem{
 	public Tree() {
-		
+		setBonus(3);
 	}
 }
