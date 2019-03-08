@@ -28,19 +28,19 @@ public class Room extends Thread {
         return messagesFrom;
     }
 
-    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats,
+    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats, ArrayList<String> playersName,
                 LinkedBlockingQueue<Message> messagesFrom) {
-        Map map = new Map();
-        board = map.load(worldName, true, false, naturalDisasters);
+        Map map = new Map(worldName);
+        board = map.loadBoard(false, naturalDisasters, playersName);
         for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionné
             board.changeToAI(board.getPlayers().size()-i-1, new RandomStrategy());
         }
         this.messagesFrom = messagesFrom;
     }
 
-    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats,
+    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats, ArrayList<String> playersName,
                 LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
-        this(worldName, naturalDisasters, aiStrats, messagesFrom);
+        this(worldName, naturalDisasters, aiStrats, playersName, messagesFrom);
         this.messagesToSend = messagesToSend;
     }
 

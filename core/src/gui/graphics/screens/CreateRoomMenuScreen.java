@@ -187,6 +187,12 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 String world = nameToFileName.get(mapSelectBox.getSelected());
                 ArrayList<String> ai = new ArrayList<>();
                 aiStrats.forEach((i) -> ai.add(i.getSelected()));
+                ArrayList<String> playersName = new ArrayList<>();
+                int number = Integer.parseInt(nameToXml.get(mapSelectBox.getSelected()).getChildByName("players").getAttribute("number"));
+                for (int i = 1; i <= number - ai.size(); i++) {
+                    playersName.add(parent.getUserSettings().getUsername());
+                }
+                ai.forEach((i) -> playersName.add("AI"));
                 InGameScreen gameScreen;
                 if (online) { //TODO
                     OnlineMessageSender messageSender = new OnlineMessageSender();
@@ -194,7 +200,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                     messageListener.start();
 
                 } else {
-                    Room room = new Room(world, isNaturalDisastersOn(), ai, messagesQueue);
+                    Room room = new Room(world, isNaturalDisastersOn(), ai, playersName, messagesQueue);
                     OfflineMessageSender messageSender = new OfflineMessageSender(messagesQueue);
                     room.start();
                     while (room.getBoard() == null) { //TODO MODIFY THIS PART

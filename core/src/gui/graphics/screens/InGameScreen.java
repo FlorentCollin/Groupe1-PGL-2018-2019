@@ -61,8 +61,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         this.board = board;
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
-        map = new Map();
-        map.load(mapName, false, true, true);
+        map = new Map(mapName);
+        map.loadTmx();
         cells = map.getCells();
         selectedLayer = map.getSelectedCells();
         //Calcule de la grandeur de la carte
@@ -116,6 +116,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
         renderItems();
+        hud.getDistrictInfo().setCurrentPlayer(board.getActivePlayer());
         hud.getViewport().apply();
         hud.act(delta);
         hud.draw();

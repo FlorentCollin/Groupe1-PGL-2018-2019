@@ -1,6 +1,7 @@
 package gui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -14,6 +15,7 @@ import gui.graphics.screens.BasicScreen;
 import gui.graphics.screens.animations.RectangleActor;
 import gui.utils.Constants;
 import logic.item.level.SoldierLevel;
+import logic.player.Player;
 
 import java.util.ArrayList;
 
@@ -121,6 +123,7 @@ public class Hud extends Stage {
 
         private final float width, height;
         private final Table table;
+        private Label currentPlayer;
         public Label goldLabel;
 
         public DistrictInfo() {
@@ -130,21 +133,34 @@ public class Hud extends Stage {
             height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
             Image gold = new Image(itemSkin.createSprite("Coin"));
             gold.setScaling(Scaling.fit);
+
             Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
             labelStyle.font = parent.getTextFont();
-
             goldLabel = new Label("", labelStyle);
+
+            Image currentPlayerImage = new Image(itemSkin.createSprite("currentPlayer"));
+            currentPlayerImage.setScaling(Scaling.fit);
+            labelStyle.font = parent.getDefaultFontItalic();
+            currentPlayer = new Label("", labelStyle);
+
             //TODO COMMENT
             table = new Table(uiSkin);
             table.setSize(width, height);
             table.setBackground("info-background");
+            table.add(currentPlayerImage).maxWidth(50).padLeft(10).padRight(2);
+            table.add(currentPlayer).expandX().pad(10).align(Align.left);
             table.add(goldLabel).expandX().pad(10).align(Align.right);
             table.add(gold).maxWidth(50).align(Align.right).pad(10);
         }
 
-        public void addActorsToStage(Hud hud) {
+        private void addActorsToStage(Hud hud) {
             table.setPosition(hud.getWidth() - width, 0);
             hud.addActor(table);
+        }
+
+        public void setCurrentPlayer(Player player) {
+            currentPlayer.setColor(player.getColor());
+            currentPlayer.setText(player.getName());
         }
     }
 }
