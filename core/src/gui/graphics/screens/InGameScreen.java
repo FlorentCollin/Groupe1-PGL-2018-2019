@@ -363,12 +363,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     //TODO Reformater le code pour ne faire plus qu'une seule méthode
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
-<<<<<<< HEAD
-        selectedCells = cellsArray;
-=======
         selectedCells = new ArrayList<>(cellsArray);
         int numberPlayer;
->>>>>>> master
         for(Cell cell : selectedCells) {
             // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
             OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));

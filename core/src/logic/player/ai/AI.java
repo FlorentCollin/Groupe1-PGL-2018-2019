@@ -4,11 +4,7 @@ import logic.board.Board;
 import logic.board.District;
 import logic.player.Player;
 import logic.player.ai.strategy.Strategy;
-<<<<<<< HEAD
-=======
-
 import java.util.ArrayList;
->>>>>>> master
 
 public class AI extends Player{
 	private transient Strategy strategy;

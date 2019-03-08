@@ -38,7 +38,6 @@ public class District {
 	 * @param district le district dont on souhaite obtenir les cellules
 	 * */
 	public void addAll(District district) {
-<<<<<<< HEAD
 		for(Cell cell : district.getCells()) {
 			addCell(cell);
 		}
@@ -49,17 +48,6 @@ public class District {
 		if(cell == capital) {
 			removeCapital();
 		}
-=======
-        synchronized (cells) {
-            cells.addAll(district.getCells());
-        }
-	}
-
-	public  void removeCell(Cell cell) {
-	    synchronized (cells) {
-		    cells.remove(cells.indexOf(cell));
-        }
->>>>>>> master
 	}
 
 	public void removeAll(District district) {
@@ -77,7 +65,6 @@ public class District {
             }
         }
 	}
-<<<<<<< HEAD
 	
 	public void refreshSoldiers() {
 		for(Cell c : cells) {
@@ -87,9 +74,7 @@ public class District {
 		}
 	}
 	
-=======
 
->>>>>>> master
 	public void addCapital(Cell cell) {
 		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
