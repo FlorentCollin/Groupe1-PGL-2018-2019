@@ -43,7 +43,9 @@ public class District {
 	 * @param district le district dont on souhaite obtenir les cellules
 	 * */
 	public void addAll(District district) {
-		cells.addAll(district.getCells());
+		for(Cell cell : district.getCells()) {
+			addCell(cell);
+		}
 	}
 	
 	public void removeCell(Cell cell) {
@@ -61,6 +63,14 @@ public class District {
 		for(Cell c : cells) {
 			if(c.getItem() instanceof Soldier) {
 				c.setItem(new Tomb());
+			}
+		}
+	}
+	
+	public void refreshSoldiers() {
+		for(Cell c : cells) {
+			if(c.getItem().isMovable()) {
+				c.getItem().setHasMoved(false);
 			}
 		}
 	}
@@ -127,5 +137,9 @@ public class District {
 
     public int getId() {
         return id;
+    }
+    
+    public int size() {
+    	return cells.size();
     }
 }
