@@ -46,6 +46,7 @@ public class Board{
 		this.shop = shop;
 		fullIn();
 		neutralCells = new ArrayList<>();
+
 	}
 	
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -72,6 +73,7 @@ public class Board{
 	
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
+		ai.setId(players.get(nPlayer).getId());
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(nPlayer)) {
 				ai.addDistrict(district);
@@ -733,7 +735,9 @@ public class Board{
     }
 
     public boolean hasChanged() {
-	    return hasChanged;
+		boolean ret = hasChanged;
+		hasChanged = false;
+	    return ret;
     }
 
     public void updateBoard(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {

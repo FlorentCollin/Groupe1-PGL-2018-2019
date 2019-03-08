@@ -5,6 +5,7 @@ import communication.JoinRoomMessage;
 import communication.Message;
 import server.Client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,7 +32,7 @@ public class RoomController {
     public void createRoom(Client creatorClient, String worldName, boolean isNaturalDisastersOn) {
         //Création d'un lien vers une file de messages pour pouvoir transmettre des messages des clients vers cette room
         LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>();
-        Room room = new Room(worldName, isNaturalDisastersOn, messagesFrom, messagesToSend);
+        Room room = new Room(worldName, isNaturalDisastersOn, new ArrayList<>(), messagesFrom, messagesToSend);
         //Mise à jour des hashMaps
         rooms.put(creatorClient, room);
         roomQueue.put(room, messagesFrom);

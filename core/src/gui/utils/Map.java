@@ -65,7 +65,6 @@ public class Map {
             generateBoard(xml_element, naturalDisasters);
             generateDistricts();
             generateItems(xml_element);
-            checkAI(xml_element);
 
         }
         return board;
@@ -84,30 +83,6 @@ public class Map {
         config.preferencesDirectory = "core/assets";
         //Lancement de l'application et initialisation des paramètres Gdx.
         new HeadlessApplication(new EmptyApplication(), config);
-    }
-    
-    protected void checkAI(XmlReader.Element xmlElement) {
-    	XmlReader.Element ais = xmlElement.getChildByName("ais");
-    	for(int i = 0; i < ais.getChildCount(); i++) {
-    		XmlReader.Element ai = ais.getChild(i);
-    		int nPlayer = Integer.parseInt(ai.getAttribute("soldierNumber"));
-    		Class<?> strategyClass = getStrategy(ai.getAttribute("strategy"));
-    		try {
-				constructor = strategyClass.getConstructor();
-			} catch (NoSuchMethodException | SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		Strategy strategy = null;
-			try {
-				strategy = (Strategy) constructor.newInstance();
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		board.changeToAI(nPlayer, strategy);
-    	}
     }
 
     /**

@@ -2,7 +2,6 @@ package gui.graphics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,11 +19,8 @@ import gui.app.Slay;
 import gui.utils.Language;
 import roomController.Room;
 
-import javax.sound.sampled.Line;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static gui.graphics.screens.animations.Animations.*;
@@ -35,11 +31,12 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private final Table table;
     private final TextButton createRoomButton;
     private final Slider aiSlider;
+    private int pValue;  //Valeur précédente du ai slider
     private final SelectBox<String> mapSelectBox;
     private final ButtonGroup<TextButton> naturalGroup;
     private Table scrollTable;
-    private ArrayList<Label> iaNames = new ArrayList<>();
-    private ArrayList<SelectBox<String>> iaStrat = new ArrayList<>();
+    private ArrayList<Label> aiNames = new ArrayList<>();
+    private ArrayList<SelectBox<String>> aiStrats = new ArrayList<>();
     private Boolean online;
 
     private HashMap<String, String> nameToFileName;
@@ -60,11 +57,22 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
 
         Label aiSliderNumber = new Label("0", labelStyle);
+        pValue = 0; //Initialisation de la première valeur du ai slider
 
         aiSlider = new Slider(0, 1, 1, false, uiSkin);
         aiSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                aiSliderNumber.setText((int)aiSlider.getValue());
+                int value = (int)aiSlider.getValue();
+                aiSliderNumber.setText(value);
+                while (value > pValue) {
+                    addAI();
+                    value--;
+                }
+                while (value < pValue) {
+                    delAI(pValue - 1);
+                    pValue--;
+                }
+                pValue = (int)aiSlider.getValue();
             }
         });
 
@@ -115,7 +123,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
         scrollTable.add(aiSliderNumber).pad(PAD).align(Align.left);
         scrollTable.row();
-        addIA();
         //TODO COMMENT
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
@@ -178,6 +185,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
             public void clicked(InputEvent event, float x, float y) {
                 LinkedBlockingQueue<Message> messagesQueue = new LinkedBlockingQueue<>();
                 String world = nameToFileName.get(mapSelectBox.getSelected());
+                ArrayList<String> ai = new ArrayList<>();
+                aiStrats.forEach((i) -> ai.add(i.getSelected()));
                 InGameScreen gameScreen;
                 if (online) { //TODO
                     OnlineMessageSender messageSender = new OnlineMessageSender();
@@ -185,7 +194,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                     messageListener.start();
 
                 } else {
-                    Room room = new Room(world, isNaturalDisastersOn(), messagesQueue);
+                    Room room = new Room(world, isNaturalDisastersOn(), ai, messagesQueue);
                     OfflineMessageSender messageSender = new OfflineMessageSender(messagesQueue);
                     room.start();
                     while (room.getBoard() == null) { //TODO MODIFY THIS PART
@@ -208,12 +217,32 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         aiSlider.setRange(0, maxValue - 1);
     }
 
-    private void addIA() {
+    private void addAI() {
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
-        Label iaName = new Label("AI#" + (iaNames.size()+1), labelStyle);
-        iaNames.add(iaName);
-        scrollTable.add(iaName).align(Align.left);
+        Label aiName = new Label("AI#" + (aiNames.size()+1), labelStyle);
+        aiNames.add(aiName);
+        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
+        selectBoxStyle.font = textFont;
+        selectBoxStyle.listStyle.font = textFont;
+        SelectBox<String> aiStrat = new SelectBox<>(selectBoxStyle);
+        aiStrat.setItems("Random", "Easy", "Medium", "Hard");
+        aiStrat.setSelected("Random");
+        aiStrats.add(aiStrat);
+        scrollTable.add(aiName).align(Align.left);
+        scrollTable.add(aiStrat).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
+    }
+
+    private void delAI(int index) {
+        Label aiName = aiNames.get(index);
+        SelectBox<String> aiStrat = aiStrats.get(index);
+        scrollTable.getCell(aiName).reset();
+        scrollTable.getCell(aiStrat).reset();
+        scrollTable.row();
+        aiName.remove();
+        aiStrat.remove();
+        aiNames.remove(index);
+        aiStrats.remove(index);
     }
 }

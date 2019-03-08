@@ -4,6 +4,7 @@ import communication.*;
 import gui.utils.Map;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.player.ai.RandomStrategy;
 import server.Client;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class Room extends Thread {
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
     private ArrayList<Client> clients = new ArrayList<>();
-    private volatile Board board;
+    private Board board;
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
@@ -27,14 +28,19 @@ public class Room extends Thread {
         return messagesFrom;
     }
 
-    public Room(String worldName, boolean naturalDisasters, LinkedBlockingQueue<Message> messagesFrom) {
+    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats,
+                LinkedBlockingQueue<Message> messagesFrom) {
         Map map = new Map();
         board = map.load(worldName, true, false, naturalDisasters);
+        for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionné
+            board.changeToAI(board.getPlayers().size()-i-1, new RandomStrategy());
+        }
         this.messagesFrom = messagesFrom;
     }
 
-    public Room(String worldName, boolean naturalDisasters, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
-        this(worldName, naturalDisasters, messagesFrom);
+    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats,
+                LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
+        this(worldName, naturalDisasters, aiStrats, messagesFrom);
         this.messagesToSend = messagesToSend;
     }
 
