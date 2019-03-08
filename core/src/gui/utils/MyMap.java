@@ -12,7 +12,7 @@ import logic.board.Board;
 import logic.board.District;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
-import logic.player.ai.Strategy;
+import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
 
 public class MyMap extends Map{

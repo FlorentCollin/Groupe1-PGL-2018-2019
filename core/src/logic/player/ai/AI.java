@@ -7,6 +7,7 @@ import logic.board.District;
 import logic.board.cell.Cell;
 import logic.item.Soldier;
 import logic.player.Player;
+import logic.player.ai.strategy.Strategy;
 
 public class AI extends Player{
 	private transient Strategy strategy;

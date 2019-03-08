@@ -1,0 +1,48 @@
+{
+  Color: {
+    white: { a: 1, r: 1, g: 1, b: 1},
+    black: { a:1, r: 0, g: 0, b: 0}
+  }
+
+  TextButtonStyle: {
+    default: { fontColor: white},
+    logo: { fontColor: white},
+    logoShadow: { fontColor: black},
+    button: { fontColor: white, up: default-button-uncheck, checked: default-button-checked}
+  }
+
+  LabelStyle: {
+    default: { fontColor: white}
+  }
+
+  ImageButtonStyle: {
+    arrow: { imageDown: "arrow", imageUp: "arrow"}
+  }
+
+  ProgressBarStyle: {
+    default-horizontal: { background: slider, knob: slider-button },
+  },
+
+  SliderStyle: {
+    default-horizontal: { parent: default-horizontal}
+  }
+
+  ScrollPaneStyle: {
+    //TODO ajouter la barre de défilement
+    default: { vScroll: default-scroll, hScrollKnob: scroll-knob, hScroll: default-scroll, vScrollKnob: scroll-knob }
+//    default: { background: selectBox-background}
+  },
+
+  SelectBoxStyle: {
+    default: {
+      background: selectBox,
+      scrollStyle: default,
+      listStyle: { selection: selectBox-selection}
+    }
+  }
+
+  TextFieldStyle: {
+    default: { selection: selection, background: default-button-checked, cursor: cursor, fontColor: white }
+  }
+
+}

@@ -24,4 +24,10 @@ public class AttackStrategy extends AbstractStrategy{
 			}
 		}
 	}
+	
+//	private Cell findEnemy(ArrayList<Cell> possibleMoves) {
+//		for(Cell cell : possibleMoves) {
+//			if(cell.getDistrict() != null && )
+//		}
+//	}
 }

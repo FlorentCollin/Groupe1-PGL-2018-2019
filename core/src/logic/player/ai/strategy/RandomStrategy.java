@@ -9,7 +9,7 @@ import logic.board.cell.Cell;
 public class RandomStrategy extends AbstractStrategy{
 	
 	public RandomStrategy() {
-		
+		super();
 	}
 	
 	@Override
