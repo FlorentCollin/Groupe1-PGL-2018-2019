@@ -1,27 +1,22 @@
 package logic.board;
 
-import java.lang.reflect.Array;
+import logic.board.cell.Cell;
+import logic.item.*;
+import logic.player.Player;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import logic.board.cell.Cell;
-import logic.item.Capital;
-import logic.item.Tomb;
-import logic.item.Item;
-import logic.item.Soldier;
-import logic.item.Tree;
-import logic.player.Player;
 
 public class District {
 	private Player player;
 	private int gold;
 	private transient Cell capital;
-	private volatile List<Cell> cells;
+	private List<Cell> cells;
 
 	public static int globalId = 0;
 	private int id;
-	
+
 	public District(Player player) {
 		cells = Collections.synchronizedList(new ArrayList<>());
 		this.player = player;
@@ -29,7 +24,7 @@ public class District {
 		globalId++;
 		id = globalId;
 	}
-	
+
 	public void addCell(Cell cell) {
 		if(cells.indexOf(cell) == -1) {
 			cells.add(cell);
@@ -43,6 +38,7 @@ public class District {
 	 * @param district le district dont on souhaite obtenir les cellules
 	 * */
 	public void addAll(District district) {
+<<<<<<< HEAD
 		for(Cell cell : district.getCells()) {
 			addCell(cell);
 		}
@@ -53,19 +49,35 @@ public class District {
 		if(cell == capital) {
 			removeCapital();
 		}
+=======
+        synchronized (cells) {
+            cells.addAll(district.getCells());
+        }
 	}
-	
+
+	public  void removeCell(Cell cell) {
+	    synchronized (cells) {
+		    cells.remove(cells.indexOf(cell));
+        }
+>>>>>>> master
+	}
+
 	public void removeAll(District district) {
-		cells.removeAll(district.getCells());
+        synchronized (cells) {
+            cells.removeAll(district.getCells());
+        }
 	}
-	
+
 	public void removeSoldiers() {
-		for(Cell c : cells) {
-			if(c.getItem() instanceof Soldier) {
-				c.setItem(new Tomb());
-			}
-		}
+	    synchronized (cells) {
+            for(Cell c : cells) {
+                if(c.getItem() instanceof Soldier) {
+                    c.setItem(new Tomb());
+                }
+            }
+        }
 	}
+<<<<<<< HEAD
 	
 	public void refreshSoldiers() {
 		for(Cell c : cells) {
@@ -75,48 +87,53 @@ public class District {
 		}
 	}
 	
+=======
+
+>>>>>>> master
 	public void addCapital(Cell cell) {
 		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
 		}
 	}
-	
+
 	public void removeCapital() {
 		if(capital != null) {
 			capital.removeItem();
 			capital = null;
 		}
 	}
-	
+
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
-	
+
 	public Player getPlayer() {
 		return this.player;
 	}
-	
+
 	/**
 	 * Permet de calculer le revenu du district
 	 * @return le revenu du district
 	 * */
 	public void calculateGold() {
 		Item item;
-		for(Cell cell : cells) {
-			item = cell.getItem();
-			setGold(getGold() + 1);
-			if(item instanceof Soldier) {
-				setGold(getGold() - ((Soldier) item).getLevel().getSalary());
-			}
-			else if(item instanceof Tree) {
-				setGold(getGold() - 1);
-			}
-		}
+		synchronized (cells) {
+            for(Cell cell : cells) {
+                item = cell.getItem();
+                setGold(getGold() + 1);
+                if(item instanceof Soldier) {
+                    setGold(getGold() - ((Soldier) item).getLevel().getSalary());
+                }
+                else if(item instanceof Tree) {
+                    setGold(getGold() - 1);
+                }
+            }
+        }
 	}
-	
-	public List<Cell> getCells() {
-		return this.cells;
+
+	public synchronized List<Cell> getCells() {
+		return cells;
 	}
 
 	public int getGold() {
@@ -126,11 +143,11 @@ public class District {
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
-	
+
 	public void addGold(int gold) {
 		this.gold += gold;
 	}
-	
+
 	public Cell getCapital() {
 		return capital;
 	}

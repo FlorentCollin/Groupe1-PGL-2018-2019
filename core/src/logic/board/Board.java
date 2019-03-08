@@ -1,8 +1,5 @@
 package logic.board;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
@@ -14,6 +11,12 @@ import logic.player.Player;
 import logic.player.ai.AI;
 import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
+<<<<<<< HEAD
+=======
+
+import java.util.ArrayList;
+import java.util.Random;
+>>>>>>> master
 
 
 
@@ -260,7 +263,13 @@ public class Board{
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
+<<<<<<< HEAD
 			for (int i = 0; i < cell.getItem().getMaxMove(); i++) {
+=======
+			int i = 0;
+			Item item = cell.getItem();
+			while(item != null && i < item.getMaxMove()) {
+>>>>>>> master
 				subAround.clear();
 				for (Cell c : around) {
 					if (c.getDistrict() == cell.getDistrict()
@@ -270,10 +279,14 @@ public class Board{
 						subAround.addAll(getNeighbors(c));
 					}
 				}
+<<<<<<< HEAD
 //				if(cell.getItem() == null) {
 //				    break;
 //				}
+=======
+>>>>>>> master
 				around.addAll(subAround);
+				i++;
 			}
 			for (Cell c : around) {
 				if (c != cell && possible.indexOf(c) == -1) {
@@ -282,7 +295,7 @@ public class Board{
 					}
 				}
 			}
-		} 
+		}
 		else {
 		    possible.add(cell);
         }
@@ -400,7 +413,17 @@ public class Board{
 						district.removeSoldiers();
 					}
 					else {
+<<<<<<< HEAD
 						district.refreshSoldiers();
+=======
+						synchronized (district.getCells()) {
+							for (Cell c : district.getCells()) {
+								if (c.getItem() != null && c.getItem().isMovable()) {
+									c.getItem().setHasMoved(false);
+								}
+							}
+						}
+>>>>>>> master
 					}
 				}
 			}
@@ -471,11 +494,22 @@ public class Board{
 	 * */
 	private void split(District district) {
 		District newDistrict = new District(district.getPlayer());
+<<<<<<< HEAD
 		for(Cell c : district.getCells()) {
 			visited.clear();
 			firstCell = c;
 			if(numberOfWayToCapital(c)==0) {
 				newDistrict.addCell(c);
+=======
+		synchronized (district.getCells()) {
+			for (Cell c : district.getCells()) {
+				visited.clear();
+				firstCell = c;
+				if (numberOfWayToCapital(c) == 0) {
+					newDistrict.addCell(c);
+					c.setDistrict(newDistrict);
+				}
+>>>>>>> master
 			}
 		}
 		district.removeAll(newDistrict);
@@ -567,6 +601,7 @@ public class Board{
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
+<<<<<<< HEAD
         synchronized (district.getCells()) { // what?
             int i = rand.nextInt(district.getCells().size());
             while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
@@ -588,9 +623,26 @@ public class Board{
 		districts.remove(district);
 		if(district.getPlayer() instanceof AI) {
 			((AI)district.getPlayer()).removeDistrict(district);
+=======
+		int i = rand.nextInt(district.getCells().size());
+		synchronized (district.getCells()) {
+			while (district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
+				visited.add(district.getCells().get(i));
+				i = rand.nextInt(district.getCells().size());
+			}
+			if (visited.size() == district.getCells().size()) {
+				for (Cell c : district.getCells()) {
+					if (c.getItem() instanceof Tree) {
+						i = district.getCells().indexOf(c);
+					}
+				}
+			}
+			Cell cell = district.getCells().get(i);
+			district.addCapital(cell);
+>>>>>>> master
 		}
 	}
-	
+
 	/**
 	 * Gère le placement d'un item sur les cellules
 	 * @param cell cell à mettre à jour
@@ -696,14 +748,23 @@ public class Board{
 		neutralCells.clear();
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
-			if(district.getCells().size() <= 1) {
+		synchronized (district.getCells()) {
+			if (district.getCells().size() <= 1) {
 				emptyDistricts.add(district);
-				for(Cell c : district.getCells()) {
+				for (Cell c : district.getCells()) {
 					c.removeDistrict();
 					c.removeItem();
 					neutralCells.add(c);
 				}
+<<<<<<< HEAD
+=======
+				if (district.getPlayer() instanceof AI) {
+					((AI) district.getPlayer()).removeDistrict(district);
+				}
+>>>>>>> master
 			}
+
+		}
 		}
 		for(District district : emptyDistricts) {
 			removeDistrict(district);
@@ -734,15 +795,17 @@ public class Board{
         this.players = players;
         this.activePlayer = activePlayer;
         for (District district : districts) {
-            for (Cell cell : district.getCells()) {
-                board[cell.getX()][cell.getY()] = cell;
-                cell.setDistrict(district);
-            }
-            for(int i = 0; i < players.size(); i++) {
-                if(district.getPlayer().getId() == players.get(i).getId()) {
-                   	players.set(i, district.getPlayer());
-                }
-            }
+			synchronized (district.getCells()) {
+				for (Cell cell : district.getCells()) {
+					board[cell.getX()][cell.getY()] = cell;
+					cell.setDistrict(district);
+				}
+				for (int i = 0; i < players.size(); i++) {
+					if (district.getPlayer().getId() == players.get(i).getId()) {
+						players.set(i, district.getPlayer());
+					}
+				}
+			}
         }
     }
     
