@@ -20,6 +20,13 @@ public abstract class Item {
 		
 	}
 	
+	public boolean isStronger(Item item) {
+		if(this.isImprovable() && item.isImprovable()) {
+			return this.level.compareTo(item) > 0;
+		}
+		return false;
+	}
+	
 	/**
 	 * Permet d'améliorer l'item
 	 * */
@@ -52,7 +59,7 @@ public abstract class Item {
 	}
 	
 	public boolean isImprovable() {
-		return improvable;
+		return improvable && level.isNotMax();
 	}
 	
 	public boolean hasSalary() {
