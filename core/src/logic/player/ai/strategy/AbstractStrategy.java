@@ -87,22 +87,22 @@ public abstract class AbstractStrategy implements Strategy {
 	
 	protected void buy(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
-		SoldierLevel level = bestSoldier(fromCell);
-		if(level != null) {
-			board.getShop().setSelectedItem(new Soldier(level), fromCell.getDistrict());
-			board.play(toCell);
-		}
+		board.play(toCell);
 	}
 	
-	private SoldierLevel bestSoldier(Cell cell) {
-		int gold = cell.getDistrict().getGold();
+	protected Soldier bestSoldier(District district) {
+		int gold = district.getGold();
 		SoldierLevel level = null;
 		for(SoldierLevel l : SoldierLevel.values()) {
-			if(gold > (l.getPrice() + l.getSalary()) * 3) {
+			if(gold > (l.getPrice() + l.getSalary())) {
 				level = l;
 			}
 		}
-		return level;
+		if(level != null) {
+			Soldier soldier = new Soldier(level);
+			return soldier;
+		}
+		return null;
 	}
 	
 	protected ArrayList<Cell> soldierCells(ArrayList<District> districts){

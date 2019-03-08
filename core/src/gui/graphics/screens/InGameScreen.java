@@ -1,6 +1,11 @@
 package gui.graphics.screens;
 
 
+import static gui.utils.Constants.N_TILES;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -8,17 +13,20 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import communication.*;
+
+import communication.MessageListener;
+import communication.MessageSender;
+import communication.PlayMessage;
+import communication.ShopMessage;
+import communication.TextMessage;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -30,12 +38,8 @@ import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
+import logic.player.ai.AI;
 import roomController.Room;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static gui.utils.Constants.N_TILES;
 
 public class InGameScreen extends BasicScreen implements InputProcessor {
 
@@ -107,7 +111,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super.render(delta);
         changeModifiedCells();
         neutral();
-
         if(board.getSelectedCell() != null) {
             selectCells(board.possibleMove(board.getSelectedCell()));
         }

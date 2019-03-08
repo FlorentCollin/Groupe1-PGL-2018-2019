@@ -93,9 +93,7 @@ public class Board{
 	}
 
 	public void setShopItem(Item item) {
-		if(selectedCell != null) {
-			shop.setSelectedItem(item, selectedCell.getDistrict());
-		}
+		shop.setSelectedItem(item, selectedCell.getDistrict());
 	}
 	
 	/**
@@ -103,32 +101,33 @@ public class Board{
 	 * @parm cell la cellule sur laquelle placer le nouvel item
 	 * */
 	public void placeNewItem(Cell cell){
-		//TO REDO !!!!!!!!!!!!
+		Item cellItem = cell.getItem();
+		Item shopItem = shop.getSelectedItem();
 		if(isInPossibleMove(possibleMove(selectedCell.getDistrict()), cell)) {
-			if(cell.getItem() == null) { // Si cell ne contient aucun item on peut toujours se placer dessus
+			if(cellItem == null) { // Si cell ne contient aucun item on peut toujours se placer dessus
 				conquerForNewItem(cell);
-			}
-			if(cell.getItem() instanceof Tree) {
-				conquerForNewItem(cell);
-				cell.getDistrict().addGold(3);
 			}
 			else if(isOnOwnTerritory(cell)) { // Si la cellule appartient déjà au joueur
 				// Il faut que l'item soit de même instance que celui à ajouter
 				// Mais aussi de même niveau et non maxé
 				// Ainsi on peut améliorer
-				if(cell.getItem().isImprovable() && sameInstance(cell.getItem(), shop.getSelectedItem()) && cell.getItem().getLevel().isNotMax()) {
+				if(cellItem.isImprovable() && sameInstance(cellItem, shopItem)) {
 					fusionForNewItem(cell);
+				}
+				else if(cellItem instanceof DestroyableItem) {
+					selectedCell.getDistrict().addGold(((DestroyableItem) cellItem).getBonus());
+					updateCellForNewItem(cell);
 				}
 			}
 			// Le joueur souhaite se placer sur une case ennemie non vide
 			// L'item de la case doit être de niveau inférieur ou égal à celui que l'on souhaite placer
 			else {
 				// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
-				if(cell.getItem().getLevel() == null) {
+				if(cellItem.getLevel() == null) {
 					conquerForNewItem(cell);
 				}
 				// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
-				else if(cell.getItem().getLevel().compareTo(shop.getSelectedItem()) <= 0) {
+				else if(shopItem.isStronger(cellItem)) {
 					conquerForNewItem(cell);
 				}
 			}
@@ -164,30 +163,27 @@ public class Board{
 	 * @param toCell la cellule de destination
 	 * */
 	public void move(Cell toCell) {
-		//TO REDO
-		if(selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {//Il faut vérifier que l'item de la cellule est déplaçable et qu'il peut encore être déplacé
-			if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
-				if(toCell.getItem() == null) {
+		Item cellItem = toCell.getItem();
+		Item selectedItem = selectedCell.getItem();
+		if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
+			if(cellItem == null) {
+				conquer(toCell);
+			}
+			else if(isOnOwnTerritory(toCell)) {
+				if(cellItem.isImprovable() && sameInstance(cellItem, selectedItem)) {
+					fusion(toCell);
+				}
+				else if(cellItem instanceof DestroyableItem) { // à modifier si on veut ajouter d'autre item procurant de l'argent
+					toCell.getDistrict().addGold(((DestroyableItem) cellItem).getBonus());
+					updateCell(toCell);
+				}
+			}
+			else {
+				if(toCell.getItem().getLevel() == null) {
 					conquer(toCell);
 				}
-				else if(isOnOwnTerritory(toCell)) {
-					if(sameInstance(toCell.getItem(), selectedCell.getItem())) {
-						if(hasSameLevel(toCell, selectedCell.getItem()) && toCell.getItem().getLevel().isNotMax()) {
-							fusion(toCell);
-						}
-					}
-					else if(toCell.getItem() instanceof Tree) { // à modifier si on veut ajouter d'autre item procurant de l'argent
-						updateCell(toCell);
-						toCell.getDistrict().addGold(3);
-					}
-				}
-				else {
-					if(toCell.getItem().getLevel() == null) {
-						conquer(toCell);
-					}
-					else if(toCell.getItem().getLevel().compareTo(selectedCell.getItem()) <= 0){
-						conquer(toCell);
-					}
+				else if(selectedItem.isStronger(cellItem)){
+					conquer(toCell);
 				}
 			}
 		}
@@ -248,18 +244,10 @@ public class Board{
 	 * 			false sinon
 	 * */
 	private boolean sameInstance(Item item1, Item item2) {
+		if(item1.getLevel() != null) {
+			return item1.getClass().isInstance(item2) && item1.getLevel() == item2.getLevel();
+		}
 		return item1.getClass().isInstance(item2);
-	}
-	
-	/**
-	 * Permet de savoir si deux items ont le même niveau
-	 * @param cell la cellule sur laquelle on souhaite se placer
-	 * @param item l'item de la cellule de départ
-	 * @return true si le niveau est identique
-	 * 			false sinon
-	 * */
-	private boolean hasSameLevel(Cell cell, Item item) {
-		return cell.getItem().getLevel() == item.getLevel();
 	}
 	
 	/**
@@ -272,18 +260,19 @@ public class Board{
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
-			for (int i = 0; i < cell.getItem().getMaxMove() - 1; i++) {
+			for (int i = 0; i < cell.getItem().getMaxMove(); i++) {
 				subAround.clear();
 				for (Cell c : around) {
-					if (c.getDistrict() == cell.getDistrict() && (c.getItem() == null
-							|| (c.getItem().getClass().isInstance(cell.getClass())
-							&& c.getItem().getLevel() == cell.getItem().getLevel()))) {
+					if (c.getDistrict() == cell.getDistrict()
+							&& (c.getItem() == null
+								|| (sameInstance(c.getItem(), cell.getItem())))
+							) {
 						subAround.addAll(getNeighbors(c));
 					}
 				}
-				if(cell.getItem() == null) {
-				    break;
-				}
+//				if(cell.getItem() == null) {
+//				    break;
+//				}
 				around.addAll(subAround);
 			}
 			for (Cell c : around) {
@@ -309,7 +298,7 @@ public class Board{
 		ArrayList<Cell> possible = new ArrayList<>();
 		synchronized (district.getCells()) {
 			for(Cell c : district.getCells()) {
-				if(possible.indexOf(c) == -1) {
+				if(possible.indexOf(c) == -1 && canGoOn(c, shop.getSelectedItem())) {
 					possible.add(c);
 				}
 				for(Cell c1 : getNeighbors(c)) {
@@ -374,7 +363,7 @@ public class Board{
 			if(!cellItem.isImprovable()) { // Item quelconque
 				return true;
 			}
-			else if(item.isStronger(cellItem)) { // Item de la cellule de plus faible niveau
+			else if(item.isStronger(cellItem)) {
 				return true;
 			}
 		}
