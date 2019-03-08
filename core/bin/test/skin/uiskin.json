@@ -28,15 +28,14 @@
   }
 
   ScrollPaneStyle: {
-    //TODO ajouter la barre de défilement
     default: { vScroll: default-scroll, hScrollKnob: scroll-knob, hScroll: default-scroll, vScrollKnob: scroll-knob }
-//    default: { background: selectBox-background}
+    default-background: { parent: default, background: selectBox-background }
   },
 
   SelectBoxStyle: {
     default: {
       background: selectBox,
-      scrollStyle: default,
+      scrollStyle: default-background,
       listStyle: { selection: selectBox-selection}
     }
   }
