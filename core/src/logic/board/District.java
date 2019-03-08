@@ -69,7 +69,7 @@ public class District {
 	
 	public void refreshSoldiers() {
 		for(Cell c : cells) {
-			if(c.getItem().isMovable()) {
+			if(c.getItem() != null && c.getItem().isMovable()) {
 				c.getItem().setHasMoved(false);
 			}
 		}
