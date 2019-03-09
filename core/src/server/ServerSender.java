@@ -1,8 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
-import communication.Message;
-import communication.NetworkMessage;
+import communication.Messages.Message;
+import communication.Messages.NetworkMessage;
+import gui.utils.GsonInit;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

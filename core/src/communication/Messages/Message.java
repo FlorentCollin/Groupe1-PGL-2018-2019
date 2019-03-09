@@ -1,7 +1,8 @@
-package communication;
+package communication.Messages;
 
 
 import com.google.gson.Gson;
+import server.Client;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,9 +14,11 @@ import java.nio.charset.StandardCharsets;
  * des informations.
  * Chaque message contient une information bien précise tel que créer une room, update le board, etc,...
  * Ex : un message de classe CreateRoomMessage, est un message envoyé par un client au serveur qui demande au serveur
- * de créer une Room.
+ * de créer une GameRoom.
  */
 public abstract class Message {
+
+    private transient Client client;
 
     /**
      * Méthode qui retourne un Message correspondant à la classe précisé dans le début du String messageStr
@@ -36,12 +39,18 @@ public abstract class Message {
                 return gson.fromJson(messageStr, PlayMessage.class);
             case "TextMessage":
                 return gson.fromJson(messageStr, TextMessage.class);
-            case "UpdateMessage":
-                return gson.fromJson(messageStr, UpdateMessage.class);
+            case "GameUpdateMessage":
+                return gson.fromJson(messageStr, GameUpdateMessage.class);
             case "CreateRoomMessage":
                 return gson.fromJson(messageStr, CreateRoomMessage.class);
             case "JoinRoomMessage":
                 return gson.fromJson(messageStr, JoinRoomMessage.class);
+            case "ShopMessage":
+                return gson.fromJson(messageStr, ShopMessage.class);
+            case "RoomUpdateMessage":
+                return gson.fromJson(messageStr, RoomUpdateMessage.class);
+            case "UsernameMessage":
+                return gson.fromJson(messageStr, UsernameMessage.class);
             default: return null;
         }
     }
@@ -58,15 +67,24 @@ public abstract class Message {
         //Boucle qui lit les données envoyées par le client et place ces données dans un string
         StringBuilder messageStr = new StringBuilder();
         int bufferSize = 100; //Arbitraire
-        int len;
+        int len = -1;
         do {
             ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
             buffer.clear();
-            len = clientChannel.read(buffer);
-            if(len == -1)
-                clientChannel.close();
-            messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
+            if (clientChannel.isConnected()) {
+                len = clientChannel.read(buffer);
+                messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
+            }
         } while (len == bufferSize); //len == 100 indique que l'entièreté du message n'a pas encore été lu
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
+    }
+
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

@@ -10,7 +10,7 @@ import logic.item.Soldier;
 public class Player {
 	private String name;
 	private Color color;
-	protected ArrayList<Soldier> soldiers;
+	protected transient ArrayList<Soldier> soldiers;
 
 	private int id;
 	

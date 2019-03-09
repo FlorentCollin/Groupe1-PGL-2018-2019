@@ -75,6 +75,7 @@ public class Board{
 	
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
+		ai.setName("AI#" + nPlayer);
 		ai.setId(players.get(nPlayer).getId());
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(nPlayer)) {
@@ -95,7 +96,9 @@ public class Board{
 	}
 
 	public void setShopItem(Item item) {
-		shop.setSelectedItem(item, selectedCell.getDistrict());
+		if(selectedCell != null) {
+			shop.setSelectedItem(item, selectedCell.getDistrict());
+		}
 	}
 	
 	/**
@@ -429,10 +432,15 @@ public class Board{
 	}
 
 	public void setSelectedCell(Cell selectedCell) {
-	    if(selectedCell == null || (selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer() == getActivePlayer())) {
+	    if(selectedCell == null || (selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer().getId() == getActivePlayer().getId())) {
 			this.selectedCell = selectedCell;
 		}
 	    hasChanged = true;
+	}
+
+	public void setSelectedCell(int x, int y) {
+		this.selectedCell = selectedCell;
+		hasChanged = true;
 	}
 	
 	public Player getActivePlayer() {

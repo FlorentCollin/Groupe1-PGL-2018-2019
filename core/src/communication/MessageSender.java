@@ -1,5 +1,7 @@
 package communication;
 
+import communication.Messages.Message;
+
 /**
  * Interface utilisé dans les classes OfflineMessageSender et OnlineMessageSender
  * L'interface graphique ne doit donc pas adapter son code si le jeu tourne en mode hors-ligne ou en ligne.

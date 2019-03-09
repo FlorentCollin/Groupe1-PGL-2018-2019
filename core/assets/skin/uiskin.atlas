@@ -1,103 +1,110 @@
 
 uiskin.png
-size: 1024,512
+size: 2048,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 arrow
   rotate: false
-  xy: 508, 353
+  xy: 1453, 414
   size: 75, 75
   orig: 75, 75
   offset: 0, 0
   index: -1
 cursor
   rotate: false
-  xy: 502, 8
+  xy: 332, 57
   size: 4, 20
   orig: 4, 20
   offset: 0, 0
   index: -1
 default-button-checked
   rotate: false
-  xy: 332, 297
+  xy: 1, 23
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-uncheck
   rotate: false
-  xy: 1, 374
+  xy: 671, 115
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-scroll
   rotate: false
-  xy: 482, 8
+  xy: 1886, 951
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
   index: -1
 info-background
   rotate: false
-  xy: 1, 430
+  xy: 1, 89
   size: 668, 80
   orig: 668, 80
   offset: 0, 0
   index: -1
+room-background
+  rotate: false
+  xy: 1, 171
+  size: 1450, 800
+  orig: 1450, 800
+  offset: 0, 0
+  index: -1
 scroll-knob
   rotate: false
-  xy: 492, 8
+  xy: 1, 1
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
   index: -1
 selectBox
   rotate: false
-  xy: 332, 241
+  xy: 1555, 861
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-background
   rotate: false
-  xy: 1, 318
+  xy: 1555, 917
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-selection
   rotate: false
-  xy: 1, 262
+  xy: 1002, 115
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selection
   rotate: false
-  xy: 1, 1
+  xy: 456, 86
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 shop-background
   rotate: false
-  xy: 671, 30
+  xy: 1453, 491
   size: 100, 480
   orig: 100, 480
   offset: 0, 0
   index: -1
 slider
   rotate: false
-  xy: 1, 20
+  xy: 1, 79
   size: 453, 8
   orig: 453, 8
   offset: 0, 0
   index: -1
 slider-button
   rotate: false
-  xy: 456, 4
+  xy: 671, 89
   size: 24, 24
   orig: 24, 24
   offset: 0, 0

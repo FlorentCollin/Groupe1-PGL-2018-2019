@@ -1,6 +1,8 @@
 package communication;
 
 import com.google.gson.Gson;
+import communication.Messages.Message;
+import communication.Messages.UsernameMessage;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,7 +21,7 @@ public class OnlineMessageSender implements MessageSender {
     private Selector selector;
     private Gson gson;
 
-    public OnlineMessageSender() {
+    public OnlineMessageSender(String username) {
         gson = new Gson();
         try {
             //Ouverture de la connection au serveur
@@ -28,6 +30,8 @@ public class OnlineMessageSender implements MessageSender {
             selector = Selector.open();
             //On associe le channel à un selector
             clientChannel.register(selector, SelectionKey.OP_READ);
+
+            send(new UsernameMessage(username)); //Envoie de l'username du Client
         } catch (IOException e) {
             e.printStackTrace();
         }

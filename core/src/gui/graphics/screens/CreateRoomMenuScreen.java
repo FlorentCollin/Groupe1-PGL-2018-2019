@@ -11,13 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
-import communication.Message;
-import communication.OfflineMessageSender;
-import communication.OnlineMessageListener;
-import communication.OnlineMessageSender;
+import communication.*;
+import communication.Messages.CreateRoomMessage;
+import communication.Messages.Message;
 import gui.app.Slay;
 import gui.utils.Language;
-import roomController.Room;
+import roomController.GameRoom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,13 +37,21 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private ArrayList<Label> aiNames = new ArrayList<>();
     private ArrayList<SelectBox<String>> aiStrats = new ArrayList<>();
     private Boolean online;
+    private MessageSender messageSender;
+    private MessageListener messageListener;
 
     private HashMap<String, String> nameToFileName;
     private HashMap<String, XmlReader.Element> nameToXml;
 
-    public CreateRoomMenuScreen(Slay parent, Stage stage, boolean online) {
+    public CreateRoomMenuScreen(Slay parent, Stage stage, MessageSender messageSender, MessageListener messageListener) {
+        this(parent, stage);
+        this.online = true;
+        this.messageSender = messageSender;
+        this.messageListener = messageListener;
+    }
+    public CreateRoomMenuScreen(Slay parent, Stage stage) {
         super(parent, stage, Language.bundle.get("createRoom"));
-        this.online = online;
+        this.online = false;
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
 
@@ -193,15 +200,19 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                     playersName.add(parent.getUserSettings().getUsername());
                 }
                 ai.forEach((i) -> playersName.add("AI"));
-                InGameScreen gameScreen;
                 if (online) { //TODO
-                    OnlineMessageSender messageSender = new OnlineMessageSender();
-                    OnlineMessageListener messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
-                    messageListener.start();
-
+                    messageSender.send(new CreateRoomMessage(world, isNaturalDisastersOn(), ai));
+                    while(messageListener.getPlayers().size() <= 0) {
+                        try {
+                            Thread.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    parent.setScreen(new WaitingRoomScreen(parent, stage, messageSender, messageListener));
                 } else {
-                    Room room = new Room(world, isNaturalDisastersOn(), ai, playersName, messagesQueue);
-                    OfflineMessageSender messageSender = new OfflineMessageSender(messagesQueue);
+                    GameRoom room = new GameRoom(world, isNaturalDisastersOn(), ai, playersName, messagesQueue);
+                    messageSender = new OfflineMessageSender(messagesQueue);
                     room.start();
                     while (room.getBoard() == null) { //TODO MODIFY THIS PART
                         try {
@@ -210,7 +221,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                             e.printStackTrace();
                         }
                     }
-                    gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender);
+                    InGameScreen gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender, messageListener);
                     parent.changeScreen(gameScreen);
                 }
             }

@@ -1,4 +1,4 @@
-package communication;
+package communication.Messages;
 
 /**
  * Message envoyé par un client pour signaler à une room qu'il souhaite effectué l'action board.play(Cell cell)

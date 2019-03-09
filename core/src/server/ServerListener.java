@@ -1,7 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
-import communication.Message;
+import communication.Messages.Message;
+import communication.Messages.UsernameMessage;
 import gui.utils.GsonInit;
 import roomController.RoomController;
 
@@ -76,13 +77,18 @@ public class ServerListener extends Thread{
      * Méthode qui ajoute un client à la liste des clients du serveur
      * @throws IOException
      */
-    private void keyIsAcceptable() throws IOException {
-        clientChannel = serverChannel.accept();
-        clientChannel.configureBlocking(false);
-        //On permet au client de lire et d'écrire des messages
-        clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-        Client client = new Client(clientChannel);
-        ServerInfo.clients.put(clientChannel, client);
+    private void keyIsAcceptable() {
+        try {
+            clientChannel = serverChannel.accept();
+            clientChannel.configureBlocking(false);
+            //On permet au client de lire et d'écrire des messages
+            clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+            Client client = new Client(clientChannel);
+            ServerInfo.clients.put(clientChannel, client);
+            System.out.println("Number of player : " + ServerInfo.clients.size());
+        } catch (IOException e) {
+            e.printStackTrace(); //TODO
+        }
     }
 
     /**
@@ -90,16 +96,24 @@ public class ServerListener extends Thread{
      * @param key
      * @throws IOException
      */
-    private void keyIsReadable(SelectionKey key) throws IOException {
+    private void keyIsReadable(SelectionKey key) {
         clientChannel = (SocketChannel) key.channel();
-        if (!clientChannel.isConnected()) {
-            //On retire le client si celui ci n'est plus connecté
+        //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
+        //Récupération du message dans le buffer du client.
+        String messageStr = null;
+        try {
+            messageStr = Message.getStringFromBuffer(clientChannel);
+            Message message = Message.getMessage(messageStr, gson);
+            message.setClient(ServerInfo.clients.get(clientChannel));
+            if(message instanceof UsernameMessage) {
+                ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
+            } else {
+                roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
+            }
+        } catch (IOException e) {
+            System.out.println("Client connection lost");
+            key.cancel();
             ServerInfo.clients.remove(clientChannel);
-        } else {
-            //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
-            //Récupération du message dans le buffer du client.
-            String messageStr = Message.getStringFromBuffer(clientChannel);
-            roomController.manageMessage(ServerInfo.clients.get(clientChannel), Message.getMessage(messageStr, gson));
         }
     }
 }

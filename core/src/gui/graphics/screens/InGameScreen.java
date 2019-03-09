@@ -16,7 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import communication.*;
+import communication.MessageListener;
+import communication.MessageSender;
+import communication.Messages.PlayMessage;
+import communication.Messages.ShopMessage;
+import communication.Messages.TextMessage;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -28,7 +32,6 @@ import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
-import roomController.Room;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private TiledMapTileLayer cells;
     private TiledMapTileLayer selectedLayer;
     private final Board board;
+    private int playerNumber;
     private TextureAtlas itemsSkin;
     private List<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
@@ -51,12 +55,15 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private MessageListener messageListener;
     private MessageSender messageSender;
-    private Room room;
 
-    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender) {
+    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
         super(parent);
         this.messageSender = messageSender;
+        this.messageListener = messageListener;
         this.board = board;
+        playerNumber = 0;
+        if(messageListener != null)
+            playerNumber = messageListener.getPlayerNumber();
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map(mapName);
@@ -95,22 +102,19 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         Gdx.input.setInputProcessor(multiplexer);
     }
 
-    public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
-        this(parent, mapName, board, messageSender);
-        this.messageListener = messageListener;
-    }
-
     @Override
     public void render(float delta) {
         super.render(delta);
         changeModifiedCells();
         neutral();
-        synchronized (board) {
-            if (board.getSelectedCell() != null) {
-                selectCells(board.possibleMove(board.getSelectedCell()));
-            }
-            if (board.getShop().getSelectedItem() != null && board.getSelectedCell() != null) {
-                selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+        if (playerNumber == board.getActivePlayerNumber()) {
+            synchronized (board) {
+                if (board.getSelectedCell() != null) {
+                    selectCells(board.possibleMove(board.getSelectedCell()));
+                }
+                if (board.getShop().getSelectedItem() != null && board.getSelectedCell() != null) {
+                    selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
+                }
             }
         }
         map.getTiledMapRenderer().setView(camera);
@@ -257,7 +261,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     @Override
     public void dispose() {
         messageListener.stopRunning();
-        room.stopRunning();
         super.dispose();
     }
 
@@ -323,7 +326,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     if (cell != null) {
                         // Ne s'applique que si la case appartient au joueur
                         // Ainsi il voit directement avec quelles cases il peut interagir
-                        if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                        if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getPlayers().get(playerNumber).getId()) {
                             hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
                             cells.setOpacity(0.9f);
                             selectCells(cell.getDistrict().getCells());

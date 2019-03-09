@@ -73,4 +73,8 @@ public abstract class Item {
 	public int getPrice() {
 		return 0;
 	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

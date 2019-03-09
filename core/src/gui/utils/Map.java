@@ -120,8 +120,12 @@ public class Map {
     private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters, ArrayList<String> playersName) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
         ArrayList<Player> players = new ArrayList<>();
+        Player newPlayer;
         for (int i = 0; i < numberOfPlayers; i++) {
-            Player newPlayer = new Player(playersName.get(i));
+            if(playersName != null)
+                newPlayer = new Player(playersName.get(i));
+            else
+                newPlayer = new Player();
             //Ajout de l'id du player
             newPlayer.setId(i+1); //Car i=0 correspond aux cellules neutres
             players.add(newPlayer);

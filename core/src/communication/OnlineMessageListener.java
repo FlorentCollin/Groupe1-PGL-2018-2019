@@ -1,6 +1,9 @@
 package communication;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
+import communication.Messages.Message;
 import gui.utils.GsonInit;
 
 import java.io.IOException;
@@ -50,7 +53,7 @@ public class OnlineMessageListener extends MessageListener{
                 SelectionKey key = keyIterator.next();
                 if(key.isReadable()) { //Si le serveur à envoyé un message
                     //Récupération du string correspondant au message
-                    String messageStr = Message.getStringFromBuffer(clientChannel);
+                    file.writeString(messageStr, false);
                     //Désérialization du string en un message
                     Message message = Message.getMessage(messageStr, gson);
                     executeMessage(message); //Exécution

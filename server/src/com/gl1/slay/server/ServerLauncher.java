@@ -1,6 +1,6 @@
 package com.gl1.slay.server;
 
-import communication.Message;
+import communication.Messages.Message;
 import server.ServerListener;
 import server.ServerSender;
 
