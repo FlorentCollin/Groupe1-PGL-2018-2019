@@ -1,6 +1,5 @@
 package gui.graphics.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,7 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import gui.app.Slay;
 import gui.utils.Constants;
-import gui.utils.RectangleActor;
+import gui.graphics.screens.animations.RectangleActor;
+import gui.utils.Language;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
@@ -36,11 +36,11 @@ public class MainMenuScreen extends MenuScreen {
         //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontTitle;
-        playOfflineButton = new TextButton("Play Offline", textButtonStyle);
-        playOnlineButton = new TextButton("Play Online", textButtonStyle);
-        shorcutsButton = new TextButton("Shortcuts", textButtonStyle);
-        settingsButton = new TextButton("Settings", textButtonStyle);
-        exitButton = new TextButton("Exit", textButtonStyle);
+        playOfflineButton = new TextButton(Language.bundle.get("playOffline"), textButtonStyle);
+        playOnlineButton = new TextButton(Language.bundle.get("playOnline"), textButtonStyle);
+        shorcutsButton = new TextButton(Language.bundle.get("shortcuts"), textButtonStyle);
+        settingsButton = new TextButton(Language.bundle.get("settings"), textButtonStyle);
+        exitButton = new TextButton(Language.bundle.get("exit"), textButtonStyle);
         //Ajout des bouttons dans un group
         bouttonsGroup = new VerticalGroup();
         bouttonsGroup.space(20);
@@ -57,7 +57,7 @@ public class MainMenuScreen extends MenuScreen {
         //Création du rectangle qui apparait en dessous des bouttons lors que
         // la souris de l'utilisateur se trouve sur un boutton
         underlineActor = new RectangleActor();
-        underlineActor.setSize(0, 10 * Constants.getRatio(stage.getWidth()));
+        underlineActor.setSize(0, 10 * Constants.getRatioY(stage.getHeight()));
         underlineActor.setColor(Color.WHITE);
         stage.addActor(underlineActor);
 
@@ -117,8 +117,6 @@ public class MainMenuScreen extends MenuScreen {
                 parent.dispose();
             }
         });
-
-
 
     }
 

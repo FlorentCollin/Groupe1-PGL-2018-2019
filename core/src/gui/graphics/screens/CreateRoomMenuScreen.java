@@ -16,13 +16,11 @@ import communication.OfflineMessageSender;
 import communication.OnlineMessageListener;
 import communication.OnlineMessageSender;
 import gui.app.Slay;
+import gui.utils.Language;
 import roomController.Room;
 
-import javax.sound.sampled.Line;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static gui.graphics.screens.animations.Animations.*;
@@ -32,16 +30,20 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
     private final Table table;
     private final TextButton createRoomButton;
-    private final Slider playersSlider, aiSlider;
+    private final Slider aiSlider;
+    private int pValue;  //Valeur précédente du ai slider
     private final SelectBox<String> mapSelectBox;
     private final ButtonGroup<TextButton> naturalGroup;
+    private Table scrollTable;
+    private ArrayList<Label> aiNames = new ArrayList<>();
+    private ArrayList<SelectBox<String>> aiStrats = new ArrayList<>();
     private Boolean online;
 
     private HashMap<String, String> nameToFileName;
     private HashMap<String, XmlReader.Element> nameToXml;
 
     public CreateRoomMenuScreen(Slay parent, Stage stage, boolean online) {
-        super(parent, stage, "CREATE ROOM");
+        super(parent, stage, Language.bundle.get("createRoom"));
         this.online = online;
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
@@ -51,32 +53,26 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         textFont.getData().padLeft = -10;
 
         TextField mapName = new TextField("", textFieldStyle);
-        mapName.appendText("name of the room");
+        mapName.appendText(Language.bundle.get("nameOfTheRoom"));
 
 
-        Label playersSliderNumber = new Label("1", labelStyle);
         Label aiSliderNumber = new Label("0", labelStyle);
+        pValue = 0; //Initialisation de la première valeur du ai slider
 
-        playersSlider = new Slider(1, 2, 1, false, uiSkin);
         aiSlider = new Slider(0, 1, 1, false, uiSkin);
-        playersSlider.addListener(new ChangeListener() {
-            public void changed(ChangeEvent event, Actor actor) {
-                playersSliderNumber.setText((int)playersSlider.getValue());
-                //On change le PlayerSlider si le nombre de players
-                // et le nombre d'ia est supérieur au nombre max de joueurs
-                if(aiSlider.getValue() + playersSlider.getValue() > playersSlider.getMaxValue()) {
-                    aiSlider.setValue(aiSlider.getValue()-1);
-                }
-            }
-        });
         aiSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                aiSliderNumber.setText((int)aiSlider.getValue());
-                //On change le PlayerSlider si le nombre de players
-                // et le nombre d'ia est supérieur au nombre max de joueurs
-                if(playersSlider.getValue() + aiSlider.getValue() > playersSlider.getMaxValue()) {
-                    playersSlider.setValue(playersSlider.getValue()-1);
+                int value = (int)aiSlider.getValue();
+                aiSliderNumber.setText(value);
+                while (value > pValue) {
+                    addAI();
+                    value--;
                 }
+                while (value < pValue) {
+                    delAI(pValue - 1);
+                    pValue--;
+                }
+                pValue = (int)aiSlider.getValue();
             }
         });
 
@@ -90,12 +86,10 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         mapSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
-                int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-                playersSlider.setRange(1, maxValue);
-                aiSlider.setRange(0, maxValue - 1);
+                changeSliderSize();
             }
         });
+        changeSliderSize();
 
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
@@ -108,42 +102,35 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         naturalGroup.setMinCheckCount(1);
         naturalGroup.setUncheckLast(true);
 
-        createRoomButton = new TextButton("Create Room", textButtonStyle);
+        createRoomButton = new TextButton(Language.bundle.get("createRoom"), textButtonStyle);
         createRoomButton.setX(stage.getWidth() - createRoomButton.getWidth());
         createRoomButton.setY(stage.getHeight() / 10);
         createRoomButton.addListener(createRoomListener());
         stage.addActor(createRoomButton);
 
-        Table scrollTable = new Table();
-        scrollTable.add(new Label("Name", labelStyle)).align(Align.left);
+        scrollTable = new Table();
+        scrollTable.add(new Label(Language.bundle.get("nameMap"), labelStyle)).align(Align.left);
         scrollTable.add(mapName).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
-        scrollTable.add(new Label("Map", labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("map"), labelStyle)).align(Align.left);
         scrollTable.add(mapSelectBox).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
-        scrollTable.add(new Label("Numbers of Players", labelStyle)).align(Align.left);
-        scrollTable.add(playersSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
-        scrollTable.add(playersSliderNumber).pad(PAD).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("naturalDisasters"), labelStyle)).align(Align.left);
+        scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
+        scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
         scrollTable.row();
-        scrollTable.add(new Label("Numbers of AI", labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("numberOfAI"), labelStyle)).align(Align.left);
         scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
         scrollTable.add(aiSliderNumber).pad(PAD).align(Align.left);
         scrollTable.row();
-        scrollTable.add(new Label("Naturals Disasters", labelStyle)).align(Align.left);
-        scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
-        scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
-
         //TODO COMMENT
         ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.setScrollingDisabled(true, false);
-        table = new Table();
+        table = new Table(uiSkin);
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
         table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
         table.add(scroller).fillX().expand().align(Align.topLeft);
-
         stage.addActor(table);
-
-
     }
 
     @Override
@@ -198,6 +185,14 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
             public void clicked(InputEvent event, float x, float y) {
                 LinkedBlockingQueue<Message> messagesQueue = new LinkedBlockingQueue<>();
                 String world = nameToFileName.get(mapSelectBox.getSelected());
+                ArrayList<String> ai = new ArrayList<>();
+                aiStrats.forEach((i) -> ai.add(i.getSelected()));
+                ArrayList<String> playersName = new ArrayList<>();
+                int number = Integer.parseInt(nameToXml.get(mapSelectBox.getSelected()).getChildByName("players").getAttribute("number"));
+                for (int i = 1; i <= number - ai.size(); i++) {
+                    playersName.add(parent.getUserSettings().getUsername());
+                }
+                ai.forEach((i) -> playersName.add("AI"));
                 InGameScreen gameScreen;
                 if (online) { //TODO
                     OnlineMessageSender messageSender = new OnlineMessageSender();
@@ -205,7 +200,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                     messageListener.start();
 
                 } else {
-                    Room room = new Room(world, isNaturalDisastersOn(), messagesQueue);
+                    Room room = new Room(world, isNaturalDisastersOn(), ai, playersName, messagesQueue);
                     OfflineMessageSender messageSender = new OfflineMessageSender(messagesQueue);
                     room.start();
                     while (room.getBoard() == null) { //TODO MODIFY THIS PART
@@ -220,5 +215,40 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 }
             }
         };
+    }
+
+    private void changeSliderSize() {
+        XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
+        int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
+        aiSlider.setRange(0, maxValue - 1);
+    }
+
+    private void addAI() {
+        Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle.font = defaultFont;
+        Label aiName = new Label("AI#" + (aiNames.size()+1), labelStyle);
+        aiNames.add(aiName);
+        SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
+        selectBoxStyle.font = textFont;
+        selectBoxStyle.listStyle.font = textFont;
+        SelectBox<String> aiStrat = new SelectBox<>(selectBoxStyle);
+        aiStrat.setItems("Random", "Easy", "Medium", "Hard");
+        aiStrat.setSelected("Random");
+        aiStrats.add(aiStrat);
+        scrollTable.add(aiName).align(Align.left);
+        scrollTable.add(aiStrat).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
+        scrollTable.row();
+    }
+
+    private void delAI(int index) {
+        Label aiName = aiNames.get(index);
+        SelectBox<String> aiStrat = aiStrats.get(index);
+        scrollTable.getCell(aiName).reset();
+        scrollTable.getCell(aiStrat).reset();
+        scrollTable.row();
+        aiName.remove();
+        aiStrat.remove();
+        aiNames.remove(index);
+        aiStrats.remove(index);
     }
 }

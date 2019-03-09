@@ -1,4 +1,4 @@
-package logic.player.ai;
+package logic.player.ai.strategy;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,6 @@ public interface Strategy {
 	/**
 	 * Permet de jouer le tour
 	 * */
-	public void play(Board board, ArrayList<District> districts);
+	void play(Board board, ArrayList<District> districts);
 
 }

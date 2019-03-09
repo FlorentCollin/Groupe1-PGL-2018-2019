@@ -11,7 +11,7 @@ import logic.item.Tree;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import logic.player.ai.AI;
-import logic.player.ai.RandomStrategy;
+import logic.player.ai.strategy.RandomStrategy;
 import logic.shop.Shop;
 
 public class RandomStrategyTest {

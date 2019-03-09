@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 
+import gui.utils.Constants;
 import logic.item.Soldier;
 
 public class Player {
@@ -11,22 +12,18 @@ public class Player {
 	private Color color;
 	protected ArrayList<Soldier> soldiers;
 
-	public static int globalId = 0;
 	private int id;
 	
 	public Player() {
 		/*Dans le cas où le joueur ne stipule rien 
 		 * ou est une ia*/
-		globalId++;
-		id = globalId;
 		soldiers =  new ArrayList<>();
 	}
 	
-	public Player(String name, Color color) {
+	public Player(String name) {
 		/*Dans le cas d'un véritable joueur modifiant des paramètres*/
         super();
 		this.name = name;
-		this.color = color;
 
 	}
 	
@@ -51,5 +48,10 @@ public class Player {
 
     public int getId() {
 	    return id;
+    }
+
+    public void setId(int id) {
+	    this.id = id;
+	    this.color = Constants.colors[id-1];
     }
 }

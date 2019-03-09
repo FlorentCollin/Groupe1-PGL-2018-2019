@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
 import gui.settings.UserShortcuts;
+import gui.utils.Language;
 import gui.utils.ShortcutsButton;
 
 import static gui.graphics.screens.animations.Animations.*;
@@ -22,7 +23,7 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
     private Table scrollTable;
 
     public ShortcutsMenuScreen(Slay parent, Stage stage) {
-        super(parent, stage, "SHORTCUTS");
+        super(parent, stage, Language.bundle.get("shortcuts"));
         labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
 
@@ -63,11 +64,11 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         //Table des raccourcis claviers
         scrollTable = new Table();
         scrollTable.add(); //Ajout d'une cellule
-        scrollTable.add(new Label("Key 1", labelStyle)).align(Align.center);
-        scrollTable.add(new Label("Key 2", labelStyle)).align(Align.center);
+        scrollTable.add(new Label(Language.bundle.get("key") + " 1", labelStyle)).align(Align.center);
+        scrollTable.add(new Label(Language.bundle.get("key") + " 2", labelStyle)).align(Align.center);
         scrollTable.row();
         for(String shortcutName : parent.getUserShortcuts().getShortcutsName()) {
-            createShortcut(shortcutName);
+            createShortcut(shortcutName, Language.bundle.get(shortcutName.replaceAll(" ","")));
             scrollTable.row();
         }
         //TODO
@@ -121,8 +122,8 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         }
     }
 
-    private void createShortcut(String text) {
-        scrollTable.add(new Label(text, labelStyle)).align(Align.left);
+    private void createShortcut(String text, String printText) {
+        scrollTable.add(new Label(printText, labelStyle)).align(Align.left);
         createKeybindButton(text);
 
     }

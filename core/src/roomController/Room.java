@@ -4,6 +4,7 @@ import communication.*;
 import gui.utils.Map;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.player.ai.strategy.RandomStrategy;
 import server.Client;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class Room extends Thread {
     private LinkedBlockingQueue<Message> messagesFrom;
     private LinkedBlockingQueue<Message> messagesToSend;
     private ArrayList<Client> clients = new ArrayList<>();
-    private Board board;
+    private final Board board;
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
@@ -27,14 +28,19 @@ public class Room extends Thread {
         return messagesFrom;
     }
 
-    public Room(String worldName, boolean naturalDisasters, LinkedBlockingQueue<Message> messagesFrom) {
-        Map map = new Map();
-        board = map.load(worldName, true, false, naturalDisasters);
+    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats, ArrayList<String> playersName,
+                LinkedBlockingQueue<Message> messagesFrom) {
+        Map map = new Map(worldName);
+        board = map.loadBoard(false, naturalDisasters, playersName);
+        for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionné
+            board.changeToAI(board.getPlayers().size()-i-1, new RandomStrategy());
+        }
         this.messagesFrom = messagesFrom;
     }
 
-    public Room(String worldName, boolean naturalDisasters, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
-        this(worldName, naturalDisasters, messagesFrom);
+    public Room(String worldName, boolean naturalDisasters, ArrayList<String> aiStrats, ArrayList<String> playersName,
+                LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
+        this(worldName, naturalDisasters, aiStrats, playersName, messagesFrom);
         this.messagesToSend = messagesToSend;
     }
 
@@ -44,26 +50,29 @@ public class Room extends Thread {
 
     @Override
     public void run() {
+        Thread.currentThread().setName("Room");
         running.set(true);
         while(running.get()) {
             try {
                 //Récupération du message du client
                 Message message = messagesFrom.take();
-                executeMessage(message);
-                if(messagesToSend != null) {
-                    //Si le board à changé alors il faut notifier les clients des changements.
-                    if(board.hasChanged()) { //TODO NEED REFACTORING when offline we don't need to send message
-                        UpdateMessage updateMessage;
-                        if(board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
-                            Cell selectedCell = board.getSelectedCell();
-                            updateMessage = new UpdateMessage(board.getDistricts(),board.getPlayers(),
-                                    board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
-                        } else { //Création d'un UpdateMessage sans selectedCell
-                            updateMessage = new UpdateMessage(board.getDistricts(),
-                                    board.getPlayers(), board.getActivePlayerNumber());
+                synchronized (board) {
+                    executeMessage(message);
+                    if (messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
+                        //Si le board à changé alors il faut notifier les clients des changements.
+                        if (board.hasChanged()) {
+                            UpdateMessage updateMessage;
+                            if (board.getSelectedCell() != null) { //Création d'un UpdateMessage avec selectedCell
+                                Cell selectedCell = board.getSelectedCell();
+                                updateMessage = new UpdateMessage(board.getDistricts(), board.getPlayers(),
+                                        board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
+                            } else { //Création d'un UpdateMessage sans selectedCell
+                                updateMessage = new UpdateMessage(board.getDistricts(),
+                                        board.getPlayers(), board.getActivePlayerNumber());
+                            }
+                            updateMessage.setClients(clients); //Ajout des clients au message
+                            messagesToSend.put(updateMessage); //Envoie du message
                         }
-                        updateMessage.setClients(clients); //Ajout des clients au message
-                        messagesToSend.put(updateMessage); //Envoie du message
                     }
                 }
             } catch (InterruptedException e) {
@@ -81,7 +90,9 @@ public class Room extends Thread {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        }  else if(message instanceof TextMessage) {
+        } else if(message instanceof ShopMessage) {
+            board.setShopItem(((ShopMessage) message).getItem());
+        } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
             if(textMessage.getMessage().equals("nextPlayer")) {
                 board.nextPlayer();

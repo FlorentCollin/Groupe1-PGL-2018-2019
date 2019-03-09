@@ -6,7 +6,15 @@
       <item type="Soldier" level="1" x="11" y="5" />
       <item type="Soldier" level="1" x="9" y="8" />
       <item type="Soldier" level="1" x="9" y="9" />
+      <item type="Soldier" level="1" x="2" y="3" />
+      <item type="Soldier" level="2" x="16" y="12" />
 
+      <item type="Capital" golds="40" x="2" y="2" />
+      <item type="Capital" golds="40" x="17" y="12" />
+      <item type="Capital" golds="20" x="9" y="5" />
+      <item type="Capital" golds="20" x="11" y="8" />
+      <item type="Capital" golds="20" x="0" y="14" />
+      <item type="Capital" golds="20" x="19" y="0" />
 
       <item type="Tree" x="15" y="12" />
       <item type="Tree" x="8" y="11" />
@@ -18,20 +26,6 @@
       <item type="Tree" x="5" y="0" />
       <item type="Tree" x="12" y="14" />
       <item type="Tree" x="18" y="9" />
-      <item type="Soldier" level="1" x="2" y="3" />
-      <item type="Soldier" level="2" x="16" y="12" />
     </items>
-    <waterCells>
-    	<waterCell type="WaterCell" x="7" y="8"/>
-    	<waterCell type="WaterCell" x="8" y="8"/>
-    	<waterCell type="WaterCell" x="9" y="7"/>
-    	<waterCell type="WaterCell" x="10" y="7"/>
-    	<waterCell type="WaterCell" x="11" y="6"/>
-    	<waterCell type="WaterCell" x="12" y="6"/>
-    </waterCells>
-    <ais>
-    	<ai soldierNumber="2" strategy="RandomStrategy" />
-    	<ai soldierNumber="1" strategy="RandomStrategy" />
-    </ais>
-    
+
 </world>

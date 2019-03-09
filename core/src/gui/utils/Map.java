@@ -9,10 +9,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.utils.XmlReader;
 
@@ -25,7 +22,7 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
-import logic.player.ai.Strategy;
+import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
 import org.mockito.Mockito;
 
@@ -34,22 +31,19 @@ import org.mockito.Mockito;
 
 public class Map {
 
+    private XmlReader.Element xmlElement;
     protected TiledMap map;
     protected HexagonalTiledMapRenderer tiledMapRenderer;
     protected TiledMapTileLayer cells;
+    protected TiledMapTileLayer selectedCells;
     protected TiledMapTileSet tileSet;
+    protected TiledMapTileSet tileSetSelected;
     protected Board board;
     protected int numberOfPlayers;
     protected Constructor<?> constructor;
 
-    /**
-     * Méthode qui permet de charger un monde du jeu
-     * @param worldName Le nom du monde à charger
-     * @param loadBoard true s'il faut charger le board, false sinon
-     * @param loadTmxRenderer true s'il faut charger le TmxRenderer, false sinon
-     * @return Le board initialisé si loadBoard == true, null sinon
-     */
-    public Board load(String worldName, boolean loadBoard, boolean loadTmxRenderer, boolean naturalDisasters) {
+
+    public Map(String worldName) {
         XmlReader xml = new XmlReader();
         //Si l'application qui à été lancé n'est pas une application Libgdx, alors on charge une fausse application
         //Pour charger toutes les variables contenus dans Gdx.files et autres.
@@ -57,17 +51,26 @@ public class Map {
             loadLibgdx();
         }
         //Création du parseur xml et on récupère le xml_element contenant les informations du monde
-        XmlReader.Element xml_element = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
-        generateTmxMap(xml_element, loadTmxRenderer);
-        if(loadBoard) {
-            generateBoard(xml_element, naturalDisasters);
-            generateDistricts();
-            generateItems(xml_element);
-            addWaterCells(xml_element);
-            checkAI(xml_element);
-
+        xmlElement = xml.parse(Gdx.files.internal("worlds/" + worldName + ".xml"));
+    }
+    /**
+     * Méthode qui permet de charger un monde du jeu
+     * @param loadTmxRenderer true s'il faut charger le TmxRenderer, false sinon
+     * @param naturalDisasters true s'il l'extension natural disasters est activé, false sinon
+     * @return Le board initialisé si loadBoard == true, null sinon
+     */
+    public Board loadBoard(boolean loadTmxRenderer, boolean naturalDisasters, ArrayList<String> playersName) {
+        if(cells == null) {
+            generateTmxMap(xmlElement, loadTmxRenderer);
         }
+            generateBoard(xmlElement, naturalDisasters, playersName);
+            generateDistricts();
+            generateItems(xmlElement);
         return board;
+    }
+
+    public void loadTmx() {
+        generateTmxMap(xmlElement, true);
     }
 
     /**
@@ -84,40 +87,6 @@ public class Map {
         //Lancement de l'application et initialisation des paramètres Gdx.
         new HeadlessApplication(new EmptyApplication(), config);
     }
-    
-    protected void checkAI(XmlReader.Element xmlElement) {
-    	XmlReader.Element ais = xmlElement.getChildByName("ais");
-    	for(int i = 0; i < ais.getChildCount(); i++) {
-    		XmlReader.Element ai = ais.getChild(i);
-    		int nPlayer = Integer.parseInt(ai.getAttribute("soldierNumber"));
-    		Class<?> strategyClass = getStrategy(ai.getAttribute("strategy"));
-    		try {
-				constructor = strategyClass.getConstructor();
-			} catch (NoSuchMethodException | SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		Strategy strategy = null;
-			try {
-				strategy = (Strategy) constructor.newInstance();
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		board.changeToAI(nPlayer, strategy);
-    	}
-    }
-    
-    protected void addWaterCells(XmlReader.Element xmlElement) {
-    	XmlReader.Element waterCells = xmlElement.getChildByName("waterCells");
-    	for(int i = 0; i < waterCells.getChildCount(); i++) {
-    		XmlReader.Element waterCell = waterCells.getChild(i);
-    		int x = Integer.parseInt(waterCell.getAttribute("x"));
-    		int y = Integer.parseInt(waterCell.getAttribute("y"));
-    		board.changeToWaterCell(x, y);
-    	}
-    }
 
     /**
      * Méthode qui génère la map Tmx ainsi que le TmxRenderer à partir du fichier tmx
@@ -133,18 +102,29 @@ public class Map {
             tiledMapRenderer = new HexagonalTiledMapRenderer(map);
         }
         cells = (TiledMapTileLayer) map.getLayers().get("background"); //cellules
+        selectedCells = (TiledMapTileLayer) map.getLayers().get("selectedTiles");
         tileSet = map.getTileSets().getTileSet("hex"); //le tileset des hexagones
+        tileSetSelected = map.getTileSets().getTileSet("hexSelected");
+
+        for (int i = 0; i < selectedCells.getWidth(); i++) {
+            for (int j = 0; j < selectedCells.getHeight(); j++) {
+                selectedCells.setCell(i,j, new TiledMapTileLayer.Cell());
+            }
+        }
     }
 
     /**
      * Méthode qui génère le board
      * @param xmlElement l'xmlElement contenant les informations du monde
      */
-    private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters) {
+    private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters, ArrayList<String> playersName) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
-            players.add(new Player());
+            Player newPlayer = new Player(playersName.get(i));
+            //Ajout de l'id du player
+            newPlayer.setId(i+1); //Car i=0 correspond aux cellules neutres
+            players.add(newPlayer);
         }
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
         int height = Integer.parseInt(xmlElement.getAttribute("height"));
@@ -165,6 +145,9 @@ public class Map {
                 //En bas à gauche tandis que le board lui à son origine centré en haut à gauche.
                 TiledMapTileLayer.Cell cell = cells.getCell(i, Math.abs(cells.getHeight()-1 - j));
                 MapProperties properties = cell.getTile().getProperties();
+                if(!(boolean) properties.get("available")) { //On change la cellule pour une cellule d'eau si la cellule n'est pas accesible
+                    board.changeToWaterCell(i, j);
+                }
                 int nPlayer = (int) properties.get("player");
                 if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre
                     District district = new District(board.getPlayers().get(nPlayer - 1));
@@ -204,6 +187,7 @@ public class Map {
                     cell.setItem((Item) constructor.newInstance());
                 }
                 if(itemClass.equals(Capital.class)) {
+                	cell.getDistrict().removeCapital();
                     cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
                     cell.getDistrict().addCapital(cell);
                 }
@@ -246,7 +230,7 @@ public class Map {
     
     protected Class<?> getStrategy(String strategy){
     	try {
-    		return Class.forName("logic.player.ai."+strategy);
+    		return Class.forName("logic.player.ai.strategy."+strategy);
     	}
     	catch(ClassNotFoundException e) {
     		System.out.println("ERROR : the strategy "+strategy+" didn't exist");
@@ -269,5 +253,13 @@ public class Map {
 
     public TiledMapTileLayer getCells() {
         return cells;
+    }
+
+    public TiledMapTileLayer getSelectedCells() {
+        return selectedCells;
+    }
+
+    public TiledMapTileSet getTileSetSelected() {
+        return tileSetSelected;
     }
 }

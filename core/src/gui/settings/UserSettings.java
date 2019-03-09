@@ -9,14 +9,19 @@ import com.badlogic.gdx.Gdx;
 public class UserSettings {
 
     private boolean fullScreen;
+    private String username;
+    private String language;
     private int musicLevel;
     private int soundLevel;
 
     public UserSettings() {
         setFullScreen(false);
+        setUsername("Player");
+        setLanguage("en");
         setMusicLevel(100);
         setSoundLevel(100);
     }
+
 
     /**
      * Initialisation des paramètres dans libgdx
@@ -36,6 +41,13 @@ public class UserSettings {
         }
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
     public void setMusicLevel(int musicLevel) {
         this.musicLevel = musicLevel;
     }
@@ -46,5 +58,13 @@ public class UserSettings {
 
     public boolean isFullScreen() {
         return fullScreen;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }
