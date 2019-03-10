@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<world name="World 2" map="g1_World2" width="49" height="96">
+    <players number="2" />
+    <items>
+      
+    </items>
+
+</world>
