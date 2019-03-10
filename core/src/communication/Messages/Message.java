@@ -63,24 +63,21 @@ public abstract class Message {
      * @return Le String associé aux bytes qui se trouvaient dans le buffer
      * @throws IOException
      */
-    public static String getStringFromBuffer(SocketChannel clientChannel) throws IOException {
+    public static String getStringFromBuffer(SocketChannel clientChannel, String previousStr) throws IOException {
         //Boucle qui lit les données envoyées par le client et place ces données dans un string
-        StringBuilder messageStr = new StringBuilder();
+        StringBuilder messageStr;
+        if(previousStr == null) {
+            messageStr = new StringBuilder();
+        } else {
+            messageStr = new StringBuilder(previousStr);
+        }
         int bufferSize = 100; //Arbitraire
         ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-        int len = -1;
         while(clientChannel.read(buffer) > 0) {
-            messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
             buffer.clear();
+            messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
+            buffer.flip();
         }
-//        do {
-//            buffer.clear();
-//            if (clientChannel.isConnected()) {
-//                len = clientChannel.read(buffer);
-//                System.out.println(len);
-//                messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
-//            }
-//        } while (len == bufferSize); //len == 100 indique que l'entièreté du message n'a pas encore été lu
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
     }
 

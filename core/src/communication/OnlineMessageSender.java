@@ -41,7 +41,7 @@ public class OnlineMessageSender implements MessageSender {
     public void send(Message message) {
         try {
             //Écriture du message dans le buffer du client pour que le serveur puisse le récupérer
-            clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
+            clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message) + "+").getBytes()));
         } catch (IOException e) {
             e.printStackTrace();
         }

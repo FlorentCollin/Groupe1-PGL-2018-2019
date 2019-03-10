@@ -100,16 +100,22 @@ public class ServerListener extends Thread{
         clientChannel = (SocketChannel) key.channel();
         //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
         //Récupération du message dans le buffer du client.
-        String messageStr = null;
         try {
-            messageStr = Message.getStringFromBuffer(clientChannel);
-            Message message = Message.getMessage(messageStr, gson);
-            message.setClient(ServerInfo.clients.get(clientChannel));
-            if(message instanceof UsernameMessage) {
-                ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
+            String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
+            if(!messageStr.endsWith("+")) {
+                key.attach(messageStr);
             } else {
-                roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
+                key.attach(null);
+                messageStr = messageStr.substring(0, messageStr.length()-1);
+                Message message = Message.getMessage(messageStr, gson);
+                message.setClient(ServerInfo.clients.get(clientChannel));
+                if(message instanceof UsernameMessage) {
+                    ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
+                } else {
+                    roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
+                }
             }
+
         } catch (IOException e) {
             System.out.println("Client connection lost");
             key.cancel();

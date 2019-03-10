@@ -53,14 +53,20 @@ public class OnlineMessageListener extends MessageListener{
                 SelectionKey key = keyIterator.next();
                 if(key.isReadable()) { //Si le serveur à envoyé un message
                     //Récupération du string correspondant au message
-                    String messageStr = Message.getStringFromBuffer(clientChannel);
-                    FileHandle file = new FileHandle("core.json");
-                    file.writeString(messageStr, false);
-                    //Désérialization du string en un message
-                    Message message = Message.getMessage(messageStr, gson);
-                    executeMessage(message); //Exécution
+                    String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
+                    if(!messageStr.endsWith("+")) {
+                        key.attach(messageStr);
+                    } else {
+                        key.attach(null);
+                        messageStr = messageStr.substring(0, messageStr.length()-1);
+                        FileHandle file = new FileHandle("core.json");
+                        file.writeString(messageStr, false);
+                        //Désérialization du string en un message
+                        Message message = Message.getMessage(messageStr, gson);
+                        executeMessage(message); //Exécution
+                    }
+                        keyIterator.remove();
                 }
-                keyIterator.remove();
             }
         }
     }
