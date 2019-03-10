@@ -16,7 +16,7 @@ public class ServerTmxMapLoader {
     public HashMap[][] load(String fileName) {
         String cwd = new File("").getAbsolutePath();
         XmlReader xmlReader = new XmlReader();
-        FileHandle file = new FileHandle(new File(cwd + File.separator + fileName.replace("/", File.separator)));
+        FileHandle file = new FileHandle(new File(cwd + File.separator + "worlds" + File.separator + fileName.replace("/", File.separator) + ".tmx"));
         XmlReader.Element root = xmlReader.parse(file);
         width = Integer.parseInt(root.getAttribute("width"));
         height = Integer.parseInt(root.getAttribute("height"));

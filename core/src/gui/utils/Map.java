@@ -142,7 +142,7 @@ public class Map {
                 boolean available;
                 int nPlayer;
                 if (online) {
-                    HashMap<String, Object> properties = onlineCells[i][height-1 - j];
+                    HashMap<String, Object> properties = onlineCells[i][j];
                     available = (boolean) properties.get("available");
                     nPlayer = (int) properties.get("player");
                 } else {
