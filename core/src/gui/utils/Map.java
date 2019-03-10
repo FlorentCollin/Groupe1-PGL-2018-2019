@@ -140,7 +140,6 @@ public class Map {
      * Méthode qui va initialiser les districts à partir de la map Tmx.
      */
     private void generateDistricts(int width, int height, boolean online) {
-        System.out.println("Here + " + online);
         //TODO Méthode qui génère les district dans board
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -159,7 +158,7 @@ public class Map {
                     nPlayer = (int) properties.get("player");
 
                 }
-                if(available) { //On change la cellule pour une cellule d'eau si la cellule n'est pas accesible
+                if(!available) { //On change la cellule pour une cellule d'eau si la cellule n'est pas accesible
                     board.changeToWaterCell(i, j);
                 }
                 if (nPlayer != 0) { //Si la cellule appartient à un joueur (car 0 est la valeur pour une cellule neutre
