@@ -25,7 +25,7 @@ public class GameRoom extends Room {
                     LinkedBlockingQueue<Message> messagesFrom) {
 
         Map map = new Map(worldName);
-        board = map.loadBoard(false, naturalDisasters, playersName);
+        board = map.loadBoard(naturalDisasters, playersName);
         for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionné
             board.changeToAI(board.getPlayers().size() - i - 1, new RandomStrategy());
         }

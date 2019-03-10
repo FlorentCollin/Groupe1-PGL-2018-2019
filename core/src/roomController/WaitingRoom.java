@@ -24,7 +24,7 @@ public class WaitingRoom extends Room {
     public WaitingRoom(CreateRoomMessage message, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messageToSend) {
         mapName = message.getWorldName();
         Map map = new Map(mapName);
-        board = map.loadBoard(false, message.isNaturalDisastersOn(), null);
+        board = map.loadBoard(message.isNaturalDisastersOn(), null);
         for (int i = 0; i < board.getPlayers().size(); i++) {
             clientsReady.add(i, false);
         }
