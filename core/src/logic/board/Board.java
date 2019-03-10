@@ -95,7 +95,9 @@ public class Board{
 	}
 
 	public void setShopItem(Item item) {
-		shop.setSelectedItem(item, selectedCell.getDistrict());
+		if(selectedCell != null) {
+			shop.setSelectedItem(item, selectedCell.getDistrict());
+		}
 	}
 	
 	/**
@@ -575,7 +577,7 @@ public class Board{
 	 * Permet de créer une nouvelle capital sur un district
 	 * @param district le district ayant besoin d'une nouvelle capitale
 	 * */
-	private void generateCapital(District district) {
+	private int generateCapital(District district) {
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
@@ -586,13 +588,11 @@ public class Board{
                 i = rand.nextInt(district.getCells().size());
             }
             if(visited.size() == district.getCells().size()) {
-                districts.remove(district);
-                removeDistrict(district);
+            	return 1;
             }
-            else {
-	            Cell cell = district.getCells().get(i);
-	            district.addCapital(cell);
-            }
+            Cell cell = district.getCells().get(i);
+            district.addCapital(cell);
+            return 0;
         }
 	}
 	
@@ -712,8 +712,6 @@ public class Board{
 				if (district.getCells().size() <= 1) {
 					emptyDistricts.add(district);
 					for (Cell c : district.getCells()) {
-						c.removeDistrict();
-						c.removeItem();
 						neutralCells.add(c);
 					}
 				}
@@ -721,15 +719,25 @@ public class Board{
 		}
 		for(District district : emptyDistricts) {
 			removeDistrict(district);
+			district.delete();
 		}
 		checkCapitals();
 	}
 	
 	public void checkCapitals() {
+		ArrayList<District> toRemove = new ArrayList<>();
+		int returnValue;
 		for(District district : districts) {
 			if(district.getCapital() == null) {
-				generateCapital(district);
+				returnValue = generateCapital(district);
+				if(returnValue == 1) {
+					toRemove.add(district);
+				}
 			}
+		}
+		for(District district : toRemove) {
+			removeDistrict(district);
+			district.delete();
 		}
 	}
 
