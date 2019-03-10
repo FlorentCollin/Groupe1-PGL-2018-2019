@@ -44,7 +44,7 @@ public class District {
 	}
 	
 	public void removeCell(Cell cell) {
-		cells.remove(cells.indexOf(cell));
+		cells.remove(cell);
 		if(cell == capital) {
 			removeCapital();
 		}
@@ -54,6 +54,13 @@ public class District {
         synchronized (cells) {
             cells.removeAll(district.getCells());
         }
+	}
+	
+	public void delete() {
+		for(Cell cell : cells) {
+			cell.removeDistrict();
+			cell.removeItem();
+		}
 	}
 
 	public void removeSoldiers() {
