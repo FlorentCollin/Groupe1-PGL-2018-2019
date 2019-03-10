@@ -67,15 +67,20 @@ public abstract class Message {
         //Boucle qui lit les données envoyées par le client et place ces données dans un string
         StringBuilder messageStr = new StringBuilder();
         int bufferSize = 100; //Arbitraire
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
         int len = -1;
-        do {
-            ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+        while(clientChannel.read(buffer) > 0) {
+            messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
             buffer.clear();
-            if (clientChannel.isConnected()) {
-                len = clientChannel.read(buffer);
-                messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
-            }
-        } while (len == bufferSize); //len == 100 indique que l'entièreté du message n'a pas encore été lu
+        }
+//        do {
+//            buffer.clear();
+//            if (clientChannel.isConnected()) {
+//                len = clientChannel.read(buffer);
+//                System.out.println(len);
+//                messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
+//            }
+//        } while (len == bufferSize); //len == 100 indique que l'entièreté du message n'a pas encore été lu
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
     }
 

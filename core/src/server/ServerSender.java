@@ -39,6 +39,7 @@ public class ServerSender extends Thread {
                             /* Écriture du message dans le buffer du client
                              * Ici on écrit le nom de la classe du message en plus du message sérialisé
                              * Pour permettre au client de retrouver le type du message */
+                            System.out.println((gson.toJson(message)).getBytes().length);
                             clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
                         }
                     }

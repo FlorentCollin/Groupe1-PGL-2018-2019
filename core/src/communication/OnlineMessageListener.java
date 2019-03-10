@@ -54,6 +54,8 @@ public class OnlineMessageListener extends MessageListener{
                 if(key.isReadable()) { //Si le serveur à envoyé un message
                     //Récupération du string correspondant au message
                     String messageStr = Message.getStringFromBuffer(clientChannel);
+                    FileHandle file = new FileHandle("core.json");
+                    file.writeString(messageStr, false);
                     //Désérialization du string en un message
                     Message message = Message.getMessage(messageStr, gson);
                     executeMessage(message); //Exécution
