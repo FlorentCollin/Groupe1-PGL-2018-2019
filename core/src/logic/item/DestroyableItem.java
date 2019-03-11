@@ -1,6 +1,6 @@
 package logic.item;
 
-public class DestroyableItem extends Item{
+public abstract class DestroyableItem extends Item{
 	private int bonus;
 
 	public int getBonus() {
