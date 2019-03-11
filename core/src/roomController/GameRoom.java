@@ -5,7 +5,7 @@ import gui.utils.Map;
 import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.item.Item;
-import logic.player.ai.strategy.RandomStrategy;
+import logic.player.ai.strategy.*;
 import server.Client;
 
 import java.util.ArrayList;
@@ -26,9 +26,24 @@ public class GameRoom extends Room {
 
         Map map = new Map(worldName);
         board = map.loadBoard(naturalDisasters, playersName);
-        for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionné
-            board.changeToAI(board.getPlayers().size() - i - 1, new RandomStrategy());
-        }
+        for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionnéE
+            System.out.println(aiStrats.get(i));
+            Strategy strat = null;
+            switch(aiStrats.get(i)) {
+                case "Random":
+                    strat = new RandomStrategy();
+                    break;
+                case "Easy":
+                    strat = new AttackStrategy();
+                    break;
+                case "Medium":
+                    strat = new DefenseStrategy();
+                    break;
+                case "Hard":
+                    strat = new AdaptativeStrategy();
+                    break;
+            }
+            board.changeToAI(board.getPlayers().size()-i-1, strat);
         this.messagesFrom = messagesFrom;
     }
 
