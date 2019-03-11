@@ -57,7 +57,7 @@ public class ServerListener extends Thread{
                 if(selector.select() != 0) { //Récupération des différentes clés qui ont envoyés un message au serveur
                     keyIterator = selector.selectedKeys().iterator();
                     while(keyIterator.hasNext()) {
-                        System.out.println("KeyNext");
+//                        System.out.println("KeyNext");
                         SelectionKey key = keyIterator.next();
                         if(key.isAcceptable()) {
                             keyIsAcceptable(); //Signifie qu'un nouveau client se connecte au serveur
@@ -103,6 +103,7 @@ public class ServerListener extends Thread{
         //Récupération du message dans le buffer du client.
         try {
             String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
+//            System.out.println(messageStr);
             if(!messageStr.endsWith("+")) {
                 key.attach(messageStr);
             } else {

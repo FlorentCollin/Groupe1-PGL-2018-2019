@@ -73,11 +73,18 @@ public abstract class Message {
         }
         int bufferSize = 100; //Arbitraire
         ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-        while(clientChannel.read(buffer) > 0) {
+        int len = 1;
+        do {
+            len = clientChannel.read(buffer);
+            if(len == 0)
+                break;
             buffer.clear();
             messageStr.append(new String(buffer.array(), StandardCharsets.UTF_8));
             buffer.flip();
-        }
+            if(len == -1) {
+                throw new IOException();
+            }
+        } while(len > 0);
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
     }
 
