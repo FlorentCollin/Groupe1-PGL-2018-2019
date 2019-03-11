@@ -101,11 +101,11 @@ public class GameRoom extends Room {
      * @param message Le message à exécuter
      */
     private void executeMessage(Message message) {
-        if(message instanceof PlayMessage && (playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
+        if(message instanceof PlayMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        } else if(message instanceof ShopMessage && (playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
+        } else if(message instanceof ShopMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
             Item item = ((ShopMessage) message).getItem();
             //On refixe le type qui n'a pas survécu au transfert
             //Ce qui permet de renvoyer l'item au client par la suite
