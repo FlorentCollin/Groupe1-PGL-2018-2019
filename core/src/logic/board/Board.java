@@ -101,6 +101,7 @@ public class Board{
 		if(selectedCell != null) {
 			shop.setSelectedItem(item, selectedCell.getDistrict());
 		}
+		hasChanged = true;
 	}
 
 	/**
@@ -768,8 +769,9 @@ public class Board{
 		return ret;
 	}
 
-	public void updateBoard(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {
+	public void updateBoard(ArrayList<District> districts, Shop shop, ArrayList<Player> players, int activePlayer) {
 		this.districts = districts;
+		this.shop = shop;
 		this.players = players;
 		this.activePlayer = activePlayer;
 		for (District district : districts) {
