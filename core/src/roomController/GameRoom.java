@@ -29,7 +29,7 @@ public class GameRoom extends Room {
         for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionnéE
             System.out.println(aiStrats.get(i));
             Strategy strat = null;
-            switch(aiStrats.get(i)) {
+            switch (aiStrats.get(i)) {
                 case "Random":
                     strat = new RandomStrategy();
                     break;
@@ -43,8 +43,9 @@ public class GameRoom extends Room {
                     strat = new AdaptativeStrategy();
                     break;
             }
-            board.changeToAI(board.getPlayers().size()-i-1, strat);
-        this.messagesFrom = messagesFrom;
+            board.changeToAI(board.getPlayers().size() - i - 1, strat);
+            this.messagesFrom = messagesFrom;
+        }
     }
 
     public GameRoom(Board board, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messagesToSend) {
