@@ -595,7 +595,6 @@ public class Board{
             return 0;
         }
 
-	}
 
 	private void removeDistrict(District district) {
 		districts.remove(district);
