@@ -395,7 +395,7 @@ public class Board{
 		hasChanged = true;
 		checkDistricts(); // Peut être à supprimer d'ici
 		checkWinner();
-		selectedCell = null;
+		setSelectedCell(null);
 		shop.removeSelection();
 		if(winner == null) {
 			activePlayer = (activePlayer + 1)%(players.size());
@@ -439,7 +439,7 @@ public class Board{
 	}
 
 	public void setSelectedCell(Cell selectedCell) {
-		if(selectedCell == null || (selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer() == getActivePlayer())) {
+		if(selectedCell == null || (selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer().getId() == getActivePlayer().getId())) {
 			this.selectedCell = selectedCell;
 		}
 		hasChanged = true;
@@ -675,12 +675,12 @@ public class Board{
 			else if(selectedCell.getItem() != null && selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {
 				move(cell);
 			}
-			selectedCell = null;
+			setSelectedCell(null);
 			shop.removeSelection();
 		}
 		// cell != null vrmt utile ????
 		else if(cell != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() == players.get(activePlayer)){
-			selectedCell = cell;
+			setSelectedCell(cell);
 		}
 	}
 

@@ -27,7 +27,7 @@ public class GameRoom extends Room {
         Map map = new Map(worldName);
         board = map.loadBoard(naturalDisasters, playersName);
         this.messagesFrom = messagesFrom;
-        for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionnéE
+        for (int i = 0; i < aiStrats.size(); i++) {
             System.out.println(aiStrats.get(i));
             Strategy strat = null;
             switch (aiStrats.get(i)) {
@@ -75,7 +75,6 @@ public class GameRoom extends Room {
                         if (board.hasChanged()) {
                             GameUpdateMessage updateMessage;
                             if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
-                                System.out.println(board.getSelectedCell());
                                 Cell selectedCell = board.getSelectedCell();
                                 updateMessage = new GameUpdateMessage(board.getDistricts(), board.getPlayers(),
                                         board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());

@@ -55,9 +55,7 @@ public abstract class MessageListener extends Thread {
             if(updateMessage.getX() == null && updateMessage.getY() == null) {
                 board.setSelectedCell(null);
             } else {
-                System.out.println("i'm settings selectedCell");
                 board.setSelectedCell(board.getCell(updateMessage.getX(), updateMessage.getY()));
-                System.out.println(board.getSelectedCell());
             }
         } else if (message instanceof RoomUpdateMessage) {
             RoomUpdateMessage roomUpdateMessage = (RoomUpdateMessage) message;

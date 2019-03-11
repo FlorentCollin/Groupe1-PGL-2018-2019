@@ -116,8 +116,5 @@ public class RoomController {
             }
             rooms.remove(client);
         }
-        System.out.println("Check Empty");
-        System.out.println(rooms.size());
-
     }
 }
