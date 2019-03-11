@@ -7,7 +7,9 @@
       <item type="Soldier" level="1" x="9" y="8" />
       <item type="Soldier" level="1" x="9" y="9" />
       <item type="Soldier" level="1" x="2" y="3" />
-      <item type="Soldier" level="2" x="16" y="12" />
+      <item type="Soldier" level="2" x="16" y="12"/>
+      <item type="Soldier" level="1" x="1" y="14" />
+      <item type="Soldier" level="1" x="19" y="1" />
 
       <item type="Capital" golds="40" x="2" y="2" />
       <item type="Capital" golds="40" x="17" y="12" />
