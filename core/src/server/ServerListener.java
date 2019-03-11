@@ -57,6 +57,7 @@ public class ServerListener extends Thread{
                 if(selector.select() != 0) { //Récupération des différentes clés qui ont envoyés un message au serveur
                     keyIterator = selector.selectedKeys().iterator();
                     while(keyIterator.hasNext()) {
+                        System.out.println("KeyNext");
                         SelectionKey key = keyIterator.next();
                         if(key.isAcceptable()) {
                             keyIsAcceptable(); //Signifie qu'un nouveau client se connecte au serveur
@@ -81,8 +82,8 @@ public class ServerListener extends Thread{
         try {
             clientChannel = serverChannel.accept();
             clientChannel.configureBlocking(false);
-            //On permet au client de lire et d'écrire des messages
-            clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+            //On permet au client d'écrire
+            clientChannel.register(selector, SelectionKey.OP_READ);
             Client client = new Client(clientChannel);
             ServerInfo.clients.put(clientChannel, client);
             System.out.println("Number of player : " + ServerInfo.clients.size());
@@ -121,5 +122,9 @@ public class ServerListener extends Thread{
             key.cancel();
             ServerInfo.clients.remove(clientChannel);
         }
+    }
+
+    public Selector getSelector() {
+        return selector;
     }
 }

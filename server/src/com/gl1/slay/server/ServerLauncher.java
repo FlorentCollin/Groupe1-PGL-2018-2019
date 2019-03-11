@@ -16,7 +16,7 @@ public class ServerLauncher {
         System.out.println("Starting server...");
         LinkedBlockingQueue<Message> messageToSend = new LinkedBlockingQueue<>();
         ServerListener serverListener = new ServerListener(8888, messageToSend);
-        ServerSender serverSender = new ServerSender(messageToSend);
+        ServerSender serverSender = new ServerSender(serverListener.getSelector(), messageToSend);
         //Démarrage des Threads
         serverSender.start();
         serverListener.start();

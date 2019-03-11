@@ -59,8 +59,8 @@ public class OnlineMessageListener extends MessageListener{
                     } else {
                         key.attach(null);
                         messageStr = messageStr.substring(0, messageStr.length()-1);
-                        FileHandle file = new FileHandle("core.json");
-                        file.writeString(messageStr, false);
+//                        FileHandle file = new FileHandle("core.json");
+//                        file.writeString(messageStr, false);
                         //Désérialization du string en un message
                         Message message = Message.getMessage(messageStr, gson);
                         executeMessage(message); //Exécution
