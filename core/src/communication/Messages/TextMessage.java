@@ -1,4 +1,4 @@
-package communication;
+package communication.Messages;
 
 /**
  * Message représentant du texte. Peut être utilisé dans plusieurs cas.

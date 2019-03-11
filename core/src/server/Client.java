@@ -26,4 +26,12 @@ public class Client {
     public SocketChannel getSocketChannel() {
         return socketChannel;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

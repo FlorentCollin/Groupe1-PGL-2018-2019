@@ -14,15 +14,11 @@ public class District {
 	private transient Cell capital;
 	private List<Cell> cells;
 
-	public static int globalId = 0;
-	private int id;
 
 	public District(Player player) {
-		cells = Collections.synchronizedList(new ArrayList<>());
+		cells = new ArrayList<>();
 		this.player = player;
 
-		globalId++;
-		id = globalId;
 	}
 
 	public void addCell(Cell cell) {
@@ -144,10 +140,6 @@ public class District {
 		return capital;
 	}
 
-    public int getId() {
-        return id;
-    }
-    
     public int size() {
     	return cells.size();
     }

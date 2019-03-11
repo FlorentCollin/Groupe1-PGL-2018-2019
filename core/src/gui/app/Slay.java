@@ -2,17 +2,12 @@ package gui.app;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.I18NBundle;
-import communication.CreateRoomMessage;
 import gui.graphics.screens.*;
 import gui.settings.InitSettings;
 import gui.settings.UserSettings;
 import gui.settings.UserShortcuts;
 import gui.utils.Language;
-
-import java.util.Locale;
 
 import static gui.utils.Constants.USER_SETTINGS_FILE;
 import static gui.utils.Constants.USER_SHORTCUTS_FILE;
@@ -82,7 +77,7 @@ public class Slay extends Game {
             nextScreen = onlineMenuScreen;
         } else if(screen == CreateRoomMenuScreen.class) {
             if(createRoomMenuScreen == null) {
-                createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage(), false);
+                createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage());
             }
             nextScreen = createRoomMenuScreen;
         }
