@@ -26,6 +26,7 @@ public class GameRoom extends Room {
 
         Map map = new Map(worldName);
         board = map.loadBoard(naturalDisasters, playersName);
+        this.messagesFrom = messagesFrom;
         for (int i = 0; i < aiStrats.size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionnéE
             System.out.println(aiStrats.get(i));
             Strategy strat = null;
@@ -44,7 +45,6 @@ public class GameRoom extends Room {
                     break;
             }
             board.changeToAI(board.getPlayers().size() - i - 1, strat);
-            this.messagesFrom = messagesFrom;
         }
     }
 
