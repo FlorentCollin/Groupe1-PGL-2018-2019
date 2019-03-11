@@ -52,10 +52,8 @@ public class GameRoom extends Room {
                 //Récupération du message du client
                 Message message = messagesFrom.take();
                 synchronized (board) {
-                    if(playersNumber.get(message.getClient()) == board.getActivePlayerNumber()) { //TODO REFACTOR
-                        executeMessage(message);
-                        System.out.println("Game Room - Message Executed : " + message.getClass().getSimpleName());
-                    }
+                    executeMessage(message);
+                    System.out.println("Game Room - Message Executed : " + message.getClass().getSimpleName());
                     if (messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
                         //Si le board à changé alors il faut notifier les clients des changements.
                         if (board.hasChanged()) {
@@ -79,6 +77,7 @@ public class GameRoom extends Room {
                 e.printStackTrace();
             }
         }
+        System.out.println("Closing Room");
     }
 
     /**
@@ -86,11 +85,11 @@ public class GameRoom extends Room {
      * @param message Le message à exécuter
      */
     private void executeMessage(Message message) {
-        if(message instanceof PlayMessage) {
+        if(message instanceof PlayMessage && (playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        } else if(message instanceof ShopMessage) {
+        } else if(message instanceof ShopMessage && (playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
             Item item = ((ShopMessage) message).getItem();
             //On refixe le type qui n'a pas survécu au transfert
             //Ce qui permet de renvoyer l'item au client par la suite
@@ -128,6 +127,9 @@ public class GameRoom extends Room {
     @Override
     public boolean remove(Client client) {
         board.changeToAI(clients.indexOf(client), new RandomStrategy());
+        if(board.getActivePlayerNumber() == clients.indexOf(client)) {
+            board.nextPlayer();
+        }
         return super.remove(client);
     }
 

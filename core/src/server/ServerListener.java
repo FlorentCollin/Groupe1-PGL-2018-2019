@@ -57,7 +57,6 @@ public class ServerListener extends Thread{
                 if(selector.select() != 0) { //Récupération des différentes clés qui ont envoyés un message au serveur
                     keyIterator = selector.selectedKeys().iterator();
                     while(keyIterator.hasNext()) {
-//                        System.out.println("KeyNext");
                         SelectionKey key = keyIterator.next();
                         if(key.isAcceptable()) {
                             keyIsAcceptable(); //Signifie qu'un nouveau client se connecte au serveur
