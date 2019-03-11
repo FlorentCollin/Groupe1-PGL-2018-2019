@@ -29,7 +29,7 @@ public class Board{
 	private volatile Cell selectedCell, firstCell;
 	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
 	private ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
-    private boolean hasChanged;
+	private boolean hasChanged;
 	private Player winner;
 	//Variable qui est utilisé dans la méthode getNeighbors
 	//Elle contient toutes les directions possibles pour les cellules adjacentes
@@ -37,6 +37,7 @@ public class Board{
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
 	private ArrayList<Cell> neutralCells;
+	private ArrayList<Cell> modificatedCells;
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
@@ -48,6 +49,7 @@ public class Board{
 		this.shop = shop;
 		fullIn();
 		neutralCells = new ArrayList<>();
+		modificatedCells = new ArrayList<>();
 
 	}
 
@@ -60,6 +62,7 @@ public class Board{
 		this.shop = shop;
 		fullIn();
 		neutralCells = new ArrayList<>();
+		modificatedCells = new ArrayList<>();
 	}
 
 	/**
@@ -75,7 +78,6 @@ public class Board{
 
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
-		ai.setName("AI#" + nPlayer);
 		ai.setId(players.get(nPlayer).getId());
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(nPlayer)) {
@@ -161,6 +163,7 @@ public class Board{
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
 		shop.buy(cell.getDistrict());
+		modificatedCells.add(cell);
 	}
 
 	/**
@@ -272,8 +275,8 @@ public class Board{
 				for (Cell c : around) {
 					if (c.getDistrict() == cell.getDistrict()
 							&& (c.getItem() == null
-								|| (sameInstance(c.getItem(), cell.getItem())))
-							) {
+							|| (sameInstance(c.getItem(), cell.getItem())))
+					) {
 						subAround.addAll(getNeighbors(c));
 					}
 				}
@@ -289,8 +292,8 @@ public class Board{
 			}
 		}
 		else {
-		    possible.add(cell);
-        }
+			possible.add(cell);
+		}
 		return possible;
 	}
 
@@ -301,17 +304,17 @@ public class Board{
 	 * */
 	public ArrayList<Cell> possibleMove(District district){
 		ArrayList<Cell> possible = new ArrayList<>();
-			for(Cell c : district.getCells()) {
-				if(possible.indexOf(c) == -1 && canGoOn(c, shop.getSelectedItem())) {
-					possible.add(c);
-				}
-				for(Cell c1 : getNeighbors(c)) {
-					if(canGoOn(c1, shop.getSelectedItem()) && possible.indexOf(c1) == -1) {
-						possible.add(c1);
-					}
+		for(Cell c : district.getCells()) {
+			if(possible.indexOf(c) == -1 && canGoOn(c, shop.getSelectedItem())) {
+				possible.add(c);
+			}
+			for(Cell c1 : getNeighbors(c)) {
+				if(canGoOn(c1, shop.getSelectedItem()) && possible.indexOf(c1) == -1) {
+					possible.add(c1);
 				}
 			}
-			return possible;
+		}
+		return possible;
 
 
 	}
@@ -389,8 +392,8 @@ public class Board{
 	 * Permet de passer au joueur suivant
 	 */
 	public void nextPlayer() {
-	    hasChanged = true;
-	    checkDistricts(); // Peut être à supprimer d'ici
+		hasChanged = true;
+		checkDistricts(); // Peut être à supprimer d'ici
 		checkWinner();
 		selectedCell = null;
 		shop.removeSelection();
@@ -405,11 +408,11 @@ public class Board{
 					}
 					else {
 						district.refreshSoldiers();
-							for (Cell c : district.getCells()) {
-								if (c.getItem() != null && c.getItem().isMovable()) {
-									c.getItem().setHasMoved(false);
-								}
+						for (Cell c : district.getCells()) {
+							if (c.getItem() != null && c.getItem().isMovable()) {
+								c.getItem().setHasMoved(false);
 							}
+						}
 					}
 				}
 			}
@@ -418,8 +421,12 @@ public class Board{
 			}
 		}
 		else {
-			//TO DO
-			System.out.println(winner+" wins");
+			if(!(winner instanceof AI)) {
+				System.out.println(winner+" wins");
+			}
+			else {
+				System.out.println("You lose");
+			}
 		}
 	}
 
@@ -432,14 +439,9 @@ public class Board{
 	}
 
 	public void setSelectedCell(Cell selectedCell) {
-	    if(selectedCell == null || (selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer().getId() == getActivePlayer().getId())) {
+		if(selectedCell == null || (selectedCell.getDistrict() != null && selectedCell.getDistrict().getPlayer() == getActivePlayer())) {
 			this.selectedCell = selectedCell;
 		}
-	    hasChanged = true;
-	}
-
-	public void setSelectedCell(int x, int y) {
-		this.selectedCell = selectedCell;
 		hasChanged = true;
 	}
 
@@ -485,14 +487,14 @@ public class Board{
 	 * */
 	private void split(District district) {
 		District newDistrict = new District(district.getPlayer());
-			for (Cell c : district.getCells()) {
-				visited.clear();
-				firstCell = c;
-				if (numberOfWayToCapital(c) == 0) {
-					newDistrict.addCell(c);
-					c.setDistrict(newDistrict);
-				}
+		for (Cell c : district.getCells()) {
+			visited.clear();
+			firstCell = c;
+			if (numberOfWayToCapital(c) == 0) {
+				newDistrict.addCell(c);
+				c.setDistrict(newDistrict);
 			}
+		}
 		district.removeAll(newDistrict);
 		addDistrict(newDistrict);
 		checkDistricts();
@@ -508,7 +510,7 @@ public class Board{
 				visited.clear();
 				firstCell = c;
 				if(numberOfWayToCapital(c) == 0) {
- 					split(c.getDistrict());
+					split(c.getDistrict());
 				}
 			}
 		}
@@ -582,19 +584,18 @@ public class Board{
 		ArrayList<Cell> visited = new ArrayList<>();
 		Random rand = new Random();
 		//On récupère une cellule du district aléatoirement
-            int i = rand.nextInt(district.getCells().size());
-            while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
-                visited.add(district.getCells().get(i));
-                i = rand.nextInt(district.getCells().size());
-            }
-            if(visited.size() == district.getCells().size()) {
-            	return 1;
-            }
-            Cell cell = district.getCells().get(i);
-            district.addCapital(cell);
-            return 0;
-        }
-
+		int i = rand.nextInt(district.getCells().size());
+		while(district.getCells().get(i).getItem() != null && visited.size() < district.getCells().size()) {
+			visited.add(district.getCells().get(i));
+			i = rand.nextInt(district.getCells().size());
+		}
+		if(visited.size() == district.getCells().size()) {
+			return 1;
+		}
+		Cell cell = district.getCells().get(i);
+		district.addCapital(cell);
+		return 0;
+	}
 
 	private void removeDistrict(District district) {
 		districts.remove(district);
@@ -613,6 +614,7 @@ public class Board{
 		cell.setItem(selectedCell.getItem());
 		selectedCell.removeItem();
 		setSelectedCell(null);
+		modificatedCells.add(cell);
 	}
 
 	/**
@@ -666,7 +668,6 @@ public class Board{
 	 * @param cell la cellule sur laquelle une action est susceptible d'être effectuée
 	 * */
 	public void play(Cell cell) {
-		hasChanged = true;
 		if(selectedCell != null) {
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
@@ -691,9 +692,23 @@ public class Board{
 			}
 		}
 		players.removeAll(deadPlayers);
-		if(players.size() == 1) {
+		if(players.size() == 1 || !realPlayer()) {
 			winner = players.get(0);
 		}
+	}
+
+	/**
+	 * Vérifie qu'il y a toujours au moins un joueur humain dans la partie
+	 * @return true si il reste au moins un joueur humain
+	 * 			false sinon
+	 */
+	private boolean realPlayer() {
+		for(Player player : players) {
+			if(!(player instanceof AI)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean canYetPlay(Player player) {
@@ -709,12 +724,12 @@ public class Board{
 		neutralCells.clear();
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
-				if (district.getCells().size() <= 1) {
-					emptyDistricts.add(district);
-					for (Cell c : district.getCells()) {
-						neutralCells.add(c);
-					}
+			if (district.getCells().size() <= 1) {
+				emptyDistricts.add(district);
+				for (Cell c : district.getCells()) {
+					modificatedCells.add(c);
 				}
+			}
 		}
 		for(District district : emptyDistricts) {
 			removeDistrict(district);
@@ -735,39 +750,50 @@ public class Board{
 			}
 		}
 		for(District district : toRemove) {
+			for(Cell c : district.getCells()) {
+				modificatedCells.add(c);
+			}
 			removeDistrict(district);
 			district.delete();
 		}
 	}
 
 	public int getActivePlayerNumber() {
-	    return activePlayer;
-    }
+		return activePlayer;
+	}
 
-    public boolean hasChanged() {
+	public boolean hasChanged() {
 		boolean ret = hasChanged;
 		hasChanged = false;
-	    return ret;
-    }
+		return ret;
+	}
 
-    public void updateBoard(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {
-        this.districts = districts;
-        this.players = players;
-        this.activePlayer = activePlayer;
-        for (District district : districts) {
-				for (Cell cell : district.getCells()) {
-					board[cell.getX()][cell.getY()] = cell;
-					cell.setDistrict(district);
+	public void updateBoard(ArrayList<District> districts, ArrayList<Player> players, int activePlayer) {
+		this.districts = districts;
+		this.players = players;
+		this.activePlayer = activePlayer;
+		for (District district : districts) {
+			for (Cell cell : district.getCells()) {
+				board[cell.getX()][cell.getY()] = cell;
+				cell.setDistrict(district);
+			}
+			for (int i = 0; i < players.size(); i++) {
+				if (district.getPlayer().getId() == players.get(i).getId()) {
+					players.set(i, district.getPlayer());
 				}
-				for (int i = 0; i < players.size(); i++) {
-					if (district.getPlayer().getId() == players.get(i).getId()) {
-						players.set(i, district.getPlayer());
-					}
-				}
-        }
-    }
+			}
+		}
+	}
 
-    public ArrayList<Cell> getNeutralCells(){
-    	return neutralCells;
-    }
+	public ArrayList<Cell> getNeutralCells(){
+		return neutralCells;
+	}
+
+	public ArrayList<Cell> getModificatedCells(){
+		return modificatedCells;
+	}
+
+	public Player getWinner() {
+		return winner;
+	}
 }
