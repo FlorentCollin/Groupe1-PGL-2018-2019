@@ -120,6 +120,7 @@ public class ServerListener extends Thread{
 
         } catch (IOException e) {
             System.out.println("Client connection lost");
+            roomController.checkEmpty(key);
             key.cancel();
             ServerInfo.clients.remove(clientChannel);
         }

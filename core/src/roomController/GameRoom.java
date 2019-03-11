@@ -101,6 +101,9 @@ public class GameRoom extends Room {
             if(textMessage.getMessage().equals("nextPlayer")) {
                 board.nextPlayer();
             }
+            else if(textMessage.getMessage().equals("close")) {
+                stopRunning();
+            }
         }
     }
 
@@ -120,6 +123,12 @@ public class GameRoom extends Room {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean remove(Client client) {
+        board.changeToAI(clients.indexOf(client), new RandomStrategy());
+        return super.remove(client);
     }
 
     public Board getBoard() {

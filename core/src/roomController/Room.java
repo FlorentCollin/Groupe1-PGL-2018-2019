@@ -26,4 +26,12 @@ public abstract class Room extends Thread {
     public ArrayList<Client> getClients() {
         return clients;
     }
+
+    public boolean remove(Client client) {
+        return clients.remove(client);
+    }
+
+    public boolean isEmpty() {
+        return clients.size() == 0;
+    }
 }

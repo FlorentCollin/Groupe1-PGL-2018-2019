@@ -5,7 +5,10 @@ import communication.Messages.JoinRoomMessage;
 import communication.Messages.Message;
 import communication.Messages.TextMessage;
 import server.Client;
+import server.ServerInfo;
 
+import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -98,5 +101,23 @@ public class RoomController {
             rooms.replace(client, gameRoom);
             gameRoom.addClient(client);
         }
+    }
+
+    public void checkEmpty(SelectionKey key) {
+        SocketChannel clientChannel = (SocketChannel) key.channel();
+        Client client = ServerInfo.clients.get(clientChannel);
+        Room room = rooms.get(client);
+        room.remove(client);
+        if(room.isEmpty()) {
+            try {
+                room.getMessagesFrom().put(new TextMessage("close"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            rooms.remove(client);
+        }
+        System.out.println("Check Empty");
+        System.out.println(rooms.size());
+
     }
 }
