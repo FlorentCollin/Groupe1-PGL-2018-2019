@@ -118,7 +118,7 @@ public class DefenseStrategy extends AbstractStrategy{
 		for(District district : districts) {
 			for(Cell c : district.getCells()) {
 				if(c.getItem() != null && c.getItem().isMovable()) {
-					if(dontDefend(c, board)) {
+					if(!defend(c, board)) {
 						inactifSoldiers.add(c);
 					}
 				}
@@ -127,16 +127,16 @@ public class DefenseStrategy extends AbstractStrategy{
 		return inactifSoldiers;
 	}
 
-	private boolean dontDefend(Cell cell, Board board) {
+	private boolean defend(Cell cell, Board board) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		District neighbourDistrict;
 		for(Cell neighbour : board.getNeighbors(cell)) {
 			neighbourDistrict = neighbour.getDistrict();
-			if((neighbourDistrict != null && neighbourDistrict.getPlayer() != currentPlayer) || (neighbour.getItem() instanceof Capital)) {
-				return false;
+			if((neighbourDistrict != null && neighbourDistrict.getPlayer() != currentPlayer) || (neighbour == cell.getDistrict().getCapital())) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private Cell joinCellToDefend(ArrayList<Cell> toDefend, ArrayList<Cell> possibleMove) {
