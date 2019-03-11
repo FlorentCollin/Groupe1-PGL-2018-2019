@@ -17,14 +17,14 @@ public abstract class AbstractStrategy implements Strategy {
 	protected HashMap<District, Integer> visitedDistricts;
 	protected ArrayList<Cell> soldierCells;
 	protected Random rand;
-	
+
 	public AbstractStrategy() {
 		soldierCells = new ArrayList<>();
 		rand = new Random();
 		visitedDistricts = new HashMap<>();
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	protected Cell improveSoldier(Cell cell, ArrayList<Cell> possibleMoves) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		Soldier currentSoldier = (Soldier) cell.getItem();
@@ -40,7 +40,7 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return null;
 	}
-	
+
 	protected Cell killEnemy(Cell cell, ArrayList<Cell> possibleMoves) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		Player enemy;
@@ -55,16 +55,17 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return null;
 	}
-	
+
 	protected Cell cutTrees(Cell cell, ArrayList<Cell> possibleMoves) {
+		Player currentPlayer = cell.getDistrict().getPlayer();
 		for(Cell possible : possibleMoves) {
-			if(possible.getItem() instanceof Tree) {
+			if(possible.getItem() instanceof Tree && possible.getDistrict() != null && possible.getDistrict().getPlayer() == currentPlayer) {
 				return possible;
 			}
 		}
 		return null;
 	}
-	
+
 	protected int sommeSalary(Cell cell) {
 		District district = cell.getDistrict();
 		int sold = 0;
@@ -75,21 +76,21 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return sold;
 	}
-	
+
 	protected int nCells(Cell cell) {
 		return cell.getDistrict().getCells().size();
 	}
-	
+
 	protected void move(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
 		board.play(toCell);
 	}
-	
+
 	protected void buy(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
 		board.play(toCell);
 	}
-	
+
 	protected Soldier bestSoldier(District district) {
 		int gold = district.getGold();
 		SoldierLevel level = null;
@@ -104,7 +105,7 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return null;
 	}
-	
+
 	protected ArrayList<Cell> soldierCells(ArrayList<District> districts){
 		ArrayList<Cell> soldierCells = new ArrayList<>();
 		for(District district : districts) {
@@ -116,7 +117,7 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return soldierCells;
 	}
-	
+
 	protected District getDistrict(ArrayList<District> districts) {
 		for(int i=0; i<districts.size(); i++) {
 			if(! visitedDistricts.containsKey(districts.get(i))) {
@@ -132,7 +133,7 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return null;
 	}
-	
+
 	protected Cell randomCell(Cell cell, ArrayList<Cell> possibleMoves) {
 		int size = possibleMoves.size();
 		if(size > 0) {
