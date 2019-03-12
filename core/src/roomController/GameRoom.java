@@ -28,7 +28,6 @@ public class GameRoom extends Room {
         board = map.loadBoard(naturalDisasters, playersName);
         this.messagesFrom = messagesFrom;
         for (int i = 0; i < aiStrats.size(); i++) {
-            System.out.println(aiStrats.get(i));
             Strategy strat = null;
             switch (aiStrats.get(i)) {
                 case "Random":

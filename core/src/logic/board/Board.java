@@ -398,8 +398,8 @@ public class Board{
 		checkWinner();
 		setSelectedCell(null);
 		shop.removeSelection();
+		activePlayer = (activePlayer + 1)%(players.size());
 		if(winner == null) {
-			activePlayer = (activePlayer + 1)%(players.size());
 			generateTree();
 			for(District district : districts) {
 				if(district.getPlayer() == getActivePlayer()) {
