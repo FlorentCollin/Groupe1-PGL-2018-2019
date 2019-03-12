@@ -100,7 +100,7 @@ public class GameRoom extends Room {
      * Méthode qui va exécuter un message d'un client
      * @param message Le message à exécuter
      */
-    private void executeMessage(Message message) {
+    private void executeMessage(Message message) { //TODO REFACTOR
         if(message instanceof PlayMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
@@ -113,7 +113,7 @@ public class GameRoom extends Room {
             board.setShopItem(item);
         } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
-            if(textMessage.getMessage().equals("nextPlayer")) {
+            if(textMessage.getMessage().equals("nextPlayer") && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
                 board.nextPlayer();
             }
             else if(textMessage.getMessage().equals("close")) {
