@@ -319,11 +319,12 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                                 hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
                                 cells.setOpacity(0.9f);
                                 selectCells(cell.getDistrict().getCells());
-                            } else {
-                                hud.getDistrictInfo().goldLabel.setText("");
-                                cells.setOpacity(1f);
-                                unselectCells();
                             }
+                        }
+                        if(cell.getDistrict() == null) {
+                            hud.getDistrictInfo().goldLabel.setText("");
+                            cells.setOpacity(1f);
+                            unselectCells();
                         }
                     }
                 }
