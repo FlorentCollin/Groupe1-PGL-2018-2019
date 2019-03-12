@@ -62,7 +62,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         this.messageSender = messageSender;
         this.board = board;
         playerNumber = -1;
-        System.out.println("Player number : " + playerNumber);
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map(mapName);
@@ -104,6 +103,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         this(parent, mapName, board, messageSender);
         this.messageListener = messageListener;
         this.playerNumber = messageListener.getPlayerNumber();
+        System.out.println("Player number : " + playerNumber);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                         // Ne s'applique que si la case appartient au joueur
                         // Ainsi il voit directement avec quelles cases il peut interagir
                         if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
-                            if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                            if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId()-1 == playerNumber) {
                                 hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
                                 cells.setOpacity(0.9f);
                                 selectCells(cell.getDistrict().getCells());

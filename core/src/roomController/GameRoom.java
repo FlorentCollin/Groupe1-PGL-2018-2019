@@ -104,7 +104,7 @@ public class GameRoom extends Room {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        } else if(message instanceof ShopMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
+        } else if(message instanceof ShopMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
             Item item = ((ShopMessage) message).getItem();
             //On refixe le type qui n'a pas survécu au transfert
             //Ce qui permet de renvoyer l'item au client par la suite
@@ -112,7 +112,7 @@ public class GameRoom extends Room {
             board.setShopItem(item);
         } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
-            if(textMessage.getMessage().equals("nextPlayer") && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
+            if(textMessage.getMessage().equals("nextPlayer") && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
                 board.nextPlayer();
             }
             else if(textMessage.getMessage().equals("close")) {
