@@ -28,14 +28,16 @@ public abstract class AbstractStrategy implements Strategy {
 	protected Cell improveSoldier(Cell cell, ArrayList<Cell> possibleMoves) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		Soldier currentSoldier = (Soldier) cell.getItem();
-		Soldier superiorSoldier = new Soldier(SoldierLevel.values()[currentSoldier.getLevel().getIndex()+1]);
-		int newSalary = superiorSoldier.getSalary();
-		for(Cell possible : possibleMoves) {
-			if(newSalary * 3 > cell.getDistrict().getGold()) {
-				break;
-			}
-			if(possible.getItem() instanceof Soldier && possible.getDistrict().getPlayer() != currentPlayer) {
-				return possible;
+		if(currentSoldier.getLevel().isNotMax()) {
+			Soldier superiorSoldier = new Soldier(SoldierLevel.values()[currentSoldier.getLevel().getIndex()+1]);
+			int newSalary = superiorSoldier.getSalary();
+			for(Cell possible : possibleMoves) {
+				if(newSalary * 3 > cell.getDistrict().getGold()) {
+					break;
+				}
+				if(possible.getItem() instanceof Soldier && possible.getDistrict().getPlayer() != currentPlayer) {
+					return possible;
+				}
 			}
 		}
 		return null;
