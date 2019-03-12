@@ -1,9 +1,6 @@
 package communication;
 
-import communication.Messages.GameUpdateMessage;
-import communication.Messages.InitMessage;
-import communication.Messages.Message;
-import communication.Messages.RoomUpdateMessage;
+import communication.Messages.*;
 import logic.board.Board;
 import logic.player.Player;
 
@@ -21,6 +18,8 @@ public abstract class MessageListener extends Thread {
     protected String mapName;
     protected String roomName;
     protected int playerNumber;
+    protected ArrayList<String> roomNames;
+    protected ArrayList<Integer> nPlayer, nPlayerIn;
     protected ArrayList<Player> players = new ArrayList<>();
     protected ArrayList<Boolean> playersReady = new ArrayList<>();
     //Variable permettant de stopper le thread quand il n'est plus nécessaire de le faire tourner
@@ -65,6 +64,11 @@ public abstract class MessageListener extends Thread {
             playersReady = roomUpdateMessage.getPlayersReady();
             mapName = roomUpdateMessage.getMapName();
             roomName = roomUpdateMessage.getRoomName();
+        } else if (message instanceof ListRoomsMessage) {
+            ListRoomsMessage listRoomsMessage = (ListRoomsMessage) message;
+            roomNames = listRoomsMessage.getRoomsName();
+            nPlayer = listRoomsMessage.getnPlayer();
+            nPlayerIn = listRoomsMessage.getnPlayerIn();
         }
     }
 
@@ -90,5 +94,17 @@ public abstract class MessageListener extends Thread {
 
     public String getRoomName() {
         return  roomName;
+    }
+
+    public ArrayList<String> getRoomNames() {
+        return roomNames;
+    }
+
+    public ArrayList<Integer> getnPlayer() {
+        return nPlayer;
+    }
+
+    public ArrayList<Integer> getnPlayerIn() {
+        return nPlayerIn;
     }
 }

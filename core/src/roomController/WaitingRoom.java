@@ -6,6 +6,8 @@ import communication.Messages.RoomUpdateMessage;
 import communication.Messages.TextMessage;
 import gui.utils.Map;
 import logic.board.Board;
+import logic.player.Player;
+import logic.player.ai.AI;
 import logic.player.ai.strategy.RandomStrategy;
 import server.Client;
 
@@ -99,8 +101,21 @@ public class WaitingRoom extends Room {
         return board;
     }
 
-    public String getMapName() {
-        return mapName;
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public int getMaxClients() {
+        return clientsReady.size();
+    }
+
+    public int getNumberOfClients() {
+        int i = clients.size();
+        for(Player player : board.getPlayers()) {
+            if(player instanceof AI)
+                i++;
+        }
+        return i;
     }
 }
 

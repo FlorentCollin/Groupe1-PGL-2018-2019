@@ -8,6 +8,7 @@ import roomController.RoomController;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -40,6 +41,7 @@ public class ServerListener extends Thread{
         roomController = new RoomController(messageToSend);
         this.messageToSend = messageToSend;
         serverChannel = ServerSocketChannel.open(); //Ouverture du serveur
+        serverChannel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
         serverChannel.configureBlocking(false);
         serverChannel.bind(new InetSocketAddress(port)); //On lie le serveur au port donné en paramètre
 

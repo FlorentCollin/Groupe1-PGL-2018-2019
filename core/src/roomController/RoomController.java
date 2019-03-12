@@ -1,14 +1,13 @@
 package roomController;
 
-import communication.Messages.CreateRoomMessage;
-import communication.Messages.JoinRoomMessage;
-import communication.Messages.Message;
-import communication.Messages.TextMessage;
+import communication.Messages.*;
 import server.Client;
 import server.ServerInfo;
 
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -72,13 +71,17 @@ public class RoomController {
             room.addClient(client);
             rooms.put(client, room);
         } else if(message instanceof TextMessage) {
-            if(((TextMessage) message).getMessage().equals("launchGame")) {
-                WaitingRoom room = (WaitingRoom) rooms.get(client);
-                if(room.isReady()) {
-                    launchGame(room);
-                }
-            } else {
-                sendMessageToRoom(message, client);
+            TextMessage textMessage = (TextMessage) message;
+            switch (textMessage.getMessage()) {
+                case "launchGame":
+                    WaitingRoom room = (WaitingRoom) rooms.get(client);
+                    if(room.isReady()) {
+                        launchGame(room);
+                    } break;
+                case "getWaitingRooms":
+                    sendWaitingRooms(client); break;
+                default:
+                    sendMessageToRoom(message, client);
             }
         } else {
             //Si le message n'est pas un message que le roomController peut gérer,
@@ -115,6 +118,27 @@ public class RoomController {
                 }
                 rooms.remove(client);
             }
+        }
+    }
+
+    private void sendWaitingRooms(Client client) {
+        ArrayList<String> waitingRooms = new ArrayList<>();
+        ArrayList<Integer> nPlayer = new ArrayList<>();
+        ArrayList<Integer> nPlayerIn = new ArrayList<>();
+        for (Room room: rooms.values()) {
+            if(room instanceof WaitingRoom) {
+                WaitingRoom wr = (WaitingRoom) room;
+                waitingRooms.add(wr.getRoomName());
+                nPlayer.add(wr.getMaxClients());
+                nPlayerIn.add(wr.getNumberOfClients());
+            }
+        }
+        ListRoomsMessage message = new ListRoomsMessage(waitingRooms, nPlayer, nPlayerIn);
+        message.setClients(Collections.singletonList(client));
+        try {
+            messagesToSend.put(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

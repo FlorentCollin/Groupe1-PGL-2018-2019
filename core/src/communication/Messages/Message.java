@@ -51,6 +51,8 @@ public abstract class Message {
                 return gson.fromJson(messageStr, RoomUpdateMessage.class);
             case "UsernameMessage":
                 return gson.fromJson(messageStr, UsernameMessage.class);
+            case "ListRoomsMessage":
+                return gson.fromJson(messageStr, ListRoomsMessage.class);
             default: return null;
         }
     }
