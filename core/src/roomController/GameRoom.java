@@ -101,7 +101,6 @@ public class GameRoom extends Room {
      * @param message Le message à exécuter
      */
     private void executeMessage(Message message) { //TODO REFACTOR
-        System.out.println(playersNumber.get(message.getClient()) == board.getActivePlayerNumber());
         if(message instanceof PlayMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
