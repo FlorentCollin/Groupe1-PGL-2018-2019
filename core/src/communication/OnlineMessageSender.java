@@ -11,6 +11,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
+import static gui.utils.Constants.PORT;
 import static gui.utils.Constants.SERVER_ADDRESS;
 
 /**
@@ -25,7 +26,7 @@ public class OnlineMessageSender implements MessageSender {
         gson = new Gson();
         try {
             //Ouverture de la connection au serveur
-            clientChannel = SocketChannel.open(new InetSocketAddress(SERVER_ADDRESS, 8888));
+            clientChannel = SocketChannel.open(new InetSocketAddress(SERVER_ADDRESS, PORT));
             clientChannel.configureBlocking(false);
             selector = Selector.open();
             //On associe le channel à un selector
