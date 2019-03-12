@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class MessageListener extends Thread {
     protected Board board;
     protected String mapName;
+    protected String roomName;
     protected int playerNumber;
     protected ArrayList<Player> players = new ArrayList<>();
     protected ArrayList<Boolean> playersReady = new ArrayList<>();
@@ -63,6 +64,7 @@ public abstract class MessageListener extends Thread {
             players = roomUpdateMessage.getPlayers();
             playersReady = roomUpdateMessage.getPlayersReady();
             mapName = roomUpdateMessage.getMapName();
+            roomName = roomUpdateMessage.getRoomName();
         }
     }
 
@@ -84,5 +86,9 @@ public abstract class MessageListener extends Thread {
 
     public int getPlayerNumber() {
         return playerNumber;
+    }
+
+    public String getRoomName() {
+        return  roomName;
     }
 }

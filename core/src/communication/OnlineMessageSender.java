@@ -48,6 +48,14 @@ public class OnlineMessageSender implements MessageSender {
         }
     }
 
+    public void close() {
+        try {
+            clientChannel.close();
+            selector.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public SocketChannel getClientChannel() {
         return clientChannel;
     }

@@ -50,7 +50,6 @@ public class RoomController {
         try {
             message.setClient(client);
             clientRoom.getMessagesFrom().put(message);
-            System.out.println("I'm Sending message to room");
         } catch (InterruptedException e) {
             e.printStackTrace(); //Si la Room n'existe plus TODO
         }

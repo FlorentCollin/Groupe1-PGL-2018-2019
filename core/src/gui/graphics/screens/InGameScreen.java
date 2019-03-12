@@ -105,7 +105,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         this(parent, mapName, board, messageSender);
         this.messageListener = messageListener;
         this.playerNumber = messageListener.getPlayerNumber();
-        System.out.println("Player number : " + playerNumber);
     }
 
     @Override
@@ -251,11 +250,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public void dispose() {
         messageListener.stopRunning();
         if(messageSender instanceof OnlineMessageSender) {
-            try {
-                ((OnlineMessageSender) messageSender).getSelector().close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ((OnlineMessageSender) messageSender).close();
         }
         super.dispose();
     }

@@ -73,7 +73,6 @@ public class GameRoom extends Room {
                         //Si le board à changé alors il faut notifier les clients des changements.
                         if (board.hasChanged()) {
                             GameUpdateMessage updateMessage;
-                            System.out.println(board.getShop().getSelectedItem());
                             if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
                                 Cell selectedCell = board.getSelectedCell();
                                 updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(),
@@ -83,7 +82,6 @@ public class GameRoom extends Room {
                                         board.getPlayers(), board.getActivePlayerNumber());
                             }
                             updateMessage.setClients(clients); //Ajout des clients au message
-                            System.out.println("Game Room - Sending Update Message");
                             messagesToSend.put(updateMessage); //Envoie du message
                         }
                     }

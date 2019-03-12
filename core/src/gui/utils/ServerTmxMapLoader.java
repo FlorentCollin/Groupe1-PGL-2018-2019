@@ -20,7 +20,6 @@ public class ServerTmxMapLoader {
         XmlReader.Element root = xmlReader.parse(file);
         width = Integer.parseInt(root.getAttribute("width"));
         height = Integer.parseInt(root.getAttribute("height"));
-        System.out.println(width + " : " + height);
         XmlReader.Element tileset = root.getChildByName("tileset");
         int firstgid = Integer.parseInt(tileset.getAttribute("firstgid"));
         FileHandle tilesetFile = new FileHandle(new File(cwd + File.separator + "worlds" +  File.separator + tileset.getAttribute("source")));

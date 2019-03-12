@@ -30,6 +30,7 @@ public abstract class MenuScreen extends BasicScreen {
         Label.LabelStyle textStyle = uiSkin.get(Label.LabelStyle.class);
         textStyle.font = defaultFont;
         Label label = new Label(name, textStyle);
+        label.setName("name");
 
         RectangleActor rectangle = new RectangleActor();
         rectangle.setColor(Color.WHITE);

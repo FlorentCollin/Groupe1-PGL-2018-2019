@@ -72,6 +72,8 @@ public class WaitingRoomScreen extends SubMenuScreen {
 
     @Override
     public void render(float delta) {
+        Label roomName =  menuNameGroup.findActor("name");
+        roomName.setText(messageListener.getRoomName());
         table.reset();
         table.left().top();
         table.add(new Label("Player's name", labelStyle)).expandX().pad(10).align(Align.topLeft);

@@ -43,7 +43,6 @@ public class OnlineMenuScreen extends SubMenuScreen{
         joinRoom.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Send Message JoinRoom");
                 messageSender.send(new JoinRoomMessage());
             }
         });
@@ -72,6 +71,11 @@ public class OnlineMenuScreen extends SubMenuScreen{
         super.hide();
         createRoom.addAction(slideToRight(createRoom));
         joinRoom.addAction(slideToRight(joinRoom));
+    }
+
+    @Override
+    public void dispose() {
+        messageSender.close();
     }
 
 }

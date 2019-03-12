@@ -30,6 +30,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private final Table table;
     private final TextButton createRoomButton;
     private final Slider aiSlider;
+    private final TextField mapName;
     private int pValue;  //Valeur précédente du ai slider
     private final SelectBox<String> mapSelectBox;
     private final ButtonGroup<TextButton> naturalGroup;
@@ -59,7 +60,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         textFieldStyle.font = textFont;
         textFont.getData().padLeft = -10;
 
-        TextField mapName = new TextField("", textFieldStyle);
+        mapName = new TextField("", textFieldStyle);
         mapName.appendText(Language.bundle.get("nameOfTheRoom"));
 
 
@@ -154,6 +155,13 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         createRoomButton.addAction(slideToRight(createRoomButton));
     }
 
+    @Override
+    public void dispose() {
+        if(messageSender instanceof OnlineMessageSender) {
+            ((OnlineMessageSender) messageSender).close();
+        }
+    }
+
     private Array<String> initWorldsNames() {
         FileHandle dirHandle = Gdx.files.internal("worlds");
         XmlReader xml = new XmlReader();
@@ -194,7 +202,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 }
                 ai.forEach((i) -> playersName.add("AI"));
                 if (online) { //TODO
-                    messageSender.send(new CreateRoomMessage(world, isNaturalDisastersOn(), ai));
+                    messageSender.send(new CreateRoomMessage(world, mapName.getText(), isNaturalDisastersOn(), ai));
                     while(messageListener.getPlayers().size() <= 0) {
                         try {
                             Thread.sleep(1);

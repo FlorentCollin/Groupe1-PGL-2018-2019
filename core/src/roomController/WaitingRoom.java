@@ -19,10 +19,12 @@ public class WaitingRoom extends Room {
 
     private final Board board;
     private final String mapName;
+    private final String roomName;
     private ArrayList<Boolean> clientsReady = new ArrayList<>();
 
     public WaitingRoom(CreateRoomMessage message, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messageToSend) {
         mapName = message.getWorldName();
+        roomName = message.getRoomName();
         Map map = new Map(mapName);
         board = map.loadBoard(message.isNaturalDisastersOn(), null);
         for (int i = 0; i < board.getPlayers().size(); i++) {
@@ -61,7 +63,7 @@ public class WaitingRoom extends Room {
                         clientsReady.set(index, false);
                     else
                         clientsReady.set(index, true);
-                    RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName);
+                    RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
                     roomUpdateMessage.setClients(clients);
                     messagesToSend.put(roomUpdateMessage);
                 } else if(((TextMessage) message).getMessage().equals("close")) {
@@ -77,7 +79,7 @@ public class WaitingRoom extends Room {
         super.addClient(client);
         board.getPlayers().get(clients.size()-1).setName(client.getUsername());
         try {
-            RoomUpdateMessage message = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName);
+            RoomUpdateMessage message = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
             message.setClients(clients);
             messagesToSend.put(message);
         } catch (InterruptedException e) {
