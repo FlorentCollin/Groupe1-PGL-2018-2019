@@ -71,9 +71,7 @@ public class Slay extends Game {
             }
             nextScreen = shortcutsMenuScreen;
         } else if(screen == OnlineMenuScreen.class) {
-		    if(onlineMenuScreen == null) {
-		        onlineMenuScreen = new OnlineMenuScreen(this, mainMenuScreen.getStage());
-            }
+			onlineMenuScreen = new OnlineMenuScreen(this, mainMenuScreen.getStage());
             nextScreen = onlineMenuScreen;
         } else if(screen == CreateRoomMenuScreen.class) {
             if(createRoomMenuScreen == null) {

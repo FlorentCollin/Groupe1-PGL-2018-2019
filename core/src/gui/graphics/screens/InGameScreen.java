@@ -3,6 +3,7 @@ package gui.graphics.screens;
 
 import static gui.utils.Constants.N_TILES;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import communication.MessageSender;
 import communication.Messages.PlayMessage;
 import communication.Messages.ShopMessage;
 import communication.Messages.TextMessage;
+import communication.OnlineMessageSender;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -243,12 +245,18 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
         messageListener.stopRunning();
+        if(messageSender instanceof OnlineMessageSender) {
+            try {
+                ((OnlineMessageSender) messageSender).getSelector().close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         super.dispose();
     }
 
@@ -259,6 +267,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             messageSender.send(new TextMessage("nextPlayer"));
         } else if(keycode == Input.Keys.ESCAPE) {
             parent.changeScreen(MainMenuScreen.class);
+            dispose();
         }
         return true;
     }
