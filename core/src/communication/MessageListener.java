@@ -46,11 +46,11 @@ public abstract class MessageListener extends Thread {
     protected void executeMessage(Message message) {
         if(message instanceof InitMessage) { //Initialisation du board
             board = ((InitMessage) message).getBoard();
-            board.updateBoard(board.getDistricts(), board.getShop(), board.getPlayers(), board.getActivePlayerNumber());
+            board.updateBoard(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(), board.getActivePlayerNumber());
             playerNumber = ((InitMessage) message).getPlayerNumber();
         } else if(message instanceof GameUpdateMessage) { //Update du board
             GameUpdateMessage updateMessage = (GameUpdateMessage) message;
-            board.updateBoard(updateMessage.getDistricts(), updateMessage.getShop(), updateMessage.getPlayers(), updateMessage.getActivePlayer());
+            board.updateBoard(updateMessage.getDistricts(), updateMessage.getShopItem(), updateMessage.getPlayers(), updateMessage.getActivePlayer());
             //Si le message possède un x et un y c'est qu'il faut update aussi la variable selectedCell du board
             //Sinon c'est qu'il faut la mettre à null
             if(updateMessage.getX() == null && updateMessage.getY() == null) {

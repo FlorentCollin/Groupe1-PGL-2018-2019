@@ -79,6 +79,7 @@ public class ServerListener extends Thread{
      */
     private void keyIsAcceptable() {
         try {
+            //Acèptation du client
             clientChannel = serverChannel.accept();
             clientChannel.configureBlocking(false);
             //On permet au client d'écrire
@@ -99,26 +100,32 @@ public class ServerListener extends Thread{
     private void keyIsReadable(SelectionKey key) {
         clientChannel = (SocketChannel) key.channel();
         //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
-        //Récupération du message dans le buffer du client.
         try {
+            //Récupération du message dans le buffer du client.
             String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
-//            System.out.println(messageStr);
-            if(!messageStr.endsWith("+")) {
+            //On définit la fin d'un message par le symbole "+"
+            if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
                 key.attach(messageStr);
             } else {
+                //Le message est terminé, et on retire le message attaché à la clé
                 key.attach(null);
+                //On supprime le symbole de fin (ie : "+")
                 messageStr = messageStr.substring(0, messageStr.length()-1);
+                //Désérialisation du message
                 Message message = Message.getMessage(messageStr, gson);
                 message.setClient(ServerInfo.clients.get(clientChannel));
                 if(message instanceof UsernameMessage) {
                     ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
                 } else {
+                    //Si le message n'est pas un message réservé au serveur alors on l'envoie au roomController
                     roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
                 }
             }
 
         } catch (IOException e) {
             System.out.println("Client connection lost");
+            //Vérifie si la room associé au client n'est pas vide :
+            //Si la room est vide alors elle est supprimée
             roomController.checkEmpty(key);
             key.cancel();
             ServerInfo.clients.remove(clientChannel);

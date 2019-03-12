@@ -769,9 +769,9 @@ public class Board{
 		return ret;
 	}
 
-	public void updateBoard(ArrayList<District> districts, Shop shop, ArrayList<Player> players, int activePlayer) {
+	public void updateBoard(ArrayList<District> districts, Item shopItem, ArrayList<Player> players, int activePlayer) {
 		this.districts = districts;
-		this.shop = shop;
+		this.shop.setSelectedItem(shopItem);
 		this.players = players;
 		this.activePlayer = activePlayer;
 		for (District district : districts) {

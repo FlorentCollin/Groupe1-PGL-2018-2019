@@ -153,14 +153,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         table.addAction(slideToRight(table));
         createRoomButton.addAction(slideToRight(createRoomButton));
     }
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-    }
 
     private Array<String> initWorldsNames() {
         FileHandle dirHandle = Gdx.files.internal("worlds");
@@ -173,6 +165,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 XmlReader.Element xmlElement = xml.parse(file);
                 String worldName = xmlElement.getAttribute("name");
                 worldsNames.add(worldName);
+                worldsNames.sort();
                 nameToFileName.put(worldName, file.nameWithoutExtension());
                 nameToXml.put(worldName, xmlElement);
             }
@@ -221,7 +214,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                             e.printStackTrace();
                         }
                     }
-                    InGameScreen gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender, messageListener);
+                    InGameScreen gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender);
                     parent.changeScreen(gameScreen);
                 }
             }

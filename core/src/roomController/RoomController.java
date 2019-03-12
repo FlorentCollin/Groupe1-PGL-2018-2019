@@ -17,7 +17,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class RoomController {
     private HashMap<Client, Room> rooms;
-    // roomQueue : permet de retrouver la file des messages d'une GameRoom particulière
     //Lien vers la pile des messages à envoyer aux clients (utilisé par ServerSender)
     private LinkedBlockingQueue<Message> messagesToSend;
 
@@ -107,14 +106,16 @@ public class RoomController {
         SocketChannel clientChannel = (SocketChannel) key.channel();
         Client client = ServerInfo.clients.get(clientChannel);
         Room room = rooms.get(client);
-        room.remove(client);
-        if(room.isEmpty()) {
-            try {
-                room.getMessagesFrom().put(new TextMessage("close"));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (room != null) {
+            room.remove(client);
+            if (room.isEmpty()) {
+                try {
+                    room.getMessagesFrom().put(new TextMessage("close"));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                rooms.remove(client);
             }
-            rooms.remove(client);
         }
     }
 }

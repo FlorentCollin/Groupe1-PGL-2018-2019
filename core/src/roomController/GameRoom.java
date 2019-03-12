@@ -77,10 +77,10 @@ public class GameRoom extends Room {
                             System.out.println(board.getShop().getSelectedItem());
                             if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
                                 Cell selectedCell = board.getSelectedCell();
-                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop(), board.getPlayers(),
+                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(),
                                         board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
                             } else { //Création d'un GameUpdateMessage sans selectedCell
-                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop(),
+                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(),
                                         board.getPlayers(), board.getActivePlayerNumber());
                             }
                             updateMessage.setClients(clients); //Ajout des clients au message
