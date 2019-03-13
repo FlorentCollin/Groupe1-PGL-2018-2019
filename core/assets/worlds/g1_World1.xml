@@ -7,7 +7,9 @@
       <item type="Soldier" level="1" x="9" y="8" />
       <item type="Soldier" level="1" x="9" y="9" />
       <item type="Soldier" level="1" x="2" y="3" />
-      <item type="Soldier" level="2" x="16" y="12" />
+      <item type="Soldier" level="2" x="16" y="12"/>
+      <item type="Soldier" level="1" x="1" y="14" />
+      <item type="Soldier" level="1" x="19" y="1" />
 
       <item type="Capital" golds="40" x="2" y="2" />
       <item type="Capital" golds="40" x="17" y="12" />
@@ -27,10 +29,5 @@
       <item type="Tree" x="12" y="14" />
       <item type="Tree" x="18" y="9" />
     </items>
-    <ais>
-    	<ai soldierNumber="2" strategy="RandomStrategy" />
-    	<ai soldierNumber="1" strategy="RandomStrategy" />
-        <ai soldierNumber="0" strategy="RandomStrategy" />
-    </ais>
 
 </world>

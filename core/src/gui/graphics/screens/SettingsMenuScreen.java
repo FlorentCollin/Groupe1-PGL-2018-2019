@@ -19,6 +19,7 @@ import static gui.utils.Constants.PAD;
 public class SettingsMenuScreen extends SubMenuScreen {
     private Table table;
     private Label windowMode;
+    private Label username;
     private Label language;
     private Label musicLevel;
     private Label soundLevel;
@@ -36,6 +37,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
 
         //Création des différents labels
         windowMode = new Label(Language.bundle.get("windowMode"), labelStyle);
+        username = new Label(Language.bundle.get("username"), labelStyle);
         language = new Label(Language.bundle.get("language"), labelStyle);
         musicLevel = new Label(Language.bundle.get("music"), labelStyle);
         soundLevel = new Label(Language.bundle.get("sound"), labelStyle);
@@ -65,6 +67,18 @@ public class SettingsMenuScreen extends SubMenuScreen {
             }
         });
 
+        TextField.TextFieldStyle textFieldStyle = uiSkin.get(TextField.TextFieldStyle.class);
+        textFieldStyle.font = textFont;
+        textFont.getData().padLeft = -10;
+
+        TextField usernameField = new TextField(parent.getUserSettings().getUsername(), textFieldStyle);
+        usernameField.setMaxLength(10);
+        usernameField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                parent.getUserSettings().setUsername(usernameField.getText());
+            }
+        });
         SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
         selectBoxStyle.font = textFont;
         selectBoxStyle.listStyle.font = textFont;
@@ -116,6 +130,10 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(windowMode).expandX().align(Align.left);
         scrollTable.add(fullScreen).pad(PAD).align(Align.right);
         scrollTable.add(windowed).pad(PAD);
+        scrollTable.row();
+
+        scrollTable.add(username).expandX().align(Align.left);
+        scrollTable.add(usernameField).pad(PAD).minWidth(fullScreen.getWidth());
         scrollTable.row();
 
         scrollTable.add(language).expandX().align(Align.left);

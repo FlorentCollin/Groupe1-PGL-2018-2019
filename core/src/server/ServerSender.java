@@ -1,11 +1,14 @@
 package server;
 
 import com.google.gson.Gson;
-import communication.Message;
-import communication.NetworkMessage;
+import communication.Messages.Message;
+import communication.Messages.NetworkMessage;
+import gui.utils.GsonInit;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,11 +17,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ServerSender extends Thread {
     private LinkedBlockingQueue<Message> messageToSend;
+    private Selector selector;
     private Gson gson;
 
-    public ServerSender(LinkedBlockingQueue<Message> messageToSend) {
+    public ServerSender(Selector selector, LinkedBlockingQueue<Message> messageToSend) {
         //Lien vers la pile des messages à envoyer, c'est sur cette pile que les rooms doivent envoyer leurs messages
         this.messageToSend = messageToSend;
+        this.selector = selector;
         gson = new Gson();
     }
 
@@ -38,7 +43,11 @@ public class ServerSender extends Thread {
                             /* Écriture du message dans le buffer du client
                              * Ici on écrit le nom de la classe du message en plus du message sérialisé
                              * Pour permettre au client de retrouver le type du message */
-                            clientChannel.write(ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message)).getBytes()));
+                            ByteBuffer buffer = ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message) + "+").getBytes());
+                            if (clientChannel.write(buffer) == 0) {
+                                clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                                clientChannel.write(buffer);
+                            }
                         }
                     }
                 }

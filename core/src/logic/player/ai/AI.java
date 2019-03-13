@@ -4,7 +4,6 @@ import logic.board.Board;
 import logic.board.District;
 import logic.player.Player;
 import logic.player.ai.strategy.Strategy;
-
 import java.util.ArrayList;
 
 public class AI extends Player{
@@ -18,7 +17,7 @@ public class AI extends Player{
 		districts = new ArrayList<>();
 	}
 	
-	/* 
+	/**
 	 * Permet à l'ia de jouer son tour en fonction de la stratégie qu'elle utilise
 	 * */
 	public void play() {

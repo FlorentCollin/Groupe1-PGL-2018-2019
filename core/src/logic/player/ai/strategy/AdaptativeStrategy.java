@@ -9,5 +9,23 @@ import logic.item.Soldier;
 import logic.player.Player;
 
 public class AdaptativeStrategy extends AbstractStrategy{
+    private int previous;
+    private DefenseStrategy defense;
+    private AttackStrategy attack;
 
+    public AdaptativeStrategy() {
+        previous = 0;
+        defense = new DefenseStrategy();
+        attack = new AttackStrategy();
+    }
+
+    @Override
+    public void play(Board board, ArrayList<District> districts) {
+        if(soldierCells(districts).size() < previous) {
+            defense.play(board, districts);
+        }
+        else {
+            attack.play(board, districts);
+        }
+    }
 }

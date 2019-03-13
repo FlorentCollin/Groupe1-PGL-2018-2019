@@ -1,5 +1,7 @@
 package communication;
 
+import communication.Messages.Message;
+
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**

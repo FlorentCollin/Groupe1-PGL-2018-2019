@@ -14,20 +14,17 @@ public class District {
 	private transient Cell capital;
 	private List<Cell> cells;
 
-	public static int globalId = 0;
-	private int id;
 
 	public District(Player player) {
-		cells = Collections.synchronizedList(new ArrayList<>());
+		cells = new ArrayList<>();
 		this.player = player;
 
-		globalId++;
-		id = globalId;
 	}
 
 	public void addCell(Cell cell) {
 		if(cells.indexOf(cell) == -1) {
 			cells.add(cell);
+			cell.setDistrict(this); // Mise à jour du district pour la cellule ajoutée
 		}
 	}
 
@@ -37,21 +34,29 @@ public class District {
 	 * @param district le district dont on souhaite obtenir les cellules
 	 * */
 	public void addAll(District district) {
-        synchronized (cells) {
-            cells.addAll(district.getCells());
-        }
+		for(Cell cell : district.getCells()) {
+			addCell(cell);
+		}
 	}
-
-	public  void removeCell(Cell cell) {
-	    synchronized (cells) {
-		    cells.remove(cells.indexOf(cell));
-        }
+	
+	public void removeCell(Cell cell) {
+		cells.remove(cell);
+		if(cell == capital) {
+			removeCapital();
+		}
 	}
 
 	public void removeAll(District district) {
         synchronized (cells) {
             cells.removeAll(district.getCells());
         }
+	}
+	
+	public void delete() {
+		for(Cell cell : cells) {
+			cell.removeDistrict();
+			cell.removeItem();
+		}
 	}
 
 	public void removeSoldiers() {
@@ -63,6 +68,15 @@ public class District {
             }
         }
 	}
+	
+	public void refreshSoldiers() {
+		for(Cell c : cells) {
+			if(c.getItem() != null && c.getItem().isMovable()) {
+				c.getItem().setHasMoved(false);
+			}
+		}
+	}
+	
 
 	public void addCapital(Cell cell) {
 		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
@@ -126,7 +140,7 @@ public class District {
 		return capital;
 	}
 
-    public int getId() {
-        return id;
+    public int size() {
+    	return cells.size();
     }
 }

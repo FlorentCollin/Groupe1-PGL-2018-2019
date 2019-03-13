@@ -1,12 +1,14 @@
 package server;
 
 import com.google.gson.Gson;
-import communication.Message;
+import communication.Messages.Message;
+import communication.Messages.UsernameMessage;
 import gui.utils.GsonInit;
 import roomController.RoomController;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -39,6 +41,7 @@ public class ServerListener extends Thread{
         roomController = new RoomController(messageToSend);
         this.messageToSend = messageToSend;
         serverChannel = ServerSocketChannel.open(); //Ouverture du serveur
+        serverChannel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
         serverChannel.configureBlocking(false);
         serverChannel.bind(new InetSocketAddress(port)); //On lie le serveur au port donné en paramètre
 
@@ -76,13 +79,19 @@ public class ServerListener extends Thread{
      * Méthode qui ajoute un client à la liste des clients du serveur
      * @throws IOException
      */
-    private void keyIsAcceptable() throws IOException {
-        clientChannel = serverChannel.accept();
-        clientChannel.configureBlocking(false);
-        //On permet au client de lire et d'écrire des messages
-        clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-        Client client = new Client(clientChannel);
-        ServerInfo.clients.put(clientChannel, client);
+    private void keyIsAcceptable() {
+        try {
+            //Acèptation du client
+            clientChannel = serverChannel.accept();
+            clientChannel.configureBlocking(false);
+            //On permet au client d'écrire
+            clientChannel.register(selector, SelectionKey.OP_READ);
+            Client client = new Client(clientChannel);
+            ServerInfo.clients.put(clientChannel, client);
+            System.out.println("Number of player : " + ServerInfo.clients.size());
+        } catch (IOException e) {
+            e.printStackTrace(); //TODO
+        }
     }
 
     /**
@@ -90,16 +99,42 @@ public class ServerListener extends Thread{
      * @param key
      * @throws IOException
      */
-    private void keyIsReadable(SelectionKey key) throws IOException {
+    private void keyIsReadable(SelectionKey key) {
         clientChannel = (SocketChannel) key.channel();
-        if (!clientChannel.isConnected()) {
-            //On retire le client si celui ci n'est plus connecté
-            ServerInfo.clients.remove(clientChannel);
-        } else {
-            //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
+        //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
+        try {
             //Récupération du message dans le buffer du client.
-            String messageStr = Message.getStringFromBuffer(clientChannel);
-            roomController.manageMessage(ServerInfo.clients.get(clientChannel), Message.getMessage(messageStr, gson));
+            String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
+            //On définit la fin d'un message par le symbole "+"
+            if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
+                key.attach(messageStr);
+            } else {
+                //Le message est terminé, et on retire le message attaché à la clé
+                key.attach(null);
+                //On supprime le symbole de fin (ie : "+")
+                messageStr = messageStr.substring(0, messageStr.length()-1);
+                //Désérialisation du message
+                Message message = Message.getMessage(messageStr, gson);
+                message.setClient(ServerInfo.clients.get(clientChannel));
+                if(message instanceof UsernameMessage) {
+                    ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
+                } else {
+                    //Si le message n'est pas un message réservé au serveur alors on l'envoie au roomController
+                    roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Client connection lost");
+            //Vérifie si la room associé au client n'est pas vide :
+            //Si la room est vide alors elle est supprimée
+            roomController.checkEmpty(key);
+            key.cancel();
+            ServerInfo.clients.remove(clientChannel);
         }
+    }
+
+    public Selector getSelector() {
+        return selector;
     }
 }

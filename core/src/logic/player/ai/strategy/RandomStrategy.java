@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.Cell;
+import logic.item.Soldier;
 
 public class RandomStrategy extends AbstractStrategy{
 	
 	public RandomStrategy() {
-		
+		super();
 	}
 	
 	@Override
@@ -33,17 +34,23 @@ public class RandomStrategy extends AbstractStrategy{
 		}
 		
 		District district;
+		Soldier newSoldier;
 		while((district = getDistrict(districts)) != null) {
 			for(int i=0; i<5; i++) {
-				possibleMoves = board.possibleMove(district);
-				cutTree = cutTrees(district.getCapital(), possibleMoves);
-				if(cutTree != null) {
-					buy(district.getCapital(), cutTree, board);
-				}
-				else {
-					randomCell = randomCell(district.getCapital(), possibleMoves);
-					if(randomCell != null) {
-						buy(district.getCapital(), randomCell, board);
+				newSoldier = bestSoldier(district);
+				if(newSoldier != null) {
+					board.setSelectedCell(district.getCapital());
+					board.setShopItem(newSoldier);
+					possibleMoves = board.possibleMove(district);
+					cutTree = cutTrees(district.getCapital(), possibleMoves);
+					if(cutTree != null) {
+						buy(district.getCapital(), cutTree, board);
+					}
+					else {
+						randomCell = randomCell(district.getCapital(), possibleMoves);
+						if(randomCell != null) {
+							buy(district.getCapital(), randomCell, board);
+						}
 					}
 				}
 			}

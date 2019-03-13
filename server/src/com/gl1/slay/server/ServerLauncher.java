@@ -1,11 +1,13 @@
 package com.gl1.slay.server;
 
-import communication.Message;
+import communication.Messages.Message;
 import server.ServerListener;
 import server.ServerSender;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static gui.utils.Constants.PORT;
 
 /**
  * Classe qui démarre les différents threads liés au serveur
@@ -16,7 +18,7 @@ public class ServerLauncher {
         System.out.println("Starting server...");
         LinkedBlockingQueue<Message> messageToSend = new LinkedBlockingQueue<>();
         ServerListener serverListener = new ServerListener(8888, messageToSend);
-        ServerSender serverSender = new ServerSender(messageToSend);
+        ServerSender serverSender = new ServerSender(serverListener.getSelector(), messageToSend);
         //Démarrage des Threads
         serverSender.start();
         serverListener.start();

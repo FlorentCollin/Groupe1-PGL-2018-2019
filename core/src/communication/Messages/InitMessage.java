@@ -1,4 +1,4 @@
-package communication;
+package communication.Messages;
 
 import logic.board.Board;
 
@@ -10,12 +10,18 @@ import logic.board.Board;
 public class InitMessage extends NetworkMessage {
 
     private Board board;
+    private int playerNumber;
 
-    public InitMessage(Board board) {
+    public InitMessage(Board board, int playerNumber) {
         this.board = board;
+        this.playerNumber = playerNumber;
     }
 
     public Board getBoard() {
         return board;
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 }

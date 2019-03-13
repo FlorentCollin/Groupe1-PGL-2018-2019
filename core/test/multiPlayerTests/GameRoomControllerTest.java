@@ -9,7 +9,7 @@ import server.Client;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class RoomControllerTest {
+public class GameRoomControllerTest {
 
     private RoomController roomController;
 
