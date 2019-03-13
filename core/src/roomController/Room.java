@@ -40,4 +40,8 @@ public abstract class Room extends Thread {
     public UUID getUUID() {
         return id;
     }
+
+    public boolean isFull() {
+        return true;
+    }
 }

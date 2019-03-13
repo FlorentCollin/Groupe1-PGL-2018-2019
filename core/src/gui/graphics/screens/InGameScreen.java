@@ -248,8 +248,8 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public void dispose() {
-        messageListener.stopRunning();
         if(messageSender instanceof OnlineMessageSender) {
+            messageListener.stopRunning();
             ((OnlineMessageSender) messageSender).close();
         }
         super.dispose();
