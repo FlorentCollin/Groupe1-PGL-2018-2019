@@ -38,4 +38,9 @@ public class UserShortcuts {
     public String[] getShortcutsName() {
         return shortcutsName;
     }
+
+    public boolean isShortcut(String key, int keycode) {
+        Integer[] values = shortcuts.get(key);
+        return (values[0] != null && values[0] == keycode) || (values[1] != null && values[1] == keycode);
+    }
 }

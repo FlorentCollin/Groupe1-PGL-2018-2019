@@ -9,7 +9,7 @@
     logo: { fontColor: white},
     logoShadow: { fontColor: black},
     button: { fontColor: white, up: default-button-uncheck, checked: default-button-checked}
-    checked: { fontColor: white, up: default-button-checked, checked: default-button-checked, over: default-button-over}
+    checked: { fontColor: white, up: default-button-checked, over: default-button-over}
   }
 
   LabelStyle: {
@@ -17,7 +17,7 @@
   }
 
   ImageButtonStyle: {
-    arrow: { imageDown: "arrow", imageUp: "arrow"}
+    arrow: { imageUp: "arrow-unover", over: "arrow"}
   }
 
   ProgressBarStyle: {

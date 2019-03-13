@@ -258,9 +258,10 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.ENTER) {
+        System.out.println(keycode);
+        if(parent.getUserShortcuts().isShortcut("End turn", keycode)) {
             messageSender.send(new TextMessage("nextPlayer"));
-        } else if(keycode == Input.Keys.ESCAPE) {
+        } else if(parent.getUserShortcuts().isShortcut("Menu", keycode)) {
             parent.changeScreen(MainMenuScreen.class);
             dispose();
         }
@@ -281,6 +282,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(hud.hit(getHudMouseLoc().x, getHudMouseLoc().y, true) != null)
             return false;
+        unselectCells();
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {

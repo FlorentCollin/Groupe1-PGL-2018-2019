@@ -46,7 +46,7 @@ public class OnlineMenuScreen extends SubMenuScreen{
         labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = textFont;
 
-        textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
+        textButtonStyle = uiSkin.get("checked",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
         createRoom = new TextButton(Language.bundle.get("createRoom"), textButtonStyle);
         createRoom.setY(stage.getHeight() / 10 - 20);
