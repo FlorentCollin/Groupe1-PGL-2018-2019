@@ -134,10 +134,12 @@ public class RoomController {
         for (Room room: rooms.values()) {
             if(room instanceof WaitingRoom) {
                 WaitingRoom wr = (WaitingRoom) room;
-                waitingRooms.add(wr.getRoomName());
-                ids.add(wr.getUUID());
-                nPlayer.add(wr.getMaxClients());
-                nPlayerIn.add(wr.getNumberOfClients());
+                if (ids.indexOf(wr.getUUID()) == -1) {
+                    waitingRooms.add(wr.getRoomName());
+                    ids.add(wr.getUUID());
+                    nPlayer.add(wr.getMaxClients());
+                    nPlayerIn.add(wr.getNumberOfClients());
+                }
             }
         }
         ListRoomsMessage message = new ListRoomsMessage(waitingRooms, ids, nPlayer, nPlayerIn);

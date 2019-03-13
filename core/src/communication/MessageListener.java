@@ -22,18 +22,19 @@ public abstract class MessageListener extends Thread {
     protected ArrayList<String> roomNames;
     protected ArrayList<UUID> ids;
     protected ArrayList<Integer> nPlayer, nPlayerIn;
-    protected AtomicBoolean needRefresh =  new AtomicBoolean(false);
+    protected AtomicBoolean needRefresh = new AtomicBoolean(false);
     protected ArrayList<Player> players = new ArrayList<>();
     protected ArrayList<Boolean> playersReady = new ArrayList<>();
     //Variable permettant de stopper le thread quand il n'est plus nécessaire de le faire tourner
     protected AtomicBoolean running = new AtomicBoolean(false);
     protected LinkedBlockingQueue<Message> messagesFrom; //File des messages en attente
 
-    public MessageListener( LinkedBlockingQueue<Message> messagesFrom) {
+    public MessageListener(LinkedBlockingQueue<Message> messagesFrom) {
         this.messagesFrom = messagesFrom;
     }
 
-    protected MessageListener() {}
+    protected MessageListener() {
+    }
 
     /**
      * Permet de stopper le thread
@@ -44,22 +45,25 @@ public abstract class MessageListener extends Thread {
 
     /**
      * Méthode qui permet d'exécuter un message
+     *
      * @param message Le message à exécuter
      */
     protected void executeMessage(Message message) {
-        if(message instanceof InitMessage) { //Initialisation du board
+        if (message instanceof InitMessage) { //Initialisation du board
             board = ((InitMessage) message).getBoard();
             board.updateBoard(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(), board.getActivePlayerNumber());
             playerNumber = ((InitMessage) message).getPlayerNumber();
-        } else if(message instanceof GameUpdateMessage) { //Update du board
-            GameUpdateMessage updateMessage = (GameUpdateMessage) message;
-            board.updateBoard(updateMessage.getDistricts(), updateMessage.getShopItem(), updateMessage.getPlayers(), updateMessage.getActivePlayer());
-            //Si le message possède un x et un y c'est qu'il faut update aussi la variable selectedCell du board
-            //Sinon c'est qu'il faut la mettre à null
-            if(updateMessage.getX() == null && updateMessage.getY() == null) {
-                board.setSelectedCell(null);
-            } else {
-                board.setSelectedCell(board.getCell(updateMessage.getX(), updateMessage.getY()));
+        } else if (message instanceof GameUpdateMessage) { //Update du board
+            synchronized (board) {
+                GameUpdateMessage updateMessage = (GameUpdateMessage) message;
+                board.updateBoard(updateMessage.getDistricts(), updateMessage.getShopItem(), updateMessage.getPlayers(), updateMessage.getActivePlayer());
+                //Si le message possède un x et un y c'est qu'il faut update aussi la variable selectedCell du board
+                //Sinon c'est qu'il faut la mettre à null
+                if (updateMessage.getX() == null && updateMessage.getY() == null) {
+                    board.setSelectedCell(null);
+                } else {
+                    board.setSelectedCell(board.getCell(updateMessage.getX(), updateMessage.getY()));
+                }
             }
         } else if (message instanceof RoomUpdateMessage) {
             RoomUpdateMessage roomUpdateMessage = (RoomUpdateMessage) message;
@@ -98,7 +102,7 @@ public abstract class MessageListener extends Thread {
     }
 
     public String getRoomName() {
-        return  roomName;
+        return roomName;
     }
 
     public ArrayList<String> getRoomNames() {
