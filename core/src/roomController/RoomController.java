@@ -69,7 +69,7 @@ public class RoomController {
         } else if(message instanceof JoinRoomMessage) {
             JoinRoomMessage joinRoomMessage = (JoinRoomMessage) message;
             for (Room room: rooms.values()) {
-                if(room.getUUID().equals(joinRoomMessage.getId())) {
+                if(room.getUUID().equals(joinRoomMessage.getId()) && ! room.isFull()) {
                     room.addClient(client);
                     rooms.put(client, room);
                     break;

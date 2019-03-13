@@ -109,7 +109,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         naturalGroup.setMaxCheckCount(1);
         naturalGroup.setMinCheckCount(1);
         naturalGroup.setUncheckLast(true);
-
+        textButtonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+        textButtonStyle.font = defaultFontItalic;
         createRoomButton = new TextButton(Language.bundle.get("createRoom"), textButtonStyle);
         createRoomButton.setX(stage.getWidth() - createRoomButton.getWidth());
         createRoomButton.setY(stage.getHeight() / 10);
