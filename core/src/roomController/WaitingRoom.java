@@ -117,6 +117,10 @@ public class WaitingRoom extends Room {
         }
         return i;
     }
+
+    public boolean isFull() {
+        return getNumberOfClients() == getMaxClients();
+    }
 }
 
 
