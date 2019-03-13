@@ -1,5 +1,6 @@
 package gui.settings;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 import java.util.ArrayList;
@@ -19,11 +20,11 @@ public class UserShortcuts {
         shortcuts = new HashMap<>();
         //Raccourcis par défaut
         shortcuts.put(shortcutsName[0], new Integer[]{Input.Keys.W, Input.Keys.Z});
-        shortcuts.put(shortcutsName[1], new Integer[]{Input.Keys.S, null});
-        shortcuts.put(shortcutsName[2], new Integer[]{Input.Keys.Q, Input.Keys.A});
-        shortcuts.put(shortcutsName[3], new Integer[]{Input.Keys.D, null});
-        shortcuts.put(shortcutsName[4], new Integer[]{Input.Keys.ESCAPE, null});
-        shortcuts.put(shortcutsName[5], new Integer[]{Input.Keys.ENTER, null});
+        shortcuts.put(shortcutsName[1], new Integer[]{Input.Keys.S, -2});
+        shortcuts.put(shortcutsName[2], new Integer[]{Input.Keys.A, Input.Keys.Q});
+        shortcuts.put(shortcutsName[3], new Integer[]{Input.Keys.D, -2});
+        shortcuts.put(shortcutsName[4], new Integer[]{Input.Keys.ESCAPE, -2});
+        shortcuts.put(shortcutsName[5], new Integer[]{Input.Keys.ENTER, -2});
     }
 
 
@@ -41,6 +42,10 @@ public class UserShortcuts {
 
     public boolean isShortcut(String key, int keycode) {
         Integer[] values = shortcuts.get(key);
-        return (values[0] != null && values[0] == keycode) || (values[1] != null && values[1] == keycode);
+        return values[0] == keycode || values[1] == keycode;
+    }
+
+    public Integer[] getShortcut(String key) {
+        return shortcuts.get(key);
     }
 }

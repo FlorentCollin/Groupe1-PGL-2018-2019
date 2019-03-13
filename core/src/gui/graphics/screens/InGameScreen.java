@@ -111,6 +111,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public void render(float delta) {
         super.render(delta);
         change();
+        checkInput();
         synchronized (board) {
             if (board.getSelectedCell() != null) {
                 selectCells(board.possibleMove(board.getSelectedCell()));
@@ -129,6 +130,25 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         hud.getViewport().apply();
         hud.act(delta);
         hud.draw();
+    }
+
+    private void checkInput() {
+        Integer[] values = parent.getUserShortcuts().getShortcut("Move camera up");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(0, 15);
+        }
+        values = parent.getUserShortcuts().getShortcut("Move camera down");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(0, -15);
+        }
+        values = parent.getUserShortcuts().getShortcut("Move camera right");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(15, 0);
+        }
+        values = parent.getUserShortcuts().getShortcut("Move camera left");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(-15, 0);
+        }
     }
 
     /**
@@ -205,7 +225,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         camera = new OrthographicCamera();
         fillViewport = new FillViewport(1280, 720, camera);
         fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.update();
         stage = new Stage(fillViewport);
     }
 
@@ -258,7 +277,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        System.out.println(keycode);
         if(parent.getUserShortcuts().isShortcut("End turn", keycode)) {
             messageSender.send(new TextMessage("nextPlayer"));
         } else if(parent.getUserShortcuts().isShortcut("Menu", keycode)) {
