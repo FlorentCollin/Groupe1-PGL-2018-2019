@@ -111,7 +111,7 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         for(int i=0; i<2; i++) {
             ShortcutsButton button;
             Integer keycode = parent.getUserShortcuts().getShortcuts().get(text)[i];
-            if(keycode != null) {
+            if(keycode != -2) {
                 button = new ShortcutsButton(text , i, Input.Keys.toString(parent.getUserShortcuts().getShortcuts().get(text)[i]), textButtonStyle);
             } else {
                 button = new ShortcutsButton(text , i, "", textButtonStyle);

@@ -11,9 +11,16 @@ arrow
   orig: 75, 75
   offset: 0, 0
   index: -1
+arrow-unover
+  rotate: false
+  xy: 1886, 930
+  size: 75, 75
+  orig: 75, 75
+  offset: 0, 0
+  index: -1
 cursor
   rotate: false
-  xy: 1333, 183
+  xy: 1555, 873
   size: 4, 20
   orig: 4, 20
   offset: 0, 0
@@ -41,7 +48,7 @@ default-button-uncheck
   index: -1
 default-scroll
   rotate: false
-  xy: 1886, 985
+  xy: 332, 91
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
@@ -62,7 +69,7 @@ room-background
   index: -1
 scroll-knob
   rotate: false
-  xy: 332, 91
+  xy: 1333, 183
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
