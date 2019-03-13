@@ -9,6 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -66,10 +67,14 @@ public class RoomController {
             CreateRoomMessage createRoomMessage = (CreateRoomMessage) message;
             createRoom(client, createRoomMessage);
         } else if(message instanceof JoinRoomMessage) { //TODO Need refactoring
-            Client aClient = rooms.keySet().iterator().next();
-            Room room = rooms.get(aClient);
-            room.addClient(client);
-            rooms.put(client, room);
+            JoinRoomMessage joinRoomMessage = (JoinRoomMessage) message;
+            for (Room room: rooms.values()) {
+                if(room.getUUID().equals(joinRoomMessage.getId())) {
+                    room.addClient(client);
+                    rooms.put(client, room);
+                    break;
+                }
+            }
         } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
             switch (textMessage.getMessage()) {
@@ -125,15 +130,17 @@ public class RoomController {
         ArrayList<String> waitingRooms = new ArrayList<>();
         ArrayList<Integer> nPlayer = new ArrayList<>();
         ArrayList<Integer> nPlayerIn = new ArrayList<>();
+        ArrayList<UUID> ids = new ArrayList<>();
         for (Room room: rooms.values()) {
             if(room instanceof WaitingRoom) {
                 WaitingRoom wr = (WaitingRoom) room;
                 waitingRooms.add(wr.getRoomName());
+                ids.add(wr.getUUID());
                 nPlayer.add(wr.getMaxClients());
                 nPlayerIn.add(wr.getNumberOfClients());
             }
         }
-        ListRoomsMessage message = new ListRoomsMessage(waitingRooms, nPlayer, nPlayerIn);
+        ListRoomsMessage message = new ListRoomsMessage(waitingRooms, ids, nPlayer, nPlayerIn);
         message.setClients(Collections.singletonList(client));
         try {
             messagesToSend.put(message);

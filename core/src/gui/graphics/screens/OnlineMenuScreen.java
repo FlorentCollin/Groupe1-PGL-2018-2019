@@ -12,9 +12,11 @@ import communication.Messages.TextMessage;
 import communication.OnlineMessageListener;
 import communication.OnlineMessageSender;
 import gui.app.Slay;
+import gui.utils.JoinButton;
 import gui.utils.Language;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.graphics.screens.animations.Animations.ANIMATION_DURATION;
@@ -29,7 +31,6 @@ public class OnlineMenuScreen extends SubMenuScreen{
     private OnlineMessageListener messageListener;
 
     private TextButton createRoom;
-    private TextButton joinRoom;
     private TextButton refresh;
 
     public OnlineMenuScreen(Slay parent, Stage stage) {
@@ -56,17 +57,8 @@ public class OnlineMenuScreen extends SubMenuScreen{
             }
         });
 
-        joinRoom = new TextButton(Language.bundle.get("join"), textButtonStyle);
-        joinRoom.setY(createRoom.getY() + createRoom.getHeight() + 20);
-        joinRoom.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                messageSender.send(new JoinRoomMessage());
-            }
-        });
-
         refresh = new TextButton(Language.bundle.get("refresh"), textButtonStyle);
-        refresh.setY(joinRoom.getY() + joinRoom.getHeight() + 20);
+        refresh.setY(createRoom.getY() + createRoom.getHeight() + 20);
         refresh.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -75,7 +67,6 @@ public class OnlineMenuScreen extends SubMenuScreen{
         });
 
         stage.addActor(createRoom);
-        stage.addActor(joinRoom);
         stage.addActor(refresh);
         scrollTable = new Table();
         ScrollPane scroller = new ScrollPane(scrollTable, uiSkin);
@@ -89,34 +80,15 @@ public class OnlineMenuScreen extends SubMenuScreen{
         table.setY(100);
         table.add(scroller).fillX().expand().align(Align.topLeft).padTop(3).padBottom(3);
         stage.addActor(table);
+        Gdx.input.setInputProcessor(this.stage);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        scrollTable.reset();
-        scrollTable.add(new Label("Room Name", labelStyle)).expandX().pad(10).align(Align.topLeft);
-        scrollTable.add(new Label("Number of Players", labelStyle)).pad(10).padRight(50).align(Align.topRight);
-        scrollTable.row();
-        if(messageListener.getRoomNames() != null) {
-            ArrayList<String> roomNames = messageListener.getRoomNames();
-            ArrayList<Integer> nPlayer = messageListener.getnPlayer();
-            ArrayList<Integer> nPlayerIn = messageListener.getnPlayerIn();
-            for (int i = 0; i < roomNames.size(); i++) {
-                scrollTable.add(new Label(roomNames.get(i), labelStyle)).pad(10).align(Align.left);
-                scrollTable.add(new Label(nPlayerIn.get(i) + "/" + nPlayer.get(i), labelStyle)).pad(10).padRight(50).align(Align.right);
-                TextButton join = new TextButton(Language.bundle.get("join"), textButtonStyle);
-                join.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        System.out.println("clicked");
-                    }
-                });
-                scrollTable.add(join).padRight(50).align(Align.right);
-                scrollTable.row();
-            }
+        if(messageListener.needRefresh()) {
+            refreshList();
         }
-
         if(messageListener.getPlayers().size() > 0) {
             parent.setScreen(new WaitingRoomScreen(parent, stage, messageSender, messageListener));
         }
@@ -127,7 +99,6 @@ public class OnlineMenuScreen extends SubMenuScreen{
         super.show();
         table.addAction(slideFromRight(table, 50, table.getY(), ANIMATION_DURATION / 4));
         refresh.addAction(slideFromRight(refresh, stage.getWidth() - refresh.getWidth() - 20, refresh.getY(), ANIMATION_DURATION / 4));
-        joinRoom.addAction(slideFromRight(joinRoom, stage.getWidth() - joinRoom.getWidth() - 20, joinRoom.getY(), ANIMATION_DURATION / 4));
         createRoom.addAction(slideFromRight(createRoom, stage.getWidth() - createRoom.getWidth() - 20, createRoom.getY(), ANIMATION_DURATION / 4));
     }
 
@@ -136,7 +107,6 @@ public class OnlineMenuScreen extends SubMenuScreen{
         super.hide();
         table.addAction(slideToRight(table));
         refresh.addAction(slideToRight(refresh));
-        joinRoom.addAction(slideToRight(joinRoom));
         createRoom.addAction(slideToRight(createRoom));
     }
 
@@ -145,4 +115,30 @@ public class OnlineMenuScreen extends SubMenuScreen{
         messageSender.close();
     }
 
+    private void refreshList() {
+        scrollTable.reset();
+        scrollTable.add(new Label("Room Name", labelStyle)).expandX().pad(10).align(Align.topLeft);
+        scrollTable.add(new Label("Number of Players", labelStyle)).pad(10).padRight(50).align(Align.center);
+        scrollTable.row();
+        if(messageListener.getRoomNames() != null) {
+            ArrayList<String> roomNames = messageListener.getRoomNames();
+            ArrayList<Integer> nPlayer = messageListener.getnPlayer();
+            ArrayList<Integer> nPlayerIn = messageListener.getnPlayerIn();
+            ArrayList<UUID> ids = messageListener.getIds();
+            for (int i = 0; i < roomNames.size(); i++) {
+                scrollTable.add(new Label(roomNames.get(i), labelStyle)).pad(10).align(Align.left);
+                scrollTable.add(new Label(nPlayerIn.get(i) + "/" + nPlayer.get(i), labelStyle)).pad(10).align(Align.center);
+                JoinButton join = new JoinButton(Language.bundle.get("join"), textButtonStyle, ids.get(i));
+                join.setChecked(true);
+                join.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        messageSender.send(new JoinRoomMessage(join.getId()));
+                    }
+                });
+                scrollTable.add(join).maxWidth(150).pad(10).padRight(50).align(Align.right);
+                scrollTable.row();
+            }
+        }
+    }
 }

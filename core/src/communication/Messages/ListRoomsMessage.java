@@ -1,19 +1,19 @@
 package communication.Messages;
 
-import roomController.WaitingRoom;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ListRoomsMessage extends NetworkMessage {
 
     private ArrayList<String> roomsName;
     private ArrayList<Integer> nPlayer, nPlayerIn;
+    private ArrayList<UUID> ids;
 
-    public ListRoomsMessage(ArrayList<String> roomsName, ArrayList<Integer> nPlayer, ArrayList<Integer> nPlayerIn ) {
+    public ListRoomsMessage(ArrayList<String> roomsName, ArrayList<UUID> ids, ArrayList<Integer> nPlayer, ArrayList<Integer> nPlayerIn) {
         this.roomsName = roomsName;
         this.nPlayer = nPlayer;
         this.nPlayerIn = nPlayerIn;
+        this.ids = ids;
     }
 
     public ArrayList<String> getRoomsName() {
@@ -26,5 +26,9 @@ public class ListRoomsMessage extends NetworkMessage {
 
     public ArrayList<Integer> getnPlayerIn() {
         return nPlayerIn;
+    }
+
+    public ArrayList<UUID> getIds() {
+        return ids;
     }
 }
