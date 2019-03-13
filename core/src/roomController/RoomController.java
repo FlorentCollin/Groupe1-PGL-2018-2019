@@ -66,7 +66,7 @@ public class RoomController {
             System.out.println("Creating GameRoom");
             CreateRoomMessage createRoomMessage = (CreateRoomMessage) message;
             createRoom(client, createRoomMessage);
-        } else if(message instanceof JoinRoomMessage) { //TODO Need refactoring
+        } else if(message instanceof JoinRoomMessage) {
             JoinRoomMessage joinRoomMessage = (JoinRoomMessage) message;
             for (Room room: rooms.values()) {
                 if(room.getUUID().equals(joinRoomMessage.getId())) {
