@@ -62,6 +62,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
 
         mapName = new TextField("", textFieldStyle);
         mapName.appendText(Language.bundle.get("nameOfTheRoom"));
+        mapName.setMaxLength(28);
 
 
         Label aiSliderNumber = new Label("0", labelStyle);
