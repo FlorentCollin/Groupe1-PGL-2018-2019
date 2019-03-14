@@ -29,12 +29,14 @@ public class WaitingRoom extends Room {
         roomName = message.getRoomName();
         Map map = new Map(mapName);
         board = map.loadBoard(message.isNaturalDisastersOn(), null);
+        changeToAI(board, message.getAiStrats());
+        //Création d'une liste qui indique si le joueur est prêt à lancer la partie ou non
         for (int i = 0; i < board.getPlayers().size(); i++) {
-            clientsReady.add(i, false);
-        }
-        for (int i = 0; i < message.getAiStrats().size(); i++) { //TODO Faire en sorte que ce soit vraiment la stratégie sélectionné
-            board.changeToAI(board.getPlayers().size() - i - 1, new RandomStrategy());
-            clientsReady.set(board.getPlayers().size() - i - 1, true);
+            if(board.getPlayers().get(i) instanceof AI)
+                clientsReady.add(i, true); //Les AI sont toujours prêtes
+            else
+                clientsReady.add(i, false);
+
         }
         this.messagesFrom = messagesFrom;
         this.messagesToSend = messageToSend;
@@ -49,13 +51,16 @@ public class WaitingRoom extends Room {
                 //Récupération du message du client
                 Message message = messagesFrom.take();
                 executeMessage(message);
-                System.out.print("");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Méthode qui va exécuter le message en fonction de sa classe
+     * @param message le message a exécuter
+     */
     private void executeMessage(Message message) {
         if (message instanceof TextMessage) {
             if (((TextMessage) message).getMessage().equals("ready")) {
@@ -72,6 +77,10 @@ public class WaitingRoom extends Room {
 
     }
 
+    /**
+     * Méthode qui permet d'envoyer un message d'update pour la waiting room aux différents clients
+     * Le message envoyé est un message contenant le nom de chaque joueur ainsi que son état (ready / not ready)
+     */
     private void sendUpdateMessage() {
         RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
         roomUpdateMessage.setClients(clients);
@@ -81,17 +90,16 @@ public class WaitingRoom extends Room {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Méthode qui va ajouter un client à la WaitingRoom
+     * @param client le client a ajouter
+     */
     @Override
     public void addClient(Client client){
         super.addClient(client);
         board.getPlayers().get(clients.size()-1).setName(client.getUsername());
-        try {
-            RoomUpdateMessage message = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
-            message.setClients(clients);
-            messagesToSend.put(message);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sendUpdateMessage();
     }
 
     @Override
@@ -103,12 +111,9 @@ public class WaitingRoom extends Room {
         return super.remove(client);
     }
 
+
     public boolean isReady() {
-        for (boolean ready : clientsReady) {
-            if (!ready)
-                return false;
-        }
-        return true;
+        return  !clientsReady.contains(false);
     }
 
     public Board getBoard() {
@@ -125,6 +130,7 @@ public class WaitingRoom extends Room {
 
     public int getNumberOfClients() {
         int i = clients.size();
+        //On ajoute les AI aux clients car elles sont aussi des joueurs
         for(Player player : board.getPlayers()) {
             if(player instanceof AI)
                 i++;
