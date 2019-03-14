@@ -106,31 +106,22 @@ public class ServerListener extends Thread{
         try {
             //Récupération du message dans le buffer du client.
             String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
+            String[] split = messageStr.split("\\+");
             //On définit la fin d'un message par le symbole "+"
             if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
-                key.attach(messageStr);
-            } else {
-                //On supprime le symbole de fin (ie : "+")
-                String[] split = messageStr.split("\\+");
-                if(split.length >= 2) {
-                    //Un deuxième message à déjà été lu
-                    key.attach(split[1]);
-                } else {
-                    //Le message est terminé, et on retire le message attaché à la clé
-                    key.attach(null);
-                }
-                messageStr = messageStr.substring(0, messageStr.length()-1);
+                key.attach(split[split.length-1]);
+            }
+            for(String s : split) { //Itération sur l'ensemble des messages reçus et complet
                 //Désérialisation du message
-                Message message = Message.getMessage(messageStr, gson);
+                Message message = Message.getMessage(s, gson);
                 message.setClient(ServerInfo.clients.get(clientChannel));
-                if(message instanceof UsernameMessage) {
+                if (message instanceof UsernameMessage) {
                     ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
                 } else {
                     //Si le message n'est pas un message réservé au serveur alors on l'envoie au roomController
                     roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
                 }
             }
-
         } catch (IOException e) {
             System.out.println("Client connection lost");
             //Vérifie si la room associé au client n'est pas vide :
