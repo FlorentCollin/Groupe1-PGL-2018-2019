@@ -107,11 +107,15 @@ public class ServerListener extends Thread{
             //Récupération du message dans le buffer du client.
             String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
             String[] split = messageStr.split("\\+");
+            int len;
             //On définit la fin d'un message par le symbole "+"
             if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
                 key.attach(split[split.length-1]);
+                len = split.length-1;
+            } else {
+                len = split.length;
             }
-            for(int i = 0; i < split.length; i++) { //Itération sur l'ensemble des messages reçus et complet
+            for(int i = 0; i < len; i++) { //Itération sur l'ensemble des messages reçus et complet
                 System.out.println(i + " : " + split[i]);
                 //Désérialisation du message
                 Message message = Message.getMessage(split[i], gson);
