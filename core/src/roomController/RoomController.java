@@ -27,16 +27,17 @@ public class RoomController {
 
     /**
      * Méthode utilisé par un client pour ouvrir une nouvelle GameRoom
-     * @param creatorClient
+     * @param creatorClient Le client qui crée la room
+     * @param message Le message de création
      */
-    public void createRoom(Client creatorClient, CreateRoomMessage message) {
+    private void createRoom(Client creatorClient, CreateRoomMessage message) {
         //Création d'un lien vers une file de messages pour pouvoir transmettre des messages des clients vers cette room
         LinkedBlockingQueue<Message> messagesFrom = new LinkedBlockingQueue<>();
         WaitingRoom room = new WaitingRoom(message, messagesFrom, messagesToSend);
-        //Mise à jour des hashMaps
+        //Mise à jour du hashMap et démarrage de la room
         rooms.put(creatorClient, room);
         room.addClient(creatorClient);
-        room.start(); //Démarrage de la room.
+        room.start();
     }
 
     /**
@@ -46,7 +47,6 @@ public class RoomController {
      */
     public void sendMessageToRoom(Message message, Client client) {
         Room clientRoom = rooms.get(client);
-        System.out.println("Rooms size : " + rooms.size());
         try {
             message.setClient(client);
             clientRoom.getMessagesFrom().put(message);
@@ -95,46 +95,67 @@ public class RoomController {
         }
     }
 
+    /**
+     * Méthode qui se charge de lancer la partie et de fermer la WaitingRoom
+     * @param room la room à fermer
+     */
     private void launchGame(WaitingRoom room) {
         try {
+            //Envoie d'un message pour fermer la WaitingRoom
             room.getMessagesFrom().put(new TextMessage("close"));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        //Création de la nouvelle room de jeu
         GameRoom gameRoom = new GameRoom(room.getBoard(), room.getMessagesFrom(), messagesToSend);
-        gameRoom.start();
+        gameRoom.start(); //Démarrage du thread
         for (Client client : room.getClients()) {
+            //Mise à jour du HashMap des rooms
             rooms.replace(client, gameRoom);
-            gameRoom.addClient(client);
+            gameRoom.addClient(client); //Ajout du client dans la nouvelle room
         }
     }
 
+    /**
+     * Méthode qui vérifie si une room est vide.
+     * Si c'est le cas alors on ferme la room.
+     * Cette méthode est appelée lorsqu'un client se déconnecte
+     * @param key la clé du client qui s'est déconnecté
+     */
     public void checkEmpty(SelectionKey key) {
         SocketChannel clientChannel = (SocketChannel) key.channel();
         Client client = ServerInfo.clients.get(clientChannel);
         Room room = rooms.get(client);
         if (room != null) {
+            //On retire le client déconnecté de la room où il se trouvait et on le retire du hashmap des différentes rooms
             room.remove(client);
+            rooms.remove(client);
             if (room.isEmpty()) {
                 try {
+                    //On envoie un message de fermeture à la room car celle-ci est vide
                     room.getMessagesFrom().put(new TextMessage("close"));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                rooms.remove(client);
             }
         }
     }
 
+    /**
+     * Méthode qui envoie à un client la liste des WaitingRooms
+     * Cette méthode est utilisé par le client lorsqu'il appuie sur le bouton refresh du OnlineMenuScreen
+     * @param client le client qui a envoyé la requête
+     */
     private void sendWaitingRooms(Client client) {
         ArrayList<String> waitingRooms = new ArrayList<>();
         ArrayList<Integer> nPlayer = new ArrayList<>();
         ArrayList<Integer> nPlayerIn = new ArrayList<>();
         ArrayList<UUID> ids = new ArrayList<>();
         for (Room room: rooms.values()) {
-            if(room instanceof WaitingRoom) {
+            if (room instanceof WaitingRoom) {
                 WaitingRoom wr = (WaitingRoom) room;
                 if (ids.indexOf(wr.getUUID()) == -1) {
+                    //Ajout des caractéristiques de la room
                     waitingRooms.add(wr.getRoomName());
                     ids.add(wr.getUUID());
                     nPlayer.add(wr.getMaxClients());
@@ -145,7 +166,7 @@ public class RoomController {
         ListRoomsMessage message = new ListRoomsMessage(waitingRooms, ids, nPlayer, nPlayerIn);
         message.setClients(Collections.singletonList(client));
         try {
-            messagesToSend.put(message);
+            messagesToSend.put(message); //Envoie du message
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

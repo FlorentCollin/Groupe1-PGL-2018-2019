@@ -57,21 +57,26 @@ public class WaitingRoom extends Room {
     }
 
     private void executeMessage(Message message) {
-        try {
-            if (message instanceof TextMessage) {
-                if (((TextMessage) message).getMessage().equals("ready")) {
-                    int index = clients.indexOf(message.getClient());
-                    if (clientsReady.get(index))
-                        clientsReady.set(index, false);
-                    else
-                        clientsReady.set(index, true);
-                    RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
-                    roomUpdateMessage.setClients(clients);
-                    messagesToSend.put(roomUpdateMessage);
-                } else if(((TextMessage) message).getMessage().equals("close")) {
-                    running.set(false);
-                }
+        if (message instanceof TextMessage) {
+            if (((TextMessage) message).getMessage().equals("ready")) {
+                int index = clients.indexOf(message.getClient());
+                if (clientsReady.get(index))
+                    clientsReady.set(index, false);
+                else
+                    clientsReady.set(index, true);
+                sendUpdateMessage();
+            } else if (((TextMessage) message).getMessage().equals("close")) {
+                running.set(false);
             }
+        }
+
+    }
+
+    private void sendUpdateMessage() {
+        RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
+        roomUpdateMessage.setClients(clients);
+        try {
+            messagesToSend.put(roomUpdateMessage);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -87,6 +92,15 @@ public class WaitingRoom extends Room {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean remove(Client client) {
+        int index = clients.indexOf(client);
+        if (index != -1)
+            board.getPlayers().get(index).setName(null);
+        sendUpdateMessage();
+        return super.remove(client);
     }
 
     public boolean isReady() {

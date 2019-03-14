@@ -300,7 +300,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(hud.hit(getHudMouseLoc().x, getHudMouseLoc().y, true) != null)
             return false;
-        unselectCells();
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {

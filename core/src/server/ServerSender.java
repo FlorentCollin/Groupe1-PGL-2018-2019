@@ -33,18 +33,18 @@ public class ServerSender extends Thread {
             try {
                 //Récupération du message dans la file d'attente
                 Message message = messageToSend.take(); //Remarque cette méthode est bloquante
-                //Si le message est un message qui peut être envoyé pour à des clients
+                //Si le message est un message qui peut être envoyé à des clients
                 if (message instanceof NetworkMessage) {
                     NetworkMessage networkMessage = (NetworkMessage) message;
                     for (Client client : networkMessage.getClients()) { //Envoie du message à tous les clients
                         SocketChannel clientChannel = client.getSocketChannel();
                         if (clientChannel.isConnected()) {
-
                             /* Écriture du message dans le buffer du client
                              * Ici on écrit le nom de la classe du message en plus du message sérialisé
-                             * Pour permettre au client de retrouver le type du message */
+                             * Pour permettre au client de retrouver le type du message
+                              * Le "+" est le caractère signalisant la fin du message */
                             ByteBuffer buffer = ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message) + "+").getBytes());
-                            if (clientChannel.write(buffer) == 0) {
+                            if (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
                                 clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
                                 clientChannel.write(buffer);
                             }
