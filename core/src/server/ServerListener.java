@@ -111,9 +111,10 @@ public class ServerListener extends Thread{
             if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
                 key.attach(split[split.length-1]);
             }
-            for(String s : split) { //Itération sur l'ensemble des messages reçus et complet
+            for(int i = 0; i < split.length; i++) { //Itération sur l'ensemble des messages reçus et complet
+                System.out.println(i + " : " + split[i]);
                 //Désérialisation du message
-                Message message = Message.getMessage(s, gson);
+                Message message = Message.getMessage(split[i], gson);
                 message.setClient(ServerInfo.clients.get(clientChannel));
                 if (message instanceof UsernameMessage) {
                     ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
