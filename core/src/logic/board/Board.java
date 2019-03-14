@@ -1,20 +1,24 @@
 package logic.board;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
+import logic.item.Capital;
 import logic.item.DestroyableItem;
 import logic.item.Item;
 import logic.item.Tree;
+import logic.naturalDisasters.LandErosion;
+import logic.naturalDisasters.NaturalDisasters;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
 import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
-
-
-import java.util.ArrayList;
-import java.util.Random;
 
 
 
@@ -36,8 +40,10 @@ public class Board{
 	private final int[][][] directions = {
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
-	private ArrayList<Cell> neutralCells;
+	private ArrayList<Cell> waterCells;
+	private ArrayList<Cell> treeCells;
 	private ArrayList<Cell> modificatedCells;
+	private HashMap<Player, ArrayList<Cell>> erodedCells;
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
@@ -48,9 +54,11 @@ public class Board{
 		this.districts = new ArrayList<>();
 		this.shop = shop;
 		fullIn();
-		neutralCells = new ArrayList<>();
+		waterCells = new ArrayList<>();
+		treeCells = new ArrayList<>();
 		modificatedCells = new ArrayList<>();
-
+		erodedCells = new HashMap<>();
+		generateHashMap();
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -61,8 +69,18 @@ public class Board{
 		this.districts = new ArrayList<>();
 		this.shop = shop;
 		fullIn();
-		neutralCells = new ArrayList<>();
+		waterCells = new ArrayList<>();
+		treeCells = new ArrayList<>();
 		modificatedCells = new ArrayList<>();
+		erodedCells = new HashMap<>();
+		naturalDisastersController = new NaturalDisastersController(this);
+		generateHashMap();
+	}
+	
+	private void generateHashMap() {
+		for(Player p : players) {
+			erodedCells.put(p, new ArrayList<>());
+		}
 	}
 
 	/**
@@ -95,6 +113,7 @@ public class Board{
 	 * */
 	public void changeToWaterCell(int i, int j) {
 		board[i][j] = new WaterCell(i,j);
+		waterCells.add(board[i][j]);
 	}
 
 	public void setShopItem(Item item) {
@@ -394,7 +413,9 @@ public class Board{
 	 */
 	public void nextPlayer() {
 		hasChanged = true;
-		checkDistricts(); // Peut être à supprimer d'ici
+		wasALand();
+		isHappening();
+		checkDistricts();
 		checkWinner();
 		setSelectedCell(null);
 		shop.removeSelection();
@@ -559,6 +580,7 @@ public class Board{
 					}
 					if(rand.nextInt(100)*PROBA < calculateProb(nTrees)*100) {
 						board[i][j].setItem(new Tree());
+						treeCells.add(board[i][j]);
 					}
 				}
 			}
@@ -722,7 +744,6 @@ public class Board{
 	}
 
 	private void checkDistricts() {
-		neutralCells.clear();
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
 			if (district.getCells().size() <= 1) {
@@ -788,8 +809,8 @@ public class Board{
 		}
 	}
 
-	public ArrayList<Cell> getNeutralCells(){
-		return neutralCells;
+	public ArrayList<Cell> getWaterCells(){
+		return waterCells;
 	}
 
 	public ArrayList<Cell> getModificatedCells(){
@@ -798,5 +819,57 @@ public class Board{
 
 	public Player getWinner() {
 		return winner;
+	}
+	
+	private void isHappening() {
+		ArrayList<Cell> modificatedCells;
+		for(NaturalDisasters nd : naturalDisastersController.isHappening()) {
+			modificatedCells = nd.getAffectedCells();
+			if(nd instanceof LandErosion) {
+				erosion(modificatedCells);
+			}
+		}
+	}
+	
+	private void erosion(ArrayList<Cell> erodedCells) {
+		ArrayList<Cell> eroded = new ArrayList<>();
+		for(Cell cell : erodedCells) {
+			if(cell.getDistrict() != null) {
+				cell.getDistrict().removeCell(cell);
+			}
+			if(cell.getItem() != null) {				
+				if(cell.getItem() instanceof Capital) {
+					cell.getDistrict().removeCapital();
+				}
+				else if(cell.getItem().isMovable()) {
+					for(Cell c : getNeighbors(cell)) {
+						if(canGoOn(c, cell.getItem())) {
+							c.setDistrict(cell.getDistrict());
+							c.setItem(cell.getItem());
+							break;
+						}
+					}
+				}
+			}
+			cell.removeDistrict();
+			cell.removeItem();
+			board[cell.getX()][cell.getY()] = new WaterCell(cell.getX(), cell.getY());
+			eroded.add(cell);
+			modificatedCells.add(getCell(cell.getX(), cell.getY()));
+		}
+		this.erodedCells.replace(players.get(activePlayer), eroded);
+	}
+	
+	private void wasALand() {
+		ArrayList<Cell> cells = erodedCells.get(players.get(activePlayer));
+		for(Cell cell : cells) {
+			board[cell.getX()][cell.getY()] = new LandCell(cell.getX(), cell.getY());
+			modificatedCells.add(cell);
+		}
+		cells.clear();
+	}
+	
+	public void addTree(int i, int j) {
+		treeCells.add(board[i][j]);
 	}
 }
