@@ -8,7 +8,7 @@
     default: { fontColor: white},
     logo: { fontColor: white},
     logoShadow: { fontColor: black},
-    button: { fontColor: white, up: default-button-uncheck, checked: default-button-checked}
+    button: { fontColor: white, up: default-button-uncheck, checked: default-button-checked, over: default-button-over-unchecked, checkedOver: default-button-over}
     checked: { fontColor: white, up: default-button-checked, over: default-button-over}
   }
 

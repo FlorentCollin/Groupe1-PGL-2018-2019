@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import communication.Messages.JoinRoomMessage;
-import communication.Messages.ListRoomsMessage;
 import communication.Messages.TextMessage;
 import communication.OnlineMessageListener;
 import communication.OnlineMessageSender;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static gui.graphics.screens.animations.Animations.*;
-import static gui.graphics.screens.animations.Animations.ANIMATION_DURATION;
 
 public class OnlineMenuScreen extends SubMenuScreen{
 
@@ -34,7 +32,7 @@ public class OnlineMenuScreen extends SubMenuScreen{
     private TextButton refresh;
 
     public OnlineMenuScreen(Slay parent, Stage stage) {
-        super(parent, stage, "Online Rooms");
+        super(parent, stage, Language.bundle.get("onlineRooms"));
         this.messageSender = new OnlineMessageSender(parent.getUserSettings().getUsername());
         this.messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
         this.messageListener.start();
@@ -117,9 +115,10 @@ public class OnlineMenuScreen extends SubMenuScreen{
 
     private void refreshList() {
         scrollTable.reset();
-        scrollTable.add(new Label("Room Name", labelStyle)).expandX().pad(10).align(Align.topLeft);
-        scrollTable.add(new Label("Number of Players", labelStyle)).pad(10).padRight(50).align(Align.center);
+        scrollTable.add(new Label(Language.bundle.get("roomName"), labelStyle)).expandX().pad(10).align(Align.topLeft);
+        scrollTable.add(new Label(Language.bundle.get("numberOfPlayers"), labelStyle)).pad(10).padRight(50).align(Align.center);
         scrollTable.row();
+        addLine(scrollTable);
         if(messageListener.getRoomNames() != null) {
             ArrayList<String> roomNames = messageListener.getRoomNames();
             ArrayList<Integer> nPlayer = messageListener.getnPlayer();
@@ -128,15 +127,17 @@ public class OnlineMenuScreen extends SubMenuScreen{
             for (int i = 0; i < roomNames.size(); i++) {
                 scrollTable.add(new Label(roomNames.get(i), labelStyle)).pad(10).align(Align.left);
                 scrollTable.add(new Label(nPlayerIn.get(i) + "/" + nPlayer.get(i), labelStyle)).pad(10).align(Align.center);
-                JoinButton join = new JoinButton(Language.bundle.get("join"), textButtonStyle, ids.get(i));
-                join.setChecked(true);
-                join.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        messageSender.send(new JoinRoomMessage(join.getId()));
-                    }
-                });
-                scrollTable.add(join).maxWidth(150).pad(10).padRight(50).align(Align.right);
+                if (!nPlayerIn.get(i).equals(nPlayer.get(i))) {
+                    JoinButton join = new JoinButton(Language.bundle.get("join"), textButtonStyle, ids.get(i));
+                    join.setChecked(true);
+                    join.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            messageSender.send(new JoinRoomMessage(join.getId()));
+                        }
+                    });
+                    scrollTable.add(join).maxWidth(200).pad(10).padRight(50).align(Align.right);
+                }
                 scrollTable.row();
             }
         }
