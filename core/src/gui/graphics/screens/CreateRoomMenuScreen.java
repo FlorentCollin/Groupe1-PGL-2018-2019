@@ -30,6 +30,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private final Table table;
     private final TextButton createRoomButton;
     private final Slider aiSlider;
+    private final TextField mapName;
     private int pValue;  //Valeur précédente du ai slider
     private final SelectBox<String> mapSelectBox;
     private final ButtonGroup<TextButton> naturalGroup;
@@ -59,7 +60,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         textFieldStyle.font = textFont;
         textFont.getData().padLeft = -10;
 
-        TextField mapName = new TextField("", textFieldStyle);
+        mapName = new TextField("", textFieldStyle);
         mapName.appendText(Language.bundle.get("nameOfTheRoom"));
 
 
@@ -108,7 +109,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         naturalGroup.setMaxCheckCount(1);
         naturalGroup.setMinCheckCount(1);
         naturalGroup.setUncheckLast(true);
-
+        textButtonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+        textButtonStyle.font = defaultFontItalic;
         createRoomButton = new TextButton(Language.bundle.get("createRoom"), textButtonStyle);
         createRoomButton.setX(stage.getWidth() - createRoomButton.getWidth());
         createRoomButton.setY(stage.getHeight() / 10);
@@ -153,13 +155,12 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         table.addAction(slideToRight(table));
         createRoomButton.addAction(slideToRight(createRoomButton));
     }
-    @Override
-    public void pause() {
-
-    }
 
     @Override
-    public void resume() {
+    public void dispose() {
+        if(messageSender instanceof OnlineMessageSender) {
+            ((OnlineMessageSender) messageSender).close();
+        }
     }
 
     private Array<String> initWorldsNames() {
@@ -173,6 +174,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 XmlReader.Element xmlElement = xml.parse(file);
                 String worldName = xmlElement.getAttribute("name");
                 worldsNames.add(worldName);
+                worldsNames.sort();
                 nameToFileName.put(worldName, file.nameWithoutExtension());
                 nameToXml.put(worldName, xmlElement);
             }
@@ -201,7 +203,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 }
                 ai.forEach((i) -> playersName.add("AI"));
                 if (online) { //TODO
-                    messageSender.send(new CreateRoomMessage(world, isNaturalDisastersOn(), ai));
+                    messageSender.send(new CreateRoomMessage(world, mapName.getText(), isNaturalDisastersOn(), ai));
                     while(messageListener.getPlayers().size() <= 0) {
                         try {
                             Thread.sleep(1);
@@ -221,7 +223,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                             e.printStackTrace();
                         }
                     }
-                    InGameScreen gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender, messageListener);
+                    InGameScreen gameScreen = new InGameScreen(parent, world, room.getBoard(), messageSender);
                     parent.changeScreen(gameScreen);
                 }
             }

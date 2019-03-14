@@ -1,60 +1,92 @@
 package gui.graphics.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import communication.Messages.JoinRoomMessage;
+import communication.Messages.TextMessage;
 import communication.OnlineMessageListener;
 import communication.OnlineMessageSender;
 import gui.app.Slay;
+import gui.utils.JoinButton;
+import gui.utils.Language;
 
-import static gui.graphics.screens.animations.Animations.slideFromRight;
-import static gui.graphics.screens.animations.Animations.slideToRight;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import static gui.graphics.screens.animations.Animations.*;
 
 public class OnlineMenuScreen extends SubMenuScreen{
 
+    private final Label.LabelStyle labelStyle;
+    private final Table table;
+    private final TextButton.TextButtonStyle textButtonStyle;
+    private Table scrollTable;
     private OnlineMessageSender messageSender;
     private OnlineMessageListener messageListener;
 
     private TextButton createRoom;
-    private TextButton joinRoom;
+    private TextButton refresh;
 
     public OnlineMenuScreen(Slay parent, Stage stage) {
-        super(parent, stage, "Online Rooms");
+        super(parent, stage, Language.bundle.get("onlineRooms"));
         this.messageSender = new OnlineMessageSender(parent.getUserSettings().getUsername());
         this.messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
         this.messageListener.start();
+        messageSender.send(new TextMessage("getWaitingRooms"));
 
-        TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button",TextButton.TextButtonStyle.class);
+        Image background = new Image(uiSkin.getDrawable("room-background"));
+        float width = background.getWidth();
+        float height = background.getHeight();
+        labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle.font = textFont;
+
+        textButtonStyle = uiSkin.get("checked",TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
-
-        createRoom = new TextButton("Create Game Room", textButtonStyle);
-        createRoom.setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+        createRoom = new TextButton(Language.bundle.get("createRoom"), textButtonStyle);
+        createRoom.setY(stage.getHeight() / 10 - 20);
         createRoom.addListener(new ClickListener() {
-           @Override
-           public void clicked(InputEvent event, float x, float y) {
-               parent.setScreen(new CreateRoomMenuScreen(parent, stage, messageSender, messageListener));
-//               messageSender.send(new CreateRoomMessage("g1_World1", true, new ArrayList<>()));
-           }
-        });
-        joinRoom = new TextButton("Join GameRoom", textButtonStyle);
-        joinRoom.setPosition(stage.getWidth() / 2, stage.getHeight() / 2 + createRoom.getHeight() + 50);
-        joinRoom.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Send Message JoinRoom");
-                messageSender.send(new JoinRoomMessage());
+                parent.setScreen(new CreateRoomMenuScreen(parent, stage, messageSender, messageListener));
             }
         });
+
+        refresh = new TextButton(Language.bundle.get("refresh"), textButtonStyle);
+        refresh.setY(createRoom.getY() + createRoom.getHeight() + 20);
+        refresh.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                messageSender.send(new TextMessage("getWaitingRooms"));
+            }
+        });
+
         stage.addActor(createRoom);
-        stage.addActor(joinRoom);
+        stage.addActor(refresh);
+        scrollTable = new Table();
+        ScrollPane scroller = new ScrollPane(scrollTable, uiSkin);
+        scroller.setScrollingDisabled(true, false);
+        scroller.setScrollbarsVisible(true);
+        scroller.setFadeScrollBars(false);
+        //TODO COMMENT
+        table = new Table(uiSkin);
+        table.setSize(width, height);
+        table.setBackground("room-background");
+        table.setY(100);
+        table.add(scroller).fillX().expand().align(Align.topLeft).padTop(3).padBottom(3);
+        stage.addActor(table);
+        Gdx.input.setInputProcessor(this.stage);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-
+        if(messageListener.needRefresh()) {
+            refreshList();
+        }
         if(messageListener.getPlayers().size() > 0) {
             parent.setScreen(new WaitingRoomScreen(parent, stage, messageSender, messageListener));
         }
@@ -63,15 +95,51 @@ public class OnlineMenuScreen extends SubMenuScreen{
     @Override
     public void show() {
         super.show();
-        createRoom.addAction(slideFromRight(createRoom, stage.getWidth() / 2, createRoom.getY()));
-        joinRoom.addAction(slideFromRight(joinRoom, stage.getWidth() / 2, joinRoom.getY()));
+        table.addAction(slideFromRight(table, 50, table.getY(), ANIMATION_DURATION / 4));
+        refresh.addAction(slideFromRight(refresh, stage.getWidth() - refresh.getWidth() - 20, refresh.getY(), ANIMATION_DURATION / 4));
+        createRoom.addAction(slideFromRight(createRoom, stage.getWidth() - createRoom.getWidth() - 20, createRoom.getY(), ANIMATION_DURATION / 4));
     }
 
     @Override
     public void hide() {
         super.hide();
+        table.addAction(slideToRight(table));
+        refresh.addAction(slideToRight(refresh));
         createRoom.addAction(slideToRight(createRoom));
-        joinRoom.addAction(slideToRight(joinRoom));
     }
 
+    @Override
+    public void dispose() {
+        messageSender.close();
+    }
+
+    private void refreshList() {
+        scrollTable.reset();
+        scrollTable.add(new Label(Language.bundle.get("roomName"), labelStyle)).expandX().pad(10).align(Align.topLeft);
+        scrollTable.add(new Label(Language.bundle.get("numberOfPlayers"), labelStyle)).pad(10).padRight(50).align(Align.center);
+        scrollTable.row();
+        addLine(scrollTable);
+        if(messageListener.getRoomNames() != null) {
+            ArrayList<String> roomNames = messageListener.getRoomNames();
+            ArrayList<Integer> nPlayer = messageListener.getnPlayer();
+            ArrayList<Integer> nPlayerIn = messageListener.getnPlayerIn();
+            ArrayList<UUID> ids = messageListener.getIds();
+            for (int i = 0; i < roomNames.size(); i++) {
+                scrollTable.add(new Label(roomNames.get(i), labelStyle)).pad(10).align(Align.left);
+                scrollTable.add(new Label(nPlayerIn.get(i) + "/" + nPlayer.get(i), labelStyle)).pad(10).align(Align.center);
+                if (!nPlayerIn.get(i).equals(nPlayer.get(i))) {
+                    JoinButton join = new JoinButton(Language.bundle.get("join"), textButtonStyle, ids.get(i));
+                    join.setChecked(true);
+                    join.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            messageSender.send(new JoinRoomMessage(join.getId()));
+                        }
+                    });
+                    scrollTable.add(join).maxWidth(200).pad(10).padRight(50).align(Align.right);
+                }
+                scrollTable.row();
+            }
+        }
+    }
 }

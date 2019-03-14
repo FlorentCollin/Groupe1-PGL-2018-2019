@@ -9,11 +9,13 @@ public class RoomUpdateMessage extends NetworkMessage {
     private ArrayList<Player> players;
     private ArrayList<Boolean> playersReady;
     private String mapName;
+    private String roomName;
 
-    public RoomUpdateMessage(ArrayList<Player> players, ArrayList<Boolean> playersReady, String mapName) {
+    public RoomUpdateMessage(ArrayList<Player> players, ArrayList<Boolean> playersReady, String mapName, String roomName) {
         this.players = players;
         this.playersReady = playersReady;
         this.mapName = mapName;
+        this.roomName = roomName;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -26,5 +28,9 @@ public class RoomUpdateMessage extends NetworkMessage {
 
     public String getMapName() {
         return mapName;
+    }
+
+    public String getRoomName() {
+        return roomName;
     }
 }

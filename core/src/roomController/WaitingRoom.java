@@ -6,6 +6,8 @@ import communication.Messages.RoomUpdateMessage;
 import communication.Messages.TextMessage;
 import gui.utils.Map;
 import logic.board.Board;
+import logic.player.Player;
+import logic.player.ai.AI;
 import logic.player.ai.strategy.RandomStrategy;
 import server.Client;
 
@@ -19,10 +21,12 @@ public class WaitingRoom extends Room {
 
     private final Board board;
     private final String mapName;
+    private final String roomName;
     private ArrayList<Boolean> clientsReady = new ArrayList<>();
 
     public WaitingRoom(CreateRoomMessage message, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messageToSend) {
         mapName = message.getWorldName();
+        roomName = message.getRoomName();
         Map map = new Map(mapName);
         board = map.loadBoard(message.isNaturalDisastersOn(), null);
         for (int i = 0; i < board.getPlayers().size(); i++) {
@@ -53,21 +57,26 @@ public class WaitingRoom extends Room {
     }
 
     private void executeMessage(Message message) {
-        try {
-            if (message instanceof TextMessage) {
-                if (((TextMessage) message).getMessage().equals("ready")) {
-                    int index = clients.indexOf(message.getClient());
-                    if (clientsReady.get(index))
-                        clientsReady.set(index, false);
-                    else
-                        clientsReady.set(index, true);
-                    RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName);
-                    roomUpdateMessage.setClients(clients);
-                    messagesToSend.put(roomUpdateMessage);
-                } else if(((TextMessage) message).getMessage().equals("close")) {
-                    running.set(false);
-                }
+        if (message instanceof TextMessage) {
+            if (((TextMessage) message).getMessage().equals("ready")) {
+                int index = clients.indexOf(message.getClient());
+                if (clientsReady.get(index))
+                    clientsReady.set(index, false);
+                else
+                    clientsReady.set(index, true);
+                sendUpdateMessage();
+            } else if (((TextMessage) message).getMessage().equals("close")) {
+                running.set(false);
             }
+        }
+
+    }
+
+    private void sendUpdateMessage() {
+        RoomUpdateMessage roomUpdateMessage = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
+        roomUpdateMessage.setClients(clients);
+        try {
+            messagesToSend.put(roomUpdateMessage);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -77,12 +86,21 @@ public class WaitingRoom extends Room {
         super.addClient(client);
         board.getPlayers().get(clients.size()-1).setName(client.getUsername());
         try {
-            RoomUpdateMessage message = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName);
+            RoomUpdateMessage message = new RoomUpdateMessage(board.getPlayers(), clientsReady, mapName, roomName);
             message.setClients(clients);
             messagesToSend.put(message);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean remove(Client client) {
+        int index = clients.indexOf(client);
+        if (index != -1)
+            board.getPlayers().get(index).setName(null);
+        sendUpdateMessage();
+        return super.remove(client);
     }
 
     public boolean isReady() {
@@ -97,8 +115,25 @@ public class WaitingRoom extends Room {
         return board;
     }
 
-    public String getMapName() {
-        return mapName;
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public int getMaxClients() {
+        return clientsReady.size();
+    }
+
+    public int getNumberOfClients() {
+        int i = clients.size();
+        for(Player player : board.getPlayers()) {
+            if(player instanceof AI)
+                i++;
+        }
+        return i;
+    }
+
+    public boolean isFull() {
+        return getNumberOfClients() == getMaxClients();
     }
 }
 

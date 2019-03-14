@@ -4,11 +4,13 @@ import communication.Messages.Message;
 import server.Client;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class Room extends Thread {
 
+    private UUID id = UUID.randomUUID();
     LinkedBlockingQueue<Message> messagesFrom;
     LinkedBlockingQueue<Message> messagesToSend;
     ArrayList<Client> clients = new ArrayList<>();
@@ -33,5 +35,13 @@ public abstract class Room extends Thread {
 
     public boolean isEmpty() {
         return clients.size() == 0;
+    }
+
+    public UUID getUUID() {
+        return id;
+    }
+
+    public boolean isFull() {
+        return true;
     }
 }

@@ -23,6 +23,9 @@ public class Shop {
 			selectedItem = item;
 		}
 	}
+	public void setSelectedItem(Item item) {
+	    selectedItem = item;
+    }
 	
 	public void removeSelection() {
 		selectedItem = null;

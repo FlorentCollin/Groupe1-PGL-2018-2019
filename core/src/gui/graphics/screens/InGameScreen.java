@@ -3,6 +3,7 @@ package gui.graphics.screens;
 
 import static gui.utils.Constants.N_TILES;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import communication.MessageSender;
 import communication.Messages.PlayMessage;
 import communication.Messages.ShopMessage;
 import communication.Messages.TextMessage;
+import communication.OnlineMessageSender;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -52,6 +54,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     private List<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
     private Hud hud;
+    private int playerNumber;
 
     private MessageListener messageListener;
     private MessageSender messageSender;
@@ -61,6 +64,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         super(parent);
         this.messageSender = messageSender;
         this.board = board;
+        playerNumber = -1;
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map(mapName);
@@ -101,12 +105,14 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {
         this(parent, mapName, board, messageSender);
         this.messageListener = messageListener;
+        this.playerNumber = messageListener.getPlayerNumber();
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         change();
+        checkInput();
         synchronized (board) {
             if (board.getSelectedCell() != null) {
                 selectCells(board.possibleMove(board.getSelectedCell()));
@@ -125,6 +131,25 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         hud.getViewport().apply();
         hud.act(delta);
         hud.draw();
+    }
+
+    private void checkInput() {
+        Integer[] values = parent.getUserShortcuts().getShortcut("Move camera up");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(0, 15);
+        }
+        values = parent.getUserShortcuts().getShortcut("Move camera down");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(0, -15);
+        }
+        values = parent.getUserShortcuts().getShortcut("Move camera right");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(15, 0);
+        }
+        values = parent.getUserShortcuts().getShortcut("Move camera left");
+        if(Gdx.input.isKeyPressed(values[0]) || Gdx.input.isKeyPressed(values[1])) {
+            camera.translate(-15, 0);
+        }
     }
 
     /**
@@ -202,7 +227,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         camera = new OrthographicCamera();
         fillViewport = new FillViewport(1280, 720, camera);
         fillViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.update();
         stage = new Stage(fillViewport);
     }
 
@@ -240,33 +264,26 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     }
 
     @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
-        messageListener.stopRunning();
+        if(messageSender instanceof OnlineMessageSender) {
+            messageListener.stopRunning();
+            ((OnlineMessageSender) messageSender).close();
+        }
         super.dispose();
     }
 
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.ENTER) {
+        if(parent.getUserShortcuts().isShortcut("End turn", keycode)) {
             messageSender.send(new TextMessage("nextPlayer"));
-        } else if(keycode == Input.Keys.ESCAPE) {
+        } else if(parent.getUserShortcuts().isShortcut("Menu", keycode)) {
             parent.changeScreen(MainMenuScreen.class);
+            dispose();
         }
         return true;
     }
@@ -322,11 +339,14 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     if (cell != null) {
                         // Ne s'applique que si la case appartient au joueur
                         // Ainsi il voit directement avec quelles cases il peut interagir
-                        if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
-                            hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
-                            cells.setOpacity(0.9f);
-                            selectCells(cell.getDistrict().getCells());
-                        } else {
+                        if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
+                            if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                                hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
+                                cells.setOpacity(0.9f);
+                                selectCells(cell.getDistrict().getCells());
+                            }
+                        }
+                        if(cell.getDistrict() == null) {
                             hud.getDistrictInfo().goldLabel.setText("");
                             cells.setOpacity(1f);
                             unselectCells();
@@ -359,18 +379,17 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     //TODO Reformater le code pour ne faire plus qu'une seule méthode
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
-        selectedCells = new ArrayList<>(cellsArray);
-        int numberPlayer;
-        for(Cell cell : selectedCells) {
-            // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
-            OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
-            // Récupération de la cellule dans la
-            TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
-            TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
-            // On change la tile (l'image) de la cellule à sélectionner.
-
-            tmxSelectedCell.setTile(map.getTileSetSelected().getTile(tmxCell.getTile().getId()+N_TILES));
-
+        if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
+            selectedCells = new ArrayList<>(cellsArray);
+            for (Cell cell : selectedCells) {
+                // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
+                OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
+                // Récupération de la cellule dans la
+                TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+                TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
+                // On change la tile (l'image) de la cellule à sélectionner.
+                tmxSelectedCell.setTile(map.getTileSetSelected().getTile(tmxCell.getTile().getId() + N_TILES));
+            }
         }
     }
 
@@ -396,22 +415,24 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         TiledMapTileLayer.Cell tmxCell;
         int playerId;
         TiledMapTile tile;
-        for(Cell cell : board.getModificatedCells()) {
-            playerId = 0;
-            if(cell.getDistrict() != null) {
-                playerId = cell.getDistrict().getPlayer().getId();
+        synchronized (board) {
+            for(Cell cell : board.getModificatedCells()) {
+                playerId = 0;
+                if(cell.getDistrict() != null) {
+                    playerId = cell.getDistrict().getPlayer().getId();
+                }
+	            if(cell instanceof WaterCell) {
+	            	tile = getTile(playerId, false);
+	            }
+	            else {
+	            	tile = getTile(playerId, true);
+	            }
+	            tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
+	            tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+	            tmxCell.setTile(tile);
             }
-            if(cell instanceof WaterCell) {
-            	tile = getTile(playerId, false);
-            }
-            else {
-            	tile = getTile(playerId, true);
-            }
-            tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
-            tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
-            tmxCell.setTile(tile);
+            board.getModificatedCells().clear();
         }
-        board.getModificatedCells().clear();
     }
 
     private OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {

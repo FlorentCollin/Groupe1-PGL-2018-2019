@@ -49,7 +49,8 @@ public class WaitingRoomScreen extends SubMenuScreen {
                 messageSender.send(new TextMessage("ready"));
             }
         });
-
+        textButtonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+        textButtonStyle.font = defaultFontItalic;
         launchGameButton = new TextButton(Language.bundle.get("launchGame"), textButtonStyle);
         launchGameButton.setY(stage.getHeight() / 10 - readyButton.getHeight() - 20);
         launchGameButton.addListener(new ClickListener() {
@@ -72,15 +73,22 @@ public class WaitingRoomScreen extends SubMenuScreen {
 
     @Override
     public void render(float delta) {
+        Label roomName =  menuNameGroup.findActor("name");
+        roomName.setText(messageListener.getRoomName());
         table.reset();
         table.left().top();
         table.add(new Label("Player's name", labelStyle)).expandX().pad(10).align(Align.topLeft);
         table.add(new Label("Ready", labelStyle)).pad(10).padRight(50).align(Align.topRight);
         table.row();
+        addLine(table);
         ArrayList<Player> players = messageListener.getPlayers();
         ArrayList<Boolean> playersReady = messageListener.getPlayersReady();
         for (int i = 0; i < players.size(); i++){
-            table.add(new Label(players.get(i).getName(), labelStyle)).pad(10).align(Align.left);
+            if(players.get(i).getName() == null) {
+                table.add(new Label(Language.bundle.get("waitingPlayer"), labelStyle)).pad(10).align(Align.left);
+            } else {
+                table.add(new Label(players.get(i).getName(), labelStyle)).pad(10).align(Align.left);
+            }
             if(playersReady.get(i)) {
                 table.add(new Label("V", labelStyle)).pad(10).padRight(50).align(Align.right);
             } else {

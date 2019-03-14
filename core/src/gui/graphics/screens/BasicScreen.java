@@ -77,7 +77,6 @@ public abstract class BasicScreen implements Screen {
 
     @Override
     public void dispose() {
-        generator.dispose();
         stage.dispose();
     }
 

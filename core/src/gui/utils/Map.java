@@ -21,6 +21,7 @@ import logic.player.Player;
 import logic.shop.Shop;
 
 import java.io.File;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ public class Map {
         }
     }
 
+    @SuppressWarnings(value = "unchecked")
     private void generateTmxMap(String mapName) {
         ServerTmxMapLoader tmxLoader = new ServerTmxMapLoader();
         onlineCells = tmxLoader.load(mapName);

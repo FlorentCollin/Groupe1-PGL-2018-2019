@@ -8,6 +8,7 @@ import roomController.RoomController;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -39,13 +40,17 @@ public class ServerListener extends Thread{
         gson = GsonInit.initGson();
         roomController = new RoomController(messageToSend);
         this.messageToSend = messageToSend;
-        serverChannel = ServerSocketChannel.open(); //Ouverture du serveur
+        serverChannel = ServerSocketChannel.open(); //Ouverture du socket
+        serverChannel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+        /* Le serveur n'est pas bloquant cela signifie qu'il ne va pas attendre qu'un client en particulier lui
+        * envoie des données. Il va au contraire regarder si un des clients lui a envoyé des données
+        * et si il y a des données dans le buffer du client alors il va s'occuper de les récupérer*/
         serverChannel.configureBlocking(false);
         serverChannel.bind(new InetSocketAddress(port)); //On lie le serveur au port donné en paramètre
 
         //Création du selector qui retiens les différents clients connectés
         selector = Selector.open();
-        //On associe le Selector au serveur, et on met le selector en mode accept
+        //On associe le Selector au serveur, et place le selector dans un mode où il peut accepter les connections des clients
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
     }
 
@@ -54,7 +59,8 @@ public class ServerListener extends Thread{
         Iterator<SelectionKey> keyIterator;
         while(serverChannel.isOpen()) { //Boucle infinie tant que le serveur est up
             try {
-                if(selector.select() != 0) { //Récupération des différentes clés qui ont envoyés un message au serveur
+                //Récupération des différentes clés qui ont envoyés un message au serveur (méthode bloquante)
+                if(selector.select() != 0) {
                     keyIterator = selector.selectedKeys().iterator();
                     while(keyIterator.hasNext()) {
                         SelectionKey key = keyIterator.next();
@@ -74,11 +80,11 @@ public class ServerListener extends Thread{
     }
 
     /**
-     * Méthode qui ajoute un client à la liste des clients du serveur
-     * @throws IOException
+     * Méthode qui ajoute un client à la liste des clients connectés
      */
     private void keyIsAcceptable() {
         try {
+            //Acceptation du client
             clientChannel = serverChannel.accept();
             clientChannel.configureBlocking(false);
             //On permet au client d'écrire
@@ -93,33 +99,38 @@ public class ServerListener extends Thread{
 
     /**
      * Méthode qui lit et envoie le message au roomController qui se charge de répartir le message
-     * @param key
-     * @throws IOException
+     * @param key la clé du client
      */
     private void keyIsReadable(SelectionKey key) {
         clientChannel = (SocketChannel) key.channel();
-        //TODO create a MessageControlCenter to manage et distribute message to server/room depending on the class's message
-        //Récupération du message dans le buffer du client.
         try {
+            //Récupération du message dans le buffer du client.
             String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
-//            System.out.println(messageStr);
-            if(!messageStr.endsWith("+")) {
+            //On définit la fin d'un message par le symbole "+"
+            if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
                 key.attach(messageStr);
             } else {
+                //Le message est terminé, et on retire le message attaché à la clé
                 key.attach(null);
+                //On supprime le symbole de fin (ie : "+")
                 messageStr = messageStr.substring(0, messageStr.length()-1);
+                //Désérialisation du message
                 Message message = Message.getMessage(messageStr, gson);
                 message.setClient(ServerInfo.clients.get(clientChannel));
                 if(message instanceof UsernameMessage) {
                     ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
                 } else {
+                    //Si le message n'est pas un message réservé au serveur alors on l'envoie au roomController
                     roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
                 }
             }
 
         } catch (IOException e) {
             System.out.println("Client connection lost");
+            //Vérifie si la room associé au client n'est pas vide :
+            //Si la room est vide alors elle est supprimée
             roomController.checkEmpty(key);
+            //Suppression du client de la liste des clients connectés et du selector
             key.cancel();
             ServerInfo.clients.remove(clientChannel);
         }

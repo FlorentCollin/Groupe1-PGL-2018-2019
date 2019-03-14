@@ -59,6 +59,12 @@ public class Slay extends Game {
 			if(mainMenuScreen == null) {
 				mainMenuScreen = new MainMenuScreen(this);
 			}
+			if(onlineMenuScreen != null) {
+				onlineMenuScreen.dispose();
+			}
+			if(createRoomMenuScreen != null) {
+				createRoomMenuScreen.dispose();
+			}
 			nextScreen = mainMenuScreen;
 		} else if(screen == SettingsMenuScreen.class) {
 			if(settingsMenuScreen == null) {
@@ -71,14 +77,10 @@ public class Slay extends Game {
             }
             nextScreen = shortcutsMenuScreen;
         } else if(screen == OnlineMenuScreen.class) {
-		    if(onlineMenuScreen == null) {
-		        onlineMenuScreen = new OnlineMenuScreen(this, mainMenuScreen.getStage());
-            }
+			onlineMenuScreen = new OnlineMenuScreen(this, mainMenuScreen.getStage());
             nextScreen = onlineMenuScreen;
         } else if(screen == CreateRoomMenuScreen.class) {
-            if(createRoomMenuScreen == null) {
-                createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage());
-            }
+			createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage());
             nextScreen = createRoomMenuScreen;
         }
 		this.setScreen(nextScreen);

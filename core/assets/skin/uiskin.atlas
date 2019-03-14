@@ -6,105 +6,133 @@ filter: Linear,Linear
 repeat: none
 arrow
   rotate: false
-  xy: 1453, 414
+  xy: 1453, 451
+  size: 75, 75
+  orig: 75, 75
+  offset: 0, 0
+  index: -1
+arrow-unover
+  rotate: false
+  xy: 1886, 933
   size: 75, 75
   orig: 75, 75
   offset: 0, 0
   index: -1
 cursor
   rotate: false
-  xy: 332, 57
+  xy: 1555, 820
   size: 4, 20
   orig: 4, 20
   offset: 0, 0
   index: -1
 default-button-checked
   rotate: false
-  xy: 1, 23
+  xy: 1002, 152
+  size: 329, 54
+  orig: 329, 54
+  offset: 0, 0
+  index: -1
+default-button-over
+  rotate: false
+  xy: 1555, 954
+  size: 329, 54
+  orig: 329, 54
+  offset: 0, 0
+  index: -1
+default-button-over-unchecked
+  rotate: false
+  xy: 1555, 898
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-uncheck
   rotate: false
-  xy: 671, 115
+  xy: 671, 152
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-scroll
   rotate: false
-  xy: 1886, 951
+  xy: 332, 94
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
   index: -1
 info-background
   rotate: false
-  xy: 1, 89
+  xy: 1, 126
   size: 668, 80
   orig: 668, 80
   offset: 0, 0
   index: -1
+line
+  rotate: false
+  xy: 456, 119
+  size: 5, 5
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
 room-background
   rotate: false
-  xy: 1, 171
+  xy: 1, 208
   size: 1450, 800
   orig: 1450, 800
   offset: 0, 0
   index: -1
 scroll-knob
   rotate: false
-  xy: 1, 1
+  xy: 1333, 186
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
   index: -1
 selectBox
   rotate: false
-  xy: 1555, 861
+  xy: 1555, 842
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-background
   rotate: false
-  xy: 1555, 917
+  xy: 1, 60
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-selection
   rotate: false
-  xy: 1002, 115
+  xy: 1, 4
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selection
   rotate: false
-  xy: 456, 86
+  xy: 1, 1
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 shop-background
   rotate: false
-  xy: 1453, 491
+  xy: 1453, 528
   size: 100, 480
   orig: 100, 480
   offset: 0, 0
   index: -1
 slider
   rotate: false
-  xy: 1, 79
+  xy: 1, 116
   size: 453, 8
   orig: 453, 8
   offset: 0, 0
   index: -1
 slider-button
   rotate: false
-  xy: 671, 89
+  xy: 671, 126
   size: 24, 24
   orig: 24, 24
   offset: 0, 0

@@ -28,7 +28,6 @@ public class GameRoom extends Room {
         board = map.loadBoard(naturalDisasters, playersName);
         this.messagesFrom = messagesFrom;
         for (int i = 0; i < aiStrats.size(); i++) {
-            System.out.println(aiStrats.get(i));
             Strategy strat = null;
             switch (aiStrats.get(i)) {
                 case "Random":
@@ -74,17 +73,15 @@ public class GameRoom extends Room {
                         //Si le board à changé alors il faut notifier les clients des changements.
                         if (board.hasChanged()) {
                             GameUpdateMessage updateMessage;
-                            System.out.println(board.getShop().getSelectedItem());
                             if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
                                 Cell selectedCell = board.getSelectedCell();
-                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop(), board.getPlayers(),
+                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(),
                                         board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
                             } else { //Création d'un GameUpdateMessage sans selectedCell
-                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop(),
+                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(),
                                         board.getPlayers(), board.getActivePlayerNumber());
                             }
                             updateMessage.setClients(clients); //Ajout des clients au message
-                            System.out.println("Game Room - Sending Update Message");
                             messagesToSend.put(updateMessage); //Envoie du message
                         }
                     }
@@ -100,12 +97,12 @@ public class GameRoom extends Room {
      * Méthode qui va exécuter un message d'un client
      * @param message Le message à exécuter
      */
-    private void executeMessage(Message message) {
+    private void executeMessage(Message message) { //TODO REFACTOR
         if(message instanceof PlayMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        } else if(message instanceof ShopMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber() || message.getClient() == null)) {
+        } else if(message instanceof ShopMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
             Item item = ((ShopMessage) message).getItem();
             //On refixe le type qui n'a pas survécu au transfert
             //Ce qui permet de renvoyer l'item au client par la suite
@@ -113,7 +110,7 @@ public class GameRoom extends Room {
             board.setShopItem(item);
         } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
-            if(textMessage.getMessage().equals("nextPlayer")) {
+            if(textMessage.getMessage().equals("nextPlayer") && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
                 board.nextPlayer();
             }
             else if(textMessage.getMessage().equals("close")) {

@@ -7,6 +7,8 @@ import server.ServerSender;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static gui.utils.Constants.PORT;
+
 /**
  * Classe qui démarre les différents threads liés au serveur
  */

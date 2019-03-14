@@ -97,6 +97,7 @@ public class Board{
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
 		ai.setId(players.get(nPlayer).getId());
+		ai.setName("AI#" + nPlayer);
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(nPlayer)) {
 				ai.addDistrict(district);
@@ -419,8 +420,8 @@ public class Board{
 		checkWinner();
 		setSelectedCell(null);
 		shop.removeSelection();
+		activePlayer = (activePlayer + 1)%(players.size());
 		if(winner == null) {
-			activePlayer = (activePlayer + 1)%(players.size());
 			generateTree();
 			for(District district : districts) {
 				if(district.getPlayer() == getActivePlayer()) {
@@ -790,9 +791,9 @@ public class Board{
 		return ret;
 	}
 
-	public void updateBoard(ArrayList<District> districts, Shop shop, ArrayList<Player> players, int activePlayer) {
+	public void updateBoard(ArrayList<District> districts, Item shopItem, ArrayList<Player> players, int activePlayer) {
 		this.districts = districts;
-		this.shop = shop;
+		this.shop.setSelectedItem(shopItem);
 		this.players = players;
 		this.activePlayer = activePlayer;
 		for (District district : districts) {
