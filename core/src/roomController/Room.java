@@ -1,6 +1,8 @@
 package roomController;
 
 import communication.Messages.Message;
+import logic.board.Board;
+import logic.player.ai.strategy.*;
 import server.Client;
 
 import java.util.ArrayList;
@@ -17,6 +19,27 @@ public abstract class Room extends Thread {
     AtomicBoolean running = new AtomicBoolean(false);
 
     Room() {}
+
+    protected void changeToAI(Board board, ArrayList<String> aiStrats) {
+        for (int i = 0; i < aiStrats.size(); i++) {
+            Strategy strat = null;
+            switch (aiStrats.get(i)) {
+                case "Random":
+                    strat = new RandomStrategy();
+                    break;
+                case "Easy":
+                    strat = new AttackStrategy();
+                    break;
+                case "Medium":
+                    strat = new DefenseStrategy();
+                    break;
+                case "Hard":
+                    strat = new AdaptativeStrategy();
+                    break;
+            }
+            board.changeToAI(board.getPlayers().size() - i - 1, strat);
+        }
+    }
 
     public void addClient(Client client) {
         clients.add(client);
