@@ -1,4 +1,4 @@
 package logic.naturalDisasters;
 
-public class Blizzard {
+public class Blizzard extends NaturalDisasters{
 }

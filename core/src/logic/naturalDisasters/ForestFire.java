@@ -1,4 +1,4 @@
 package logic.naturalDisasters;
 
-public class ForestFire {
+public class ForestFire extends NaturalDisasters{
 }
