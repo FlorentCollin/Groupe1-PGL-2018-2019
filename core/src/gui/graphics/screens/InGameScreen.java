@@ -34,6 +34,7 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
@@ -131,15 +132,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
      * @param id l'id du joueur
      * @return la tile correspondante
      */
-    private TiledMapTile getTile(int id) {
+    private TiledMapTile getTile(int id, boolean available) {
+    	System.out.println("InGameScreen - "+id+" "+available);
         TiledMapTile tile = null;
         for(int i = 0; i < map.getTileSet().size(); i++) {
             tile = map.getTileSet().getTile(i);
-            if(tile != null && (int)tile.getProperties().get("player") == id && (boolean)tile.getProperties().get("available")) {
+            if(tile != null && (int)tile.getProperties().get("player") == id && (boolean)tile.getProperties().get("available") == available) {
                 return tile;
             }
         }
-        return null;
+        return map.getTileSet().getTile(5); //Parce que sinon ça ne veut pas prendre la cellule bleue :'(
     }
 
     @Override
@@ -399,7 +401,12 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             if(cell.getDistrict() != null) {
                 playerId = cell.getDistrict().getPlayer().getId();
             }
-            tile = getTile(playerId);
+            if(cell instanceof WaterCell) {
+            	tile = getTile(playerId, false);
+            }
+            else {
+            	tile = getTile(playerId, true);
+            }
             tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
             tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
             tmxCell.setTile(tile);
