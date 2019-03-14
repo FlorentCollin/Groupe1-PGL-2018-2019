@@ -114,9 +114,9 @@ public class ServerListener extends Thread{
                 len = split.length-1;
             } else {
                 len = split.length;
+                key.attach(null);
             }
             for(int i = 0; i < len; i++) { //Itération sur l'ensemble des messages reçus et complet
-                System.out.println(i + " : " + split[i]);
                 //Désérialisation du message
                 Message message = Message.getMessage(split[i], gson);
                 message.setClient(ServerInfo.clients.get(clientChannel));
