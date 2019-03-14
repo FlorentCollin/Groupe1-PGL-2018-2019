@@ -110,9 +110,15 @@ public class ServerListener extends Thread{
             if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
                 key.attach(messageStr);
             } else {
-                //Le message est terminé, et on retire le message attaché à la clé
-                key.attach(null);
                 //On supprime le symbole de fin (ie : "+")
+                String[] split = messageStr.split("\\+");
+                if(split.length >= 2) {
+                    //Un deuxième message à déjà été lu
+                    key.attach(split[1]);
+                } else {
+                    //Le message est terminé, et on retire le message attaché à la clé
+                    key.attach(null);
+                }
                 messageStr = messageStr.substring(0, messageStr.length()-1);
                 //Désérialisation du message
                 Message message = Message.getMessage(messageStr, gson);
