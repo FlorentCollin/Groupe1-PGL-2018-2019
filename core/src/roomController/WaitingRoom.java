@@ -24,7 +24,7 @@ public class WaitingRoom extends Room {
     private final String roomName;
     private ArrayList<Boolean> clientsReady = new ArrayList<>();
 
-    private WaitingRoom(CreateRoomMessage message, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messageToSend) {
+    public WaitingRoom(CreateRoomMessage message, LinkedBlockingQueue<Message> messagesFrom, LinkedBlockingQueue<Message> messageToSend) {
         mapName = message.getWorldName();
         roomName = message.getRoomName();
         Map map = new Map(mapName);
