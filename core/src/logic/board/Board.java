@@ -2,7 +2,6 @@ package logic.board;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import logic.board.cell.Cell;
@@ -12,6 +11,8 @@ import logic.item.Capital;
 import logic.item.DestroyableItem;
 import logic.item.Item;
 import logic.item.Tree;
+import logic.myList.MyList;
+import logic.naturalDisasters.ForestFire;
 import logic.naturalDisasters.LandErosion;
 import logic.naturalDisasters.NaturalDisasters;
 import logic.naturalDisasters.NaturalDisastersController;
@@ -44,6 +45,7 @@ public class Board{
 	private ArrayList<Cell> treeCells;
 	private ArrayList<Cell> modificatedCells;
 	private HashMap<Player, ArrayList<Cell>> erodedCells;
+	private MyList disasters;
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
@@ -59,6 +61,7 @@ public class Board{
 		modificatedCells = new ArrayList<>();
 		erodedCells = new HashMap<>();
 		generateHashMap();
+		disasters = new MyList();
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -75,6 +78,7 @@ public class Board{
 		erodedCells = new HashMap<>();
 		naturalDisastersController = new NaturalDisastersController(this);
 		generateHashMap();
+		disasters = new MyList();
 	}
 	
 	private void generateHashMap() {
@@ -115,6 +119,11 @@ public class Board{
 	public void changeToWaterCell(int i, int j) {
 		board[i][j] = new WaterCell(i,j);
 		waterCells.add(board[i][j]);
+	}
+	
+	public void changeToLandCell(int i, int j) {
+		waterCells.remove(board[i][j]);
+		board[i][j] = new WaterCell(i, j);
 	}
 
 	public void setShopItem(Item item) {
@@ -372,7 +381,7 @@ public class Board{
 	 * @return true si c'est possible
 	 * 			false sinon
 	 * */
-	private boolean canGoOn(Cell cell, Item item) {
+	public boolean canGoOn(Cell cell, Item item) {
 		Item cellItem = cell.getItem();
 		// Si il n'y a aucun item il est toujours possible de se placer sur la case
 		if(cellItem == null) {
@@ -414,8 +423,9 @@ public class Board{
 	 */
 	public void nextPlayer() {
 		hasChanged = true;
-		wasALand();
-		isHappening();
+		if(naturalDisastersController != null) {
+			naturalDisastersController.isHappening();
+		}
 		checkDistricts();
 		checkWinner();
 		setSelectedCell(null);
@@ -822,55 +832,11 @@ public class Board{
 		return winner;
 	}
 	
-	private void isHappening() {
-		ArrayList<Cell> modificatedCells;
-		for(NaturalDisasters nd : naturalDisastersController.isHappening()) {
-			modificatedCells = nd.getAffectedCells();
-			if(nd instanceof LandErosion) {
-				erosion(modificatedCells);
-			}
-		}
-	}
-	
-	private void erosion(ArrayList<Cell> erodedCells) {
-		ArrayList<Cell> eroded = new ArrayList<>();
-		for(Cell cell : erodedCells) {
-			if(cell.getDistrict() != null) {
-				cell.getDistrict().removeCell(cell);
-			}
-			if(cell.getItem() != null) {				
-				if(cell.getItem() instanceof Capital) {
-					cell.getDistrict().removeCapital();
-				}
-				else if(cell.getItem().isMovable()) {
-					for(Cell c : getNeighbors(cell)) {
-						if(canGoOn(c, cell.getItem())) {
-							c.setDistrict(cell.getDistrict());
-							c.setItem(cell.getItem());
-							break;
-						}
-					}
-				}
-			}
-			cell.removeDistrict();
-			cell.removeItem();
-			board[cell.getX()][cell.getY()] = new WaterCell(cell.getX(), cell.getY());
-			eroded.add(cell);
-			modificatedCells.add(getCell(cell.getX(), cell.getY()));
-		}
-		this.erodedCells.replace(players.get(activePlayer), eroded);
-	}
-	
-	private void wasALand() {
-		ArrayList<Cell> cells = erodedCells.get(players.get(activePlayer));
-		for(Cell cell : cells) {
-			board[cell.getX()][cell.getY()] = new LandCell(cell.getX(), cell.getY());
-			modificatedCells.add(cell);
-		}
-		cells.clear();
-	}
-	
 	public void addTree(int i, int j) {
 		treeCells.add(board[i][j]);
+	}
+	
+	public ArrayList<Cell> getTreeCells(){
+		return treeCells;
 	}
 }

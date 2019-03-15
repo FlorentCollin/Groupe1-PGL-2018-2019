@@ -1,18 +1,24 @@
 package logic.naturalDisasters;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import logic.board.Board;
 import logic.board.cell.Cell;
 
 public abstract class NaturalDisasters {
 	private int proba;
 	private int	numberOfEffectedCells;
 	private int duration;
+	protected Random rand = new Random();
+	protected Board board;
 	
 	protected ArrayList<Cell> affectedCells;
 	
-	public NaturalDisasters() {
+	public NaturalDisasters(Board board) {
 		affectedCells = new ArrayList<>();
+		this.board = board;
+		duration = 1;
 	}
 
 	public int getProba() {

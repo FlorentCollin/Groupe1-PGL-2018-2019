@@ -17,26 +17,21 @@ public class NaturalDisastersController {
 	public NaturalDisastersController(Board board) {
 		enableDisasters = new ArrayList<>();
 		naturalDisasters = new ArrayList<>();
-		blizzard = new Blizzard();
+		blizzard = new Blizzard(board);
 		naturalDisasters.add(blizzard);
-		drought = new Drought();
+		drought = new Drought(board);
 		naturalDisasters.add(drought);
-		forestFire = new ForestFire();
+		forestFire = new ForestFire(board);
 		naturalDisasters.add(forestFire);
 		landErosion = new LandErosion(board);
 		naturalDisasters.add(landErosion);
-		tsunami = new Tsunami();
+		tsunami = new Tsunami(board);
 		naturalDisasters.add(tsunami);
-		volcanicEruption = new VolcanicEruption();
+		volcanicEruption = new VolcanicEruption(board);
 		naturalDisasters.add(volcanicEruption);
 	}
 	
-	public ArrayList<NaturalDisasters> isHappening(){
-		happen();
-		return enableDisasters;
-	}
-	
-	private void happen() {
+	public void isHappening() {
 		for(NaturalDisasters nd : naturalDisasters) {
 			nd.play();
 			if(nd.getAffectedCells().size() > 0) {
