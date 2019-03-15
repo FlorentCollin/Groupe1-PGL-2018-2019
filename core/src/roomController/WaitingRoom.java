@@ -32,11 +32,8 @@ public class WaitingRoom extends Room {
         changeToAI(board, message.getAiStrats());
         //Création d'une liste qui indique si le joueur est prêt à lancer la partie ou non
         for (int i = 0; i < board.getPlayers().size(); i++) {
-            if(board.getPlayers().get(i) instanceof AI)
-                clientsReady.add(i, true); //Les AI sont toujours prêtes
-            else
-                clientsReady.add(i, false);
-
+            //Les AI sont toujours prêtes et les joueurs ne le sont pas au début de la Waiting Room
+            clientsReady.add(i, board.getPlayers().get(i) instanceof AI);
         }
         this.messagesFrom = messagesFrom;
         this.messagesToSend = messageToSend;
@@ -65,10 +62,7 @@ public class WaitingRoom extends Room {
         if (message instanceof TextMessage) {
             if (((TextMessage) message).getMessage().equals("ready")) {
                 int index = clients.indexOf(message.getClient());
-                if (clientsReady.get(index))
-                    clientsReady.set(index, false);
-                else
-                    clientsReady.set(index, true);
+                clientsReady.set(index, !clientsReady.get(index));
                 sendUpdateMessage();
             } else if (((TextMessage) message).getMessage().equals("close")) {
                 running.set(false);

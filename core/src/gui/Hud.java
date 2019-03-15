@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import gui.graphics.screens.BasicScreen;
 import gui.graphics.screens.animations.RectangleActor;
 import gui.utils.Constants;
@@ -38,6 +40,12 @@ public class Hud extends Stage {
         districtInfo = new DistrictInfo();
         districtInfo.addActorsToStage(this);
         shop.addActorsToStage(this);
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    }
+
+    public void resize(int width, int height) {
+        this.getViewport().update(width, height, true);
+        this.getBatch().setProjectionMatrix(this.getCamera().combined);
     }
 
     public Shop getShop() {
@@ -57,6 +65,10 @@ public class Hud extends Stage {
         public final Image soldierLvl2;
         public final Image soldierLvl3;
         public final Image soldierLvl4;
+        private final Label soldierLvl1Price;
+        private final Label soldierLvl2Price;
+        private final Label soldierLvl3Price;
+        private final Label soldierLvl4Price;
         private float width, height;
 
         public Shop() { //TODO Refactor for more soldier or others items
@@ -72,10 +84,10 @@ public class Hud extends Stage {
             }
             Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
             labelStyle.font = parent.getTextFont();
-            Label soldierLvl1Price = new Label(Integer.toString(SoldierLevel.level1.getPrice()), labelStyle);
-            Label soldierLvl2Price = new Label(Integer.toString(SoldierLevel.level2.getPrice()), labelStyle);
-            Label soldierLvl3Price = new Label(Integer.toString(SoldierLevel.level3.getPrice()), labelStyle);
-            Label soldierLvl4Price = new Label(Integer.toString(SoldierLevel.level4.getPrice()), labelStyle);
+            soldierLvl1Price = new Label(Integer.toString(SoldierLevel.level1.getPrice()), labelStyle);
+            soldierLvl2Price = new Label(Integer.toString(SoldierLevel.level2.getPrice()), labelStyle);
+            soldierLvl3Price = new Label(Integer.toString(SoldierLevel.level3.getPrice()), labelStyle);
+            soldierLvl4Price = new Label(Integer.toString(SoldierLevel.level4.getPrice()), labelStyle);
             //Création des objets accessibles dans le shop
             soldierLvl1 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl1_big")));
             soldierLvl2 = new Image(new Sprite(itemSkin.createSprite("Soldier_lvl2_big")));
