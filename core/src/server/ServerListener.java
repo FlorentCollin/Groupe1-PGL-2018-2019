@@ -111,7 +111,7 @@ public class ServerListener extends Thread{
             //On définit la fin d'un message par le symbole "+"
             if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
                 key.attach(split[split.length-1]);
-                len = split.length-1;
+                len = split.length > 0 ? split.length-1 : 0;
             } else {
                 len = split.length;
                 key.attach(null);
