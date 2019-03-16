@@ -77,7 +77,7 @@ public abstract class Message {
         }
         int bufferSize = 100; //Arbitraire
         ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-        int len = 1;
+        int len;
         do {
             len = clientChannel.read(buffer);
             if(len == 0)
@@ -100,6 +100,7 @@ public abstract class Message {
         //On définit la fin d'un message par le symbole "+"
         if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
             key.attach(split[split.length-1]);
+            //Note: on met le len à 0 si le split renvoie une liste vide
             len = split.length > 0 ? split.length-1 : 0;
         } else {
             len = split.length;
