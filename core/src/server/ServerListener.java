@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import communication.Messages.Message;
 import communication.Messages.UsernameMessage;
 import gui.utils.GsonInit;
+import org.pmw.tinylog.Logger;
 import roomController.RoomController;
 
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class ServerListener extends Thread{
             clientChannel.register(selector, SelectionKey.OP_READ);
             Client client = new Client(clientChannel);
             ServerInfo.clients.put(clientChannel, client);
-            System.out.println("Number of player : " + ServerInfo.clients.size());
+            Logger.info(String.format("Number of player %d", ServerInfo.clients.size()));
         } catch (IOException e) {
             e.printStackTrace(); //TODO
         }
@@ -128,7 +129,7 @@ public class ServerListener extends Thread{
                 }
             }
         } catch (IOException e) {
-            System.out.println("Client connection lost");
+            Logger.info("Client connection lost");
             //Vérifie si la room associé au client n'est pas vide :
             //Si la room est vide alors elle est supprimée
             roomController.checkEmpty(key);

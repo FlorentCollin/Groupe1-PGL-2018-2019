@@ -8,3 +8,5 @@ out
 core/assets/settings/userShortcuts.json
 core/assets/settings/userSettings.json
 .gradle/4.6/fileHashes/fileHashes.lock
+
+core/assets/settings/log\.txt
