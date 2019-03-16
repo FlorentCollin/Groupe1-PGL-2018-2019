@@ -173,4 +173,8 @@ public class RoomController {
             e.printStackTrace();
         }
     }
+
+    public int numberRooms() {
+        return rooms.size();
+    }
 }

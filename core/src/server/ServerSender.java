@@ -3,38 +3,45 @@ package server;
 import com.google.gson.Gson;
 import communication.Messages.Message;
 import communication.Messages.NetworkMessage;
+import communication.Messages.TextMessage;
 import gui.utils.GsonInit;
+import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Thread qui se charge d'envoyer les messages du serveur/room aux différents clients
  */
 public class ServerSender extends Thread {
     private LinkedBlockingQueue<Message> messageToSend;
+    private ServerSocketChannel serverChannel;
     private Selector selector;
     private Gson gson;
+    private AtomicBoolean running = new AtomicBoolean(true);
 
-    public ServerSender(Selector selector, LinkedBlockingQueue<Message> messageToSend) {
+    public ServerSender(ServerSocketChannel serverChannel, Selector selector, LinkedBlockingQueue<Message> messageToSend) {
         //Lien vers la pile des messages à envoyer, c'est sur cette pile que les rooms doivent envoyer leurs messages
         this.messageToSend = messageToSend;
+        this.serverChannel = serverChannel;
         this.selector = selector;
         gson = new Gson();
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (running.get()) {
             try {
                 //Récupération du message dans la file d'attente
                 Message message = messageToSend.take(); //Remarque cette méthode est bloquante
                 //Si le message est un message qui peut être envoyé à des clients
-                if (message instanceof NetworkMessage) {
+                if (serverChannel.isOpen()  && selector.isOpen() && message instanceof NetworkMessage) {
                     NetworkMessage networkMessage = (NetworkMessage) message;
                     for (Client client : networkMessage.getClients()) { //Envoie du message à tous les clients
                         SocketChannel clientChannel = client.getSocketChannel();
@@ -50,10 +57,21 @@ public class ServerSender extends Thread {
                             }
                         }
                     }
+                } else if(message instanceof TextMessage && ((TextMessage) message).getMessage().equals("close")) {
+                    running.set(false);
                 }
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace(); //TODO
             }
+        }
+        Logger.info("ServerSender is close");
+    }
+
+    public void stopRunning() {
+        try {
+            messageToSend.put(new TextMessage("close"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

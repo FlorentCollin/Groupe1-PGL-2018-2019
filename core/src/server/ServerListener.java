@@ -78,6 +78,7 @@ public class ServerListener extends Thread{
             }
 
         }
+        Logger.info("ServerListener is close");
     }
 
     /**
@@ -139,7 +140,15 @@ public class ServerListener extends Thread{
         }
     }
 
+    public ServerSocketChannel getServerChannel() {
+        return serverChannel;
+    }
+
     public Selector getSelector() {
         return selector;
+    }
+
+    public RoomController getRoomController() {
+        return roomController;
     }
 }

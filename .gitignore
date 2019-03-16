@@ -10,3 +10,5 @@ core/assets/settings/userSettings.json
 .gradle/4.6/fileHashes/fileHashes.lock
 
 core/assets/settings/log\.txt
+
+core/assets/settings/server_log\.txt
