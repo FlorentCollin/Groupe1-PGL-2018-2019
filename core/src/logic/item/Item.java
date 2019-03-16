@@ -22,7 +22,7 @@ public abstract class Item {
 	
 	public boolean isStronger(Item item) {
 		if(this.isImprovable() && item.isImprovable()) {
-			return this.level.compareTo(item) > 0;
+			return this.level.compareTo(item) >= 0;
 		}
 		return false;
 	}
