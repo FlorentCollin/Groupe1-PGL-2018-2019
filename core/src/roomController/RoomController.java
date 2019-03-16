@@ -175,6 +175,11 @@ public class RoomController {
     }
 
     public int numberRooms() {
-        return rooms.size();
+        ArrayList<Room> temp = new ArrayList<>();
+        for (Room room : rooms.values()) {
+            if(temp.indexOf(room) == -1)
+                temp.add(room);
+        }
+        return temp.size();
     }
 }

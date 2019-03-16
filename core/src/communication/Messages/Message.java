@@ -6,8 +6,10 @@ import server.Client;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * Classe qui représente un message, cette classe est utilisé par l'ensemble des threads pour communiquer entre eux
@@ -88,6 +90,27 @@ public abstract class Message {
             }
         } while(len > 0);
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
+    }
+
+    public static ArrayList<Message> readFromKey(SelectionKey key, Gson gson) throws IOException {
+        SocketChannel channel = (SocketChannel) key.channel();
+        String messageStr = Message.getStringFromBuffer(channel, (String) key.attachment());
+        String[] split = messageStr.split("\\+");
+        int len;
+        //On définit la fin d'un message par le symbole "+"
+        if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
+            key.attach(split[split.length-1]);
+            len = split.length > 0 ? split.length-1 : 0;
+        } else {
+            len = split.length;
+            key.attach(null);
+        }
+        ArrayList<Message> messages = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            messages.add(getMessage(split[i], gson));
+        }
+        return messages;
+
     }
 
 

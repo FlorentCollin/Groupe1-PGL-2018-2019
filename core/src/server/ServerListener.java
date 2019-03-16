@@ -14,6 +14,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -106,21 +107,8 @@ public class ServerListener extends Thread{
     private void keyIsReadable(SelectionKey key) {
         clientChannel = (SocketChannel) key.channel();
         try {
-            //Récupération du message dans le buffer du client.
-            String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
-            String[] split = messageStr.split("\\+");
-            int len;
-            //On définit la fin d'un message par le symbole "+"
-            if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
-                key.attach(split[split.length-1]);
-                len = split.length > 0 ? split.length-1 : 0;
-            } else {
-                len = split.length;
-                key.attach(null);
-            }
-            for(int i = 0; i < len; i++) { //Itération sur l'ensemble des messages reçus et complet
-                //Désérialisation du message
-                Message message = Message.getMessage(split[i], gson);
+            ArrayList<Message> messages = Message.readFromKey(key, gson);
+            for(Message message : messages) { //Itération sur l'ensemble des messages reçus et complet
                 message.setClient(ServerInfo.clients.get(clientChannel));
                 if (message instanceof UsernameMessage) {
                     ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
