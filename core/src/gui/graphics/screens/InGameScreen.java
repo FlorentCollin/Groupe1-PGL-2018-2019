@@ -157,10 +157,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
      * @return la tile correspondante
      */
     private TiledMapTile getTile(int id) {
-        TiledMapTile tile = null;
         for(int i = 0; i < map.getTileSet().size(); i++) {
-            tile = map.getTileSet().getTile(i);
-            if(tile != null && (int)tile.getProperties().get("player") == id && (boolean)tile.getProperties().get("available")) {
+            TiledMapTile tile = map.getTileSet().getTile(i+1); //Le i+1 vient du first gid de tiled
+            if((int)tile.getProperties().get("player") == id && (boolean)tile.getProperties().get("available")) {
                 return tile;
             }
         }
@@ -170,8 +169,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        hud.getViewport().update(width, height, true);
-        hud.getBatch().setProjectionMatrix(hud.getCamera().combined);
+        hud.resize(width, height);
 
     }
 
@@ -386,7 +384,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                 TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
                 // On change la tile (l'image) de la cellule à sélectionner.
-                tmxSelectedCell.setTile(map.getTileSetSelected().getTile(tmxCell.getTile().getId() + N_TILES));
+                tmxSelectedCell.setTile(getSelectedTile(tmxCell.getTile()));
             }
         }
     }
@@ -403,6 +401,15 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             tmxSelectedCell.setTile(null);
         }
         selectedCells = new ArrayList<>();
+    }
+
+    private TiledMapTile getSelectedTile(TiledMapTile tile) {
+        for (TiledMapTile selectedTile : map.getTileSetSelected()) {
+            if((int) selectedTile.getProperties().get("player") == (int) tile.getProperties().get("player")) {
+                return selectedTile;
+            }
+        }
+        return null;
     }
 
     /**
