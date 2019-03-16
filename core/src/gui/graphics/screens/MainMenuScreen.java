@@ -1,5 +1,6 @@
 package gui.graphics.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -17,6 +18,9 @@ import gui.utils.Language;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
 
+/**
+ * Menu principal du jeu, ce menu est lancé automatiquement au lancement du jeu
+ */
 public class MainMenuScreen extends MenuScreen {
     private VerticalGroup bouttonsGroup;
     private Group slayLogo;
@@ -33,7 +37,7 @@ public class MainMenuScreen extends MenuScreen {
     public MainMenuScreen(Slay parent) {
         super(parent);
 
-        //Création des différents bouttons disponibles pour l'utilisateur dans le menu principal
+        //Création des différents boutons disponibles pour l'utilisateur dans le menu principal
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontTitle;
         playOfflineButton = new TextButton(Language.bundle.get("playOffline"), textButtonStyle);
@@ -41,7 +45,7 @@ public class MainMenuScreen extends MenuScreen {
         shorcutsButton = new TextButton(Language.bundle.get("shortcuts"), textButtonStyle);
         settingsButton = new TextButton(Language.bundle.get("settings"), textButtonStyle);
         exitButton = new TextButton(Language.bundle.get("exit"), textButtonStyle);
-        //Ajout des bouttons dans un group
+        //Ajout des boutons dans un group
         bouttonsGroup = new VerticalGroup();
         bouttonsGroup.space(20);
         bouttonsGroup.center();
@@ -54,16 +58,15 @@ public class MainMenuScreen extends MenuScreen {
 
         stage.addActor(bouttonsGroup);
 
-        //Création du rectangle qui apparait en dessous des bouttons lors que
-        // la souris de l'utilisateur se trouve sur un boutton
+        //Création du rectangle qui apparaît en dessous des boutons lors que
+        //la souris de l'utilisateur se trouve sur un bouton
         underlineActor = new RectangleActor();
         underlineActor.setSize(0, 10 * Constants.getRatioY(stage.getHeight()));
         underlineActor.setColor(Color.WHITE);
         stage.addActor(underlineActor);
 
-        //Création du logo Slay qui apparait en haut dans le menu principal
+        //Création du logo Slay qui apparaît en haut dans le menu principal
         slayLogo = new Group();
-
         textButtonStyle = uiSkin.get("logo", TextButton.TextButtonStyle.class);
         textButtonStyle.font = logoFont;
         whiteSlay = new TextButton("SLAY", textButtonStyle);
@@ -79,7 +82,7 @@ public class MainMenuScreen extends MenuScreen {
 
         stage.addActor(slayLogo);
 
-        //Ajout des animations de soulignage du boutton sélectionné
+        //Ajout des animations de soulignage du bouton sélectionné
         //Ainsi que des différents listeners pour changer de menu ou quitter le jeu
         playOfflineButton.addListener(this.underlineAnimation(playOfflineButton));
         playOfflineButton.addListener(new ClickListener() {
@@ -128,6 +131,7 @@ public class MainMenuScreen extends MenuScreen {
         //Animation d'entrée
         bouttonsGroup.addAction(slideFromLeft(bouttonsGroup, stage.getWidth() / 2, bouttonsGroup.getY()));
         slayLogo.addAction(slideFromLeft(slayLogo, stage.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY()));
+        Gdx.input.setInputProcessor(stage);
     }
     @Override
     public void pause() {
@@ -146,14 +150,10 @@ public class MainMenuScreen extends MenuScreen {
         slayLogo.addAction(slideToLeft(slayLogo));
     }
 
-    @Override
-    public void dispose() {
-    }
-
     /**
      * Méthode qui créer un ClickListener qui réagit pour créer l'effet de soulignage dans le menu
-     * lorsque l'utilisateur positionne sa souris au dessus d'un boutton
-     * @param actor l'actor sur lequel le ClickListener va agir
+     * lorsque l'utilisateur positionne sa souris au dessus d'un bouton
+     * @param actor l'acteur sur lequel le ClickListener va agir
      * @return le ClickListener configuré pour le soulignage
      */
     private ClickListener underlineAnimation(Actor actor) {

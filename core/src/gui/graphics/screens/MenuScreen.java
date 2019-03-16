@@ -27,17 +27,21 @@ public abstract class MenuScreen extends BasicScreen {
      * @return le groupe contenant le Titre du menu et le petit carré à sa gauche
      */
     protected HorizontalGroup generateMenuNameGroup(String name) {
+        //Récupération du style d'un texte
         Label.LabelStyle textStyle = uiSkin.get(Label.LabelStyle.class);
         textStyle.font = defaultFont;
+        //Création du label qui contient le nom du menu
         Label label = new Label(name, textStyle);
-        label.setName("name");
+        label.setName("name"); //On lui ajoute un nom pour pouvoir le modifier par la suite
+        //Note: Par exemple le nom du menu est changé par le nom de le nom de la room dans des parties en ligne
 
+        //Création du carré situé a gauche du nom du menu
         RectangleActor rectangle = new RectangleActor();
         rectangle.setColor(Color.WHITE);
         rectangle.setSize(25 * ratio, 25 * ratio);
 
         HorizontalGroup horizontalGroup = new HorizontalGroup();
-        horizontalGroup.space(25 * ratio);
+        horizontalGroup.space(25 * ratio); //Espace entre les différents acteurs du groupe
         horizontalGroup.setY(stage.getHeight() - 100 * ratio);
         horizontalGroup.addActor(rectangle);
         horizontalGroup.addActor(label);

@@ -18,16 +18,10 @@ import static gui.utils.Constants.PAD;
  */
 public class SettingsMenuScreen extends SubMenuScreen {
     private Table table;
-    private Label windowMode;
-    private Label username;
-    private Label language;
-    private Label musicLevel;
-    private Label soundLevel;
     private Slider musicSlider;
     private Slider soundSlider;
     private Label musicSliderPourcent;
     private Label soundSliderPourcent;
-
 
     public SettingsMenuScreen(Slay parent, Stage stage) {
         super(parent, stage, Language.bundle.get("settings"));
@@ -36,14 +30,16 @@ public class SettingsMenuScreen extends SubMenuScreen {
         labelStyle.font = defaultFont;
 
         //Création des différents labels
-        windowMode = new Label(Language.bundle.get("windowMode"), labelStyle);
-        username = new Label(Language.bundle.get("username"), labelStyle);
-        language = new Label(Language.bundle.get("language"), labelStyle);
-        musicLevel = new Label(Language.bundle.get("music"), labelStyle);
-        soundLevel = new Label(Language.bundle.get("sound"), labelStyle);
+        Label windowMode = new Label(Language.bundle.get("windowMode"), labelStyle);
+        Label username = new Label(Language.bundle.get("username"), labelStyle);
+        Label language = new Label(Language.bundle.get("language"), labelStyle);
+        Label musicLevel = new Label(Language.bundle.get("music"), labelStyle);
+        Label soundLevel = new Label(Language.bundle.get("sound"), labelStyle);
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
+
         //Création des différents boutons.
+        //Window mode
         TextButton fullScreen = new TextButton(Language.bundle.get("fullscreen"), textButtonStyle);
         fullScreen.setChecked(parent.getUserSettings().isFullScreen());
         TextButton windowed = new TextButton(Language.bundle.get("windowed"), textButtonStyle);
@@ -67,6 +63,12 @@ public class SettingsMenuScreen extends SubMenuScreen {
             }
         });
 
+        ButtonGroup<TextButton> buttonGroup = new ButtonGroup<>(fullScreen, windowed);
+        buttonGroup.setMaxCheckCount(1);
+        buttonGroup.setMinCheckCount(1);
+        buttonGroup.setUncheckLast(true);
+
+        //Username field
         TextField.TextFieldStyle textFieldStyle = uiSkin.get(TextField.TextFieldStyle.class);
         textFieldStyle.font = textFont;
         textFont.getData().padLeft = -10;
@@ -79,9 +81,12 @@ public class SettingsMenuScreen extends SubMenuScreen {
                 parent.getUserSettings().setUsername(usernameField.getText());
             }
         });
+
+        //Language selectBox
         SelectBox.SelectBoxStyle selectBoxStyle = uiSkin.get(SelectBox.SelectBoxStyle.class);
         selectBoxStyle.font = textFont;
         selectBoxStyle.listStyle.font = textFont;
+
         SelectBox<String> languageSelectBox = new SelectBox<>(selectBoxStyle);
         languageSelectBox.setItems("English", "Français");
         if(parent.getUserSettings().getLanguage().equals("fr")) {
@@ -93,17 +98,13 @@ public class SettingsMenuScreen extends SubMenuScreen {
                 String language = languageSelectBox.getSelected().toLowerCase().substring(0,2);
                 parent.getUserSettings().setLanguage(language);
                 Language.setLanguage(language);
+                //On clear le screen pour reafficher le menu principal dans la langue choisie par l'utilisateur
                 parent.clearScreen();
                 parent.changeScreen(MainMenuScreen.class);
             }
         });
 
-        ButtonGroup<TextButton> buttonGroup = new ButtonGroup<>(fullScreen, windowed);
-        buttonGroup.setMaxCheckCount(1);
-        buttonGroup.setMinCheckCount(1);
-        buttonGroup.setUncheckLast(true);
-
-
+        //Slider pour la musique et les sons
         musicSlider = new Slider(0, 100, 1, false, uiSkin);
         musicSlider.setValue(100);
         //Update du pourcentage affiché à l'écran
@@ -112,13 +113,13 @@ public class SettingsMenuScreen extends SubMenuScreen {
                 musicSliderPourcent.setText((int)musicSlider.getValue() + "%");
             }
         });
+
         soundSlider = new Slider(0, 100, 1, false, uiSkin);
         soundSlider.setValue(100);
         //Update du pourcentage affiché à l'écran
         soundSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 soundSliderPourcent.setText((int)soundSlider.getValue() + "%");
-
             }
         });
         //Création des pourcentage correspondant au slider
@@ -152,8 +153,8 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
 
-        //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
+        //Désactivation du scrolling horizontal
         scroller.setScrollingDisabled(true, false);
         table = new Table();
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
@@ -161,7 +162,6 @@ public class SettingsMenuScreen extends SubMenuScreen {
         table.add(scroller).fillX().expand().align(Align.topLeft);
 
         stage.addActor(table);
-
     }
 
     @Override
@@ -175,15 +175,5 @@ public class SettingsMenuScreen extends SubMenuScreen {
     public void hide() {
         super.hide();
         table.addAction(slideToRight(table));
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
     }
 }
