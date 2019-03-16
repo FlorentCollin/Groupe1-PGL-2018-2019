@@ -82,6 +82,9 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                     pValue--;
                 }
                 pValue = (int)aiSlider.getValue();
+                //On repositionne le bouton de création de partie en haut de la liste des acteurs pour qu'il soit encore accessible
+                createRoomButton.remove();
+                stage.addActor(createRoomButton);
             }
         });
 
