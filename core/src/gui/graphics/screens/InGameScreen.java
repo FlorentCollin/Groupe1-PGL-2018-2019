@@ -158,7 +158,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
      * @return la tile correspondante
      */
     private TiledMapTile getTile(int id, boolean available) {
-    	System.out.println("InGameScreen - "+id+" "+available);
         TiledMapTile tile = null;
         for(int i = 0; i < map.getTileSet().size(); i++) {
             tile = map.getTileSet().getTile(i);

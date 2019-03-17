@@ -1,10 +1,12 @@
 package logic.naturalDisasters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.player.Player;
 
 public abstract class NaturalDisasters {
 	private int proba;
@@ -14,9 +16,11 @@ public abstract class NaturalDisasters {
 	protected Board board;
 	
 	protected ArrayList<Cell> affectedCells;
+	protected HashMap<Player, ArrayList<Cell>> modificatedCells;
 	
 	public NaturalDisasters(Board board) {
 		affectedCells = new ArrayList<>();
+		modificatedCells = new HashMap<>();
 		this.board = board;
 		duration = 1;
 	}
@@ -55,6 +59,15 @@ public abstract class NaturalDisasters {
 	
 	public void play() {
 		
+	}
+	
+	protected void cancel() {
+		ArrayList<Cell> toCancel = modificatedCells.get(board.getActivePlayer());
+		if(toCancel != null) {
+			for(Cell c : toCancel) {
+				board.changeToLandCell(c.getX(), c.getY());
+			}
+		}
 	}
 	
 }

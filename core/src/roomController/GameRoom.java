@@ -66,7 +66,7 @@ public class GameRoom extends Room {
                 Message message = messagesFrom.take();
                 synchronized (board) {
                     executeMessage(message);
-                    System.out.println("Game Room - Message Executed : " + message.getClass().getSimpleName());
+//                    System.out.println("Game Room - Message Executed : " + message.getClass().getSimpleName());
                     if (messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
                         //Si le board à changé alors il faut notifier les clients des changements.
                         if (board.hasChanged()) {

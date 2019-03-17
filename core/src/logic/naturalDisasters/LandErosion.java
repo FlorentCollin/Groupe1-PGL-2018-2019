@@ -11,12 +11,10 @@ import logic.item.Capital;
 import logic.player.Player;
 
 public class LandErosion extends NaturalDisasters{
-	private HashMap<Player, ArrayList<Cell>> newWaterCells;
 	
 	
 	public LandErosion(Board board) {
 		super(board);
-		newWaterCells = new HashMap<>();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -42,7 +40,8 @@ public class LandErosion extends NaturalDisasters{
 				}
 			}
 		}
-		newWaterCells.put(board.getActivePlayer(), affectedCells);
+		modificatedCells.put(board.getActivePlayer(), affectedCells);
+		changeToWaterCells();
 	}
 	
 	private void erode(Cell cell) {
@@ -65,13 +64,12 @@ public class LandErosion extends NaturalDisasters{
 		}
 		cell.removeDistrict();
 		cell.removeItem();
-		board.changeToWaterCell(cell.getX(), cell.getY());
+		board.addModification(cell);
 	}
 	
-	private void cancel() {
-		ArrayList<Cell> toCancel = newWaterCells.get(board.getActivePlayer());
-		for(Cell c : toCancel) {
-			board.changeToLandCell(c.getX(), c.getY());
+	private void changeToWaterCells() {
+		for(Cell cell : modificatedCells.get(board.getActivePlayer())) {
+			board.changeToWaterCell(cell.getX(), cell.getY());
 		}
 	}
 	

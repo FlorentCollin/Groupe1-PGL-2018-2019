@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.item.Tree;
 
 public class ForestFire extends NaturalDisasters{
 
@@ -15,7 +16,19 @@ public class ForestFire extends NaturalDisasters{
 	private void fire() {
 		affectedCells.clear();
 		ArrayList<Cell> treeCells = board.getTreeCells();
-		affectedCells.add(treeCells.get(rand.nextInt(treeCells.size())));
+		if(treeCells.size() > 0) {
+			Cell tree = treeCells.get(rand.nextInt(treeCells.size()));
+			destroyTreeFrom(tree);
+		}
+	}
+	
+	private void destroyTreeFrom(Cell tree) {
+		tree.removeItem();
+		for(Cell neighbour : board.getNeighbors(tree)) {
+			if(neighbour.getItem() instanceof Tree) {
+				destroyTreeFrom(neighbour);
+			}
+		}
 	}
 	
 	@Override

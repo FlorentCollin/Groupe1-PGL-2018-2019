@@ -7,18 +7,14 @@ import java.util.Random;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
-import logic.item.Capital;
 import logic.item.DestroyableItem;
 import logic.item.Item;
 import logic.item.Tree;
 import logic.myList.MyList;
-import logic.naturalDisasters.ForestFire;
-import logic.naturalDisasters.LandErosion;
-import logic.naturalDisasters.NaturalDisasters;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
-import logic.player.ai.strategy.Strategy;
+import logic.player.ai.strategy.Strategy; 
 import logic.shop.Shop;
 
 
@@ -838,5 +834,9 @@ public class Board{
 	
 	public ArrayList<Cell> getTreeCells(){
 		return treeCells;
+	}
+	
+	public void addModification(Cell cell) {
+		modificatedCells.add(cell);
 	}
 }
