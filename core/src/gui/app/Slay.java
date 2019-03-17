@@ -65,6 +65,7 @@ public class Slay extends Game {
 			if(createRoomMenuScreen != null) {
 				createRoomMenuScreen.dispose();
 			}
+			Gdx.graphics.setResizable(true);
 			nextScreen = mainMenuScreen;
 		} else if(screen == SettingsMenuScreen.class) {
 			if(settingsMenuScreen == null) {

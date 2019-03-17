@@ -17,6 +17,7 @@
   }
 
   ImageButtonStyle: {
+    default: {}
     arrow: { imageUp: "arrow-unover", over: "arrow"}
   }
 

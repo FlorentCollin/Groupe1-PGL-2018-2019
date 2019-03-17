@@ -1,6 +1,6 @@
 
 items.png
-size: 2048,512
+size: 2048,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -11,80 +11,38 @@ Capital
   orig: 256, 222
   offset: 0, 0
   index: -1
-Coin
-  rotate: false
-  xy: 2, 226
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
 Soldier_lvl1
   rotate: false
-  xy: 260, 260
-  size: 256, 222
-  orig: 256, 222
-  offset: 0, 0
-  index: -1
-Soldier_lvl1_big
-  rotate: false
-  xy: 260, 36
+  xy: 260, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Soldier_lvl2
   rotate: false
-  xy: 1034, 36
-  size: 256, 222
-  orig: 256, 222
-  offset: 0, 0
-  index: -1
-Soldier_lvl2_big
-  rotate: false
-  xy: 518, 260
+  xy: 518, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Soldier_lvl3
   rotate: false
-  xy: 1034, 260
-  size: 256, 222
-  orig: 256, 222
-  offset: 0, 0
-  index: -1
-Soldier_lvl3_big
-  rotate: false
-  xy: 518, 36
+  xy: 776, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Soldier_lvl4
   rotate: false
-  xy: 776, 36
-  size: 256, 222
-  orig: 256, 222
-  offset: 0, 0
-  index: -1
-Soldier_lvl4_big
-  rotate: false
-  xy: 776, 260
+  xy: 1034, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Tree
   rotate: false
-  xy: 1292, 260
+  xy: 1292, 2
   size: 256, 222
   orig: 256, 222
-  offset: 0, 0
-  index: -1
-currentPlayer
-  rotate: false
-  xy: 1292, 2
-  size: 180, 256
-  orig: 180, 256
   offset: 0, 0
   index: -1

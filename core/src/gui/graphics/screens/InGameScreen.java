@@ -99,6 +99,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         multiplexer.addProcessor(this);
         multiplexer.addProcessor(hud);
         Gdx.input.setInputProcessor(multiplexer);
+        Gdx.graphics.setResizable(false);
     }
 
     public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender, MessageListener messageListener) {

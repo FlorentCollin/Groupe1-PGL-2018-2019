@@ -270,7 +270,7 @@ public class Board{
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
-			int i = 0;
+			int i = 1;
 			Item item = cell.getItem();
 			while(item != null && i < item.getMaxMove()) {
 				subAround.clear();

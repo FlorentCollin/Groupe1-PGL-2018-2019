@@ -36,7 +36,6 @@ public class MainMenuScreen extends MenuScreen {
 
     public MainMenuScreen(Slay parent) {
         super(parent);
-
         //Création des différents boutons disponibles pour l'utilisateur dans le menu principal
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontTitle;

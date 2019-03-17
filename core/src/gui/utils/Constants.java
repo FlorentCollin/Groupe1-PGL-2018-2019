@@ -16,7 +16,7 @@ public class Constants {
                                                 new Color(25/255f, 25/255f, 25/255f, 1) /* Neutral Gray */,
                                                 new Color(0,113/255f,183/255f,1) /* Blue */ };
 //    public static final String SERVER_ADDRESS = "localhost";
-    public static final String SERVER_ADDRESS = "91.178.82.144";
+    public static final String SERVER_ADDRESS = "91.178.208.115";
     public static final int PORT = 8888;
     /** Résolution maximum **/
     public static final int MAX_RES_X = 1920;
