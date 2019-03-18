@@ -7,27 +7,29 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import gui.app.Slay;
-import gui.utils.Constants;
 import gui.graphics.screens.animations.RectangleActor;
+import gui.utils.Constants;
 import gui.utils.Language;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
+import static gui.utils.Constants.SERVER_ADDRESS;
 
 /**
  * Menu principal du jeu, ce menu est lancé automatiquement au lancement du jeu
  */
 public class MainMenuScreen extends MenuScreen {
-    private VerticalGroup bouttonsGroup;
+    private VerticalGroup buttonsGroup;
     private Group slayLogo;
     private TextButton whiteSlay;
     private TextButton shadowSlay;
     private TextButton playOfflineButton;
     private TextButton playOnlineButton;
+    private TextButton playLocalButton;
     private TextButton shorcutsButton;
     private TextButton settingsButton;
     private TextButton exitButton;
@@ -41,21 +43,23 @@ public class MainMenuScreen extends MenuScreen {
         textButtonStyle.font = defaultFontTitle;
         playOfflineButton = new TextButton(Language.bundle.get("playOffline"), textButtonStyle);
         playOnlineButton = new TextButton(Language.bundle.get("playOnline"), textButtonStyle);
+        playLocalButton = new TextButton(Language.bundle.get("playLocal"), textButtonStyle);
         shorcutsButton = new TextButton(Language.bundle.get("shortcuts"), textButtonStyle);
         settingsButton = new TextButton(Language.bundle.get("settings"), textButtonStyle);
         exitButton = new TextButton(Language.bundle.get("exit"), textButtonStyle);
         //Ajout des boutons dans un group
-        bouttonsGroup = new VerticalGroup();
-        bouttonsGroup.space(20);
-        bouttonsGroup.center();
-        bouttonsGroup.setY(stage.getHeight() / 2 - stage.getHeight() / 10);
-        bouttonsGroup.addActor(playOfflineButton);
-        bouttonsGroup.addActor(playOnlineButton);
-        bouttonsGroup.addActor(shorcutsButton);
-        bouttonsGroup.addActor(settingsButton);
-        bouttonsGroup.addActor(exitButton);
+        buttonsGroup = new VerticalGroup();
+        buttonsGroup.space(20);
+        buttonsGroup.center();
+        buttonsGroup.setY(stage.getHeight() / 2 - stage.getHeight() / 10);
+        buttonsGroup.addActor(playOfflineButton);
+        buttonsGroup.addActor(playOnlineButton);
+        buttonsGroup.addActor(playLocalButton);
+        buttonsGroup.addActor(shorcutsButton);
+        buttonsGroup.addActor(settingsButton);
+        buttonsGroup.addActor(exitButton);
 
-        stage.addActor(bouttonsGroup);
+        stage.addActor(buttonsGroup);
 
         //Création du rectangle qui apparaît en dessous des boutons lors que
         //la souris de l'utilisateur se trouve sur un bouton
@@ -94,9 +98,30 @@ public class MainMenuScreen extends MenuScreen {
         playOnlineButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    parent.changeScreen(OnlineMenuScreen.class);
+                    parent.changeScreen(new OnlineMenuScreen(parent, stage, SERVER_ADDRESS));
                 }
             });
+        playLocalButton.addListener(this.underlineAnimation(playLocalButton));
+        playLocalButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Skin uiSkin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
+                TextField ipField = new TextField("", uiSkin);
+                Dialog dialog = new Dialog(Language.bundle.get("connectionToLocalServer"), uiSkin, "dialog") {
+                    public void result(Object obj) {
+                        if((boolean) obj)
+                            parent.changeScreen(new OnlineMenuScreen(parent, stage, ipField.getText()));
+                    }
+                };
+                dialog.add(new Label(Language.bundle.get("ipAddressLocalServer"), uiSkin)).pad(10);
+                dialog.add(ipField).align(Align.center);
+                dialog.getButtonTable().pad(10);
+                dialog.getButtonTable().align(Align.right);
+                dialog.button(Language.bundle.get("cancel"), false);
+                dialog.button(Language.bundle.get("joinServer"), true);
+                dialog.show(stage);
+            }
+        });
         shorcutsButton.addListener(this.underlineAnimation(shorcutsButton));
         shorcutsButton.addListener(new ClickListener() {
             @Override
@@ -128,7 +153,7 @@ public class MainMenuScreen extends MenuScreen {
     @Override
     public void show() {
         //Animation d'entrée
-        bouttonsGroup.addAction(slideFromLeft(bouttonsGroup, stage.getWidth() / 2, bouttonsGroup.getY()));
+        buttonsGroup.addAction(slideFromLeft(buttonsGroup, stage.getWidth() / 2, buttonsGroup.getY()));
         slayLogo.addAction(slideFromLeft(slayLogo, stage.getWidth() / 2 - whiteSlay.getWidth() / 2, slayLogo.getY()));
         Gdx.input.setInputProcessor(stage);
     }
@@ -145,7 +170,7 @@ public class MainMenuScreen extends MenuScreen {
     @Override
     public void hide() {
         //Animation de sortie
-        bouttonsGroup.addAction(slideToLeft(bouttonsGroup));
+        buttonsGroup.addAction(slideToLeft(buttonsGroup));
         slayLogo.addAction(slideToLeft(slayLogo));
     }
 

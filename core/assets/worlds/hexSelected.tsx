@@ -41,6 +41,6 @@
   <properties>
    <property name="player" type="int" value="6"/>
   </properties>
-  <image width="256" height="222" source="hex_brown_selected.png"/>
+  <image width="256" height="222" source="hex_cyan_selected.png"/>
  </tile>
 </tileset>

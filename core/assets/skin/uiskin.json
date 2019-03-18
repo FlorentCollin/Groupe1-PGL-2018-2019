@@ -46,4 +46,9 @@
     default: { selection: selection, background: default-button-checked, cursor: cursor, fontColor: white }
   }
 
+  WindowStyle: {
+    default: { background: room-background, titleFontColor: white },
+    dialog: { parent: default, stageBackground: room-background }
+  },
+
 }

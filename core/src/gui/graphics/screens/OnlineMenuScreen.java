@@ -14,10 +14,12 @@ import gui.app.Slay;
 import gui.utils.JoinButton;
 import gui.utils.Language;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static gui.graphics.screens.animations.Animations.*;
+import static gui.utils.Constants.SERVER_ADDRESS;
 
 /**
  * Menu des parties en lignes
@@ -34,13 +36,8 @@ public class OnlineMenuScreen extends SubMenuScreen{
     private TextButton createRoom;
     private TextButton refresh;
 
-    public OnlineMenuScreen(Slay parent, Stage stage) {
+    public OnlineMenuScreen(Slay parent, Stage stage, String ip) {
         super(parent, stage, Language.bundle.get("onlineRooms"));
-        //Création du messageListener thread et du message sender
-        this.messageSender = new OnlineMessageSender(parent.getUserSettings().getUsername());
-        this.messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
-        this.messageListener.start();
-        messageSender.send(new TextMessage("getWaitingRooms"));
 
         //Récupération du l'image de fond
         Image background = new Image(uiSkin.getDrawable("room-background"));
@@ -86,18 +83,40 @@ public class OnlineMenuScreen extends SubMenuScreen{
         table.add(scroller).fillX().expand().align(Align.topLeft).padTop(3).padBottom(3);
         stage.addActor(table);
         Gdx.input.setInputProcessor(this.stage);
+
+
+        //Création du messageListener thread et du message sender
+        try {
+            this.messageSender = new OnlineMessageSender(parent.getUserSettings().getUsername(), ip);
+            this.messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
+            this.messageListener.start();
+            messageSender.send(new TextMessage("getWaitingRooms"));
+        } catch (IOException e) { //Cette exception arrive lorsqu'il y a eu un problème lors de la connection du client au serveur
+            Skin uiSkin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
+            Dialog dialog = new Dialog(Language.bundle.get("serverConnectionFailed"), uiSkin, "dialog") {
+                public void result(Object obj) {
+                    parent.changeScreen(MainMenuScreen.class);
+                }
+            };
+            dialog.text(Language.bundle.get("connectionError"));
+            dialog.button(Language.bundle.get("returnToMainMenu"));
+            dialog.show(stage);
+            parent.changeScreen(MainMenuScreen.class);
+        }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        if(messageListener.needRefresh()) {
-            refreshList();
-        }
-        //Si la taille de la liste de joueurs est > 0 cela signifie qu'il faut passé au waiting screen
-        //TODO refactor with boolean
-        if(messageListener.getPlayers().size() > 0) {
-            parent.setScreen(new WaitingRoomScreen(parent, stage, messageSender, messageListener));
+        if (messageListener != null) {
+            if (messageListener.needRefresh()) {
+                refreshList();
+            }
+            //Si la taille de la liste de joueurs est > 0 cela signifie qu'il faut passé au waiting screen
+            //TODO refactor with boolean
+            if (messageListener.getPlayers().size() > 0) {
+                parent.setScreen(new WaitingRoomScreen(parent, stage, messageSender, messageListener));
+            }
         }
     }
 
@@ -119,7 +138,8 @@ public class OnlineMenuScreen extends SubMenuScreen{
 
     @Override
     public void dispose() {
-        messageSender.close();
+        if(messageSender != null)
+            messageSender.close();
     }
 
     /**

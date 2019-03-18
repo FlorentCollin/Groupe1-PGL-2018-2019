@@ -12,10 +12,9 @@ public class Constants {
                                                 new Color(242/255f, 128/255f, 238/255f, 1) /* Pink */,
                                                 new Color(234/255f, 1, 0, 1), /* Yellow */
                                                 new Color(138/255f, 7/255f, 7/255f, 1), /* Red */
-                                                new Color(100/255f, 41/255f, 17/255f, 1), /* Brown */
+                                                new Color(7/255f, 77/255f, 94/255f, 1), /* Cyan */
                                                 new Color(25/255f, 25/255f, 25/255f, 1) /* Neutral Gray */,
                                                 new Color(0,113/255f,183/255f,1) /* Blue */ };
-//    public static final String SERVER_ADDRESS = "localhost";
     public static final String SERVER_ADDRESS = "91.178.208.115";
     public static final int PORT = 8888;
     /** Résolution maximum **/

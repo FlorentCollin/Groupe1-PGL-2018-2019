@@ -12,7 +12,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 import static gui.utils.Constants.PORT;
-import static gui.utils.Constants.SERVER_ADDRESS;
 
 /**
  * Classe qui permet l'envoit de message de l'interface graphique au serveur durant une partie en ligne
@@ -22,20 +21,18 @@ public class OnlineMessageSender implements MessageSender {
     private Selector selector;
     private Gson gson;
 
-    public OnlineMessageSender(String username) {
+    public OnlineMessageSender(String username, String serverAddress) throws IOException {
+        System.out.println(serverAddress);
+        System.out.println(serverAddress.length());
         gson = new Gson();
-        try {
-            //Ouverture de la connection au serveur
-            clientChannel = SocketChannel.open(new InetSocketAddress(SERVER_ADDRESS, PORT));
-            clientChannel.configureBlocking(false);
-            selector = Selector.open();
-            //On associe le channel à un selector
-            clientChannel.register(selector, SelectionKey.OP_READ);
+        //Ouverture de la connection au serveur
+        clientChannel = SocketChannel.open(new InetSocketAddress(serverAddress, PORT));
+        clientChannel.configureBlocking(false);
+        selector = Selector.open();
+        //On associe le channel à un selector
+        clientChannel.register(selector, SelectionKey.OP_READ);
 
-            send(new UsernameMessage(username)); //Envoie de l'username du Client
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        send(new UsernameMessage(username)); //Envoie de l'username du Client
     }
 
     @Override

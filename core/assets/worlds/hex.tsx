@@ -55,6 +55,6 @@
    <property name="available" type="bool" value="true"/>
    <property name="player" type="int" value="6"/>
   </properties>
-  <image width="256" height="222" source="hex_brown.png"/>
+  <image width="256" height="222" source="hex_cyan.png"/>
  </tile>
 </tileset>
