@@ -6,6 +6,7 @@ import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.player.ai.strategy.*;
+import org.pmw.tinylog.Logger;
 import server.Client;
 
 import java.util.ArrayList;
@@ -66,29 +67,17 @@ public class GameRoom extends Room {
                 Message message = messagesFrom.take();
                 synchronized (board) {
                     executeMessage(message);
-//                    System.out.println("Game Room - Message Executed : " + message.getClass().getSimpleName());
+                    Logger.info(String.format("Message Executed : %s", message.getClass().getSimpleName()));
                     if (messagesToSend != null) { //On vérifie qu'il faut envoyer des messages d'update
                         //Si le board à changé alors il faut notifier les clients des changements.
-                        if (board.hasChanged()) {
-                            GameUpdateMessage updateMessage;
-                            if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
-                                Cell selectedCell = board.getSelectedCell();
-                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(),
-                                        board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
-                            } else { //Création d'un GameUpdateMessage sans selectedCell
-                                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(),
-                                        board.getPlayers(), board.getActivePlayerNumber());
-                            }
-                            updateMessage.setClients(clients); //Ajout des clients au message
-                            messagesToSend.put(updateMessage); //Envoie du message
-                        }
+                        sendUpdateMessage();
                     }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("Closing Room");
+        Logger.info("Closing Room");
     }
 
     /**
@@ -113,6 +102,26 @@ public class GameRoom extends Room {
             }
             else if(textMessage.getMessage().equals("close")) {
                 stopRunning();
+            }
+        }
+    }
+
+    private void sendUpdateMessage() {
+        if (board.hasChanged()) {
+            GameUpdateMessage updateMessage;
+            if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
+                Cell selectedCell = board.getSelectedCell();
+                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(),
+                        board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
+            } else { //Création d'un GameUpdateMessage sans selectedCell
+                updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(),
+                        board.getPlayers(), board.getActivePlayerNumber());
+            }
+            updateMessage.setClients(clients); //Ajout des clients au message
+            try {
+                messagesToSend.put(updateMessage); //Envoie du message
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -143,6 +152,7 @@ public class GameRoom extends Room {
         board.changeToAI(clients.indexOf(client), new RandomStrategy());
         if(board.getActivePlayerNumber() == clients.indexOf(client)) {
             board.nextPlayer();
+            sendUpdateMessage();
         }
         return super.remove(client);
     }

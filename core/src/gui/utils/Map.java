@@ -248,7 +248,7 @@ public class Map {
     		return Class.forName("logic.player.ai.strategy."+strategy);
     	}
     	catch(ClassNotFoundException e) {
-    		System.out.println("ERROR : the strategy "+strategy+" didn't exist");
+    	    Gdx.app.log("ERROR", String.format("the strategy %s didn't exist", strategy));
     		return null;
     	}
     }

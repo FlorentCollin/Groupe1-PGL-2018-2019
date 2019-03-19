@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -50,20 +51,9 @@ public class OnlineMessageListener extends MessageListener{
             while(keyIterator.hasNext()) {
                 SelectionKey key = keyIterator.next();
                 if(key.isReadable()) { //Si le serveur à envoyé un message
-                    //Récupération du string correspondant au message
-                    String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
-                    if(!messageStr.endsWith("+")) {
-                        key.attach(messageStr);
-                    } else {
-                        key.attach(null);
-                        messageStr = messageStr.substring(0, messageStr.length()-1);
-//                        FileHandle file = new FileHandle("core.json");
-//                        file.writeString(messageStr, false);
-                        //Désérialization du string en un message
-                        Message message = Message.getMessage(messageStr, gson);
-                        executeMessage(message); //Exécution
-                    }
-                        keyIterator.remove();
+                    ArrayList<Message> messages = Message.readFromKey(key, gson);
+                    messages.forEach(this::executeMessage);
+                    keyIterator.remove();
                 }
             }
         }

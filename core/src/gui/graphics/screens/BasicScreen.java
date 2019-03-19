@@ -37,7 +37,7 @@ public abstract class BasicScreen implements Screen {
         this.parent = parent;
         //Chargement du skin spécifique pour l'interface graphique
         generateStage();
-        if (!init)
+        if (!init) //Si aucun screen n'a été instancié on initialise le skin et les polices
             init();
         ratio = Constants.getRatioX(stage.getWidth());
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
@@ -48,9 +48,8 @@ public abstract class BasicScreen implements Screen {
         this.parent = parent;
         this.stage = stage;
         ratio = Constants.getRatioX(stage.getWidth());
-        if (!init)
+        if (!init) //Si aucun screen n'a été instancié on initialise le skin et les polices
             init();
-        generateFont();
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         this.stage.draw();
     }
@@ -62,6 +61,7 @@ public abstract class BasicScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        //On reset la couleur de fond
         Gdx.gl.glClearColor(16 / 255, 16 / 255f, 16 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getViewport().apply();
@@ -80,16 +80,23 @@ public abstract class BasicScreen implements Screen {
         stage.dispose();
     }
 
+    /**
+     * Méthode qui va générer le stage
+     */
     protected void generateStage() {
         camera = new OrthographicCamera();
         viewport = new ScalingViewport(Scaling.stretch, 1920, 1080, camera);
+        //Update du viewport avec la taille actuel de l'application
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
     }
 
-    protected void generateFont() {
-        //Génération des différentes polices utilisées dans le jeu
+    /**
+     * Méthode qui génère les différentes polices utilisés dans les différents screens de l'application
+     */
+    private void generateFont() {
+        //Lemon Milk font
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilk.otf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 42;
@@ -99,11 +106,12 @@ public abstract class BasicScreen implements Screen {
         parameter.size = 128;
         logoFont = generator.generateFont(parameter);
 
-        generator.dispose();
+        //Lemon Milk Italic font
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/LemonMilk/LemonMilkItalicLight.otf"));
         parameter.size = 36;
         defaultFontItalic = generator.generateFont(parameter);
 
+        //Roboto Light font
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Light.ttf"));
         parameter.size = 28;
         textFont = generator.generateFont(parameter);

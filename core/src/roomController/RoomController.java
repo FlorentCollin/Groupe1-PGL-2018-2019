@@ -1,6 +1,7 @@
 package roomController;
 
 import communication.Messages.*;
+import org.pmw.tinylog.Logger;
 import server.Client;
 import server.ServerInfo;
 
@@ -61,12 +62,13 @@ public class RoomController {
      * @param message Le message envoyé par le client
      */
     public void manageMessage(Client client, Message message) {
-        System.out.println("Room Controller - Managing Message : " + message.getClass().getSimpleName());
+        Logger.info(String.format("Managing Message : %s", message.getClass().getSimpleName()));
         if(message instanceof CreateRoomMessage) {
-            System.out.println("Creating GameRoom");
             CreateRoomMessage createRoomMessage = (CreateRoomMessage) message;
             createRoom(client, createRoomMessage);
+            Logger.info(String.format("Creating GameRoom : %s", createRoomMessage.getRoomName()));
         } else if(message instanceof JoinRoomMessage) {
+            Logger.info("A client has just joined a room");
             JoinRoomMessage joinRoomMessage = (JoinRoomMessage) message;
             for (Room room: rooms.values()) {
                 if(room.getUUID().equals(joinRoomMessage.getId()) && ! room.isFull()) {
@@ -170,5 +172,14 @@ public class RoomController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public int numberRooms() {
+        ArrayList<Room> temp = new ArrayList<>();
+        for (Room room : rooms.values()) {
+            if(temp.indexOf(room) == -1)
+                temp.add(room);
+        }
+        return temp.size();
     }
 }

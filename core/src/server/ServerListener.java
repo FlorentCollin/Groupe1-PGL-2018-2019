@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import communication.Messages.Message;
 import communication.Messages.UsernameMessage;
 import gui.utils.GsonInit;
+import org.pmw.tinylog.Logger;
 import roomController.RoomController;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -77,6 +79,7 @@ public class ServerListener extends Thread{
             }
 
         }
+        Logger.info("ServerListener is close");
     }
 
     /**
@@ -91,7 +94,7 @@ public class ServerListener extends Thread{
             clientChannel.register(selector, SelectionKey.OP_READ);
             Client client = new Client(clientChannel);
             ServerInfo.clients.put(clientChannel, client);
-            System.out.println("Number of player : " + ServerInfo.clients.size());
+            Logger.info(String.format("Number of player %d", ServerInfo.clients.size()));
         } catch (IOException e) {
             e.printStackTrace(); //TODO
         }
@@ -104,29 +107,18 @@ public class ServerListener extends Thread{
     private void keyIsReadable(SelectionKey key) {
         clientChannel = (SocketChannel) key.channel();
         try {
-            //Récupération du message dans le buffer du client.
-            String messageStr = Message.getStringFromBuffer(clientChannel, (String) key.attachment());
-            //On définit la fin d'un message par le symbole "+"
-            if(!messageStr.endsWith("+")) { //Si le message n'est pas terminé alors on enregistre le message à la clé
-                key.attach(messageStr);
-            } else {
-                //Le message est terminé, et on retire le message attaché à la clé
-                key.attach(null);
-                //On supprime le symbole de fin (ie : "+")
-                messageStr = messageStr.substring(0, messageStr.length()-1);
-                //Désérialisation du message
-                Message message = Message.getMessage(messageStr, gson);
+            ArrayList<Message> messages = Message.readFromKey(key, gson);
+            for(Message message : messages) { //Itération sur l'ensemble des messages reçus et complet
                 message.setClient(ServerInfo.clients.get(clientChannel));
-                if(message instanceof UsernameMessage) {
+                if (message instanceof UsernameMessage) {
                     ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
                 } else {
                     //Si le message n'est pas un message réservé au serveur alors on l'envoie au roomController
                     roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);
                 }
             }
-
         } catch (IOException e) {
-            System.out.println("Client connection lost");
+            Logger.info("Client connection lost");
             //Vérifie si la room associé au client n'est pas vide :
             //Si la room est vide alors elle est supprimée
             roomController.checkEmpty(key);
@@ -136,7 +128,15 @@ public class ServerListener extends Thread{
         }
     }
 
+    public ServerSocketChannel getServerChannel() {
+        return serverChannel;
+    }
+
     public Selector getSelector() {
         return selector;
+    }
+
+    public RoomController getRoomController() {
+        return roomController;
     }
 }

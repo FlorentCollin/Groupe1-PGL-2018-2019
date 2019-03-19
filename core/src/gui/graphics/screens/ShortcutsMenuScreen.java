@@ -14,7 +14,9 @@ import gui.utils.ShortcutsButton;
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.PAD;
 
-
+/**
+ * Menu des paramètres utilisateur
+ */
 public class ShortcutsMenuScreen extends SubMenuScreen {
 
     private final Table table;
@@ -36,29 +38,30 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
 
         //Listener que l'utilisateur déclenche lorsqu'il veut changer un raccourci
         stage.addListener(new InputListener() {
-          @Override
-          public boolean keyDown(InputEvent event, int keycode) {
-              if(keyBindGroup.getChecked() != null) {
-                  UserShortcuts userShortcuts = parent.getUserShortcuts();
-                  //Si le raccourci est déjà assigné alors celui-ci est automatiquement retiré
-                  for (ShortcutsButton button : keyBindGroup.getButtons()) {
-                      if(button.getText().toString().equals(Input.Keys.toString(keycode))) {
-                          Integer [] value = userShortcuts.getShortcuts().get(button.getShortcutName());
-                          value[button.getNumber()] = null;
-                          userShortcuts.changeShortcut(button.getShortcutName(), value);
-                          button.setText("");
-                      }
-                      ShortcutsButton checkedButton = keyBindGroup.getChecked();
-                      Integer[] value = userShortcuts.getShortcuts().get(checkedButton.getShortcutName());
-                      System.out.println(value.length);
-                      value[checkedButton.getNumber()] = keycode;
-                      userShortcuts.changeShortcut(checkedButton.getShortcutName(), value);
-                      checkedButton.setText(Input.Keys.toString(keycode));
-                  }
-                  keyBindGroup.uncheckAll();
-              }
-              return true;
-          }
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keyBindGroup.getChecked() != null) {
+                    UserShortcuts userShortcuts = parent.getUserShortcuts();
+                    //Si le raccourci est déjà assigné alors celui-ci est automatiquement retiré
+                    for (ShortcutsButton button : keyBindGroup.getButtons()) {
+                        if (button.getText().toString().equals(Input.Keys.toString(keycode))) {
+                            Integer[] value = userShortcuts.getShortcuts().get(button.getShortcutName());
+                            value[button.getNumber()] = null;
+                            userShortcuts.changeShortcut(button.getShortcutName(), value);
+                            button.setText("");
+                        }
+                        //Changement du raccourci dans le textButton correspondant
+                        ShortcutsButton checkedButton = keyBindGroup.getChecked();
+                        Integer[] value = userShortcuts.getShortcuts().get(checkedButton.getShortcutName());
+                        System.out.println(value.length);
+                        value[checkedButton.getNumber()] = keycode;
+                        userShortcuts.changeShortcut(checkedButton.getShortcutName(), value);
+                        checkedButton.setText(Input.Keys.toString(keycode));
+                    }
+                    keyBindGroup.uncheckAll();
+                }
+                return true;
+            }
         });
 
         //Table des raccourcis claviers
@@ -67,17 +70,17 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
         scrollTable.add(new Label(Language.bundle.get("key") + " 1", labelStyle)).align(Align.center);
         scrollTable.add(new Label(Language.bundle.get("key") + " 2", labelStyle)).align(Align.center);
         scrollTable.row();
-        for(String shortcutName : parent.getUserShortcuts().getShortcutsName()) {
-            createShortcut(shortcutName, Language.bundle.get(shortcutName.replaceAll(" ","")));
+        //Création des différents labels et boutons pour les raccourcis
+        for (String shortcutName : parent.getUserShortcuts().getShortcutsName()) {
+            createShortcut(shortcutName, Language.bundle.get(shortcutName.replaceAll(" ", "")));
             scrollTable.row();
         }
-        //TODO
         ScrollPane scroller = new ScrollPane(scrollTable);
-        scroller.setScrollingDisabled(true, false);
+        scroller.setScrollingDisabled(true, false); //Désactivation du scrolling horizontal
 
         table = new Table();
         table.setWidth(stage.getWidth() - stage.getWidth() / 5);
-        table.setHeight(stage.getHeight() - (stage.getHeight() -menuNameGroup.getY())*2);
+        table.setHeight(stage.getHeight() - (stage.getHeight() - menuNameGroup.getY()) * 2);
         table.add(scroller).fillX().expand().align(Align.topLeft);
         stage.addActor(table);
     }
@@ -105,20 +108,26 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
 
     }
 
+    /**
+     * Méthode qui permet de créer un label avec le nom du raccourci
+     * ainsi que deux textButtons qui montrent quelles sont les touches associées à ce raccourci
+     *
+     * @param text le text qui décrit le raccourci (ex: Move camera down)
+     */
     private void createKeybindButton(String text) {
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
-        for(int i=0; i<2; i++) {
+        for (int i = 0; i < 2; i++) {
             ShortcutsButton button;
             Integer keycode = parent.getUserShortcuts().getShortcuts().get(text)[i];
-            if(keycode != -2) {
-                button = new ShortcutsButton(text , i, Input.Keys.toString(parent.getUserShortcuts().getShortcuts().get(text)[i]), textButtonStyle);
+            if (keycode != -2) { //keycode == -2 indique que le raccourci n'est pas défini (-1 étant pris par Libgdx comme n'importe quelle touche
+                button = new ShortcutsButton(text, i, Input.Keys.toString(parent.getUserShortcuts().getShortcuts().get(text)[i]), textButtonStyle);
             } else {
-                button = new ShortcutsButton(text , i, "", textButtonStyle);
+                button = new ShortcutsButton(text, i, "", textButtonStyle);
 
             }
-                keyBindGroup.add(button);
-                scrollTable.add(button).pad(PAD).align(Align.center);
+            keyBindGroup.add(button);
+            scrollTable.add(button).pad(PAD).align(Align.center);
         }
     }
 
