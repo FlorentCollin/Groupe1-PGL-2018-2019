@@ -1,6 +1,6 @@
 
 items.png
-size: 2048,256
+size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -13,7 +13,7 @@ Capital
   index: -1
 Soldier_lvl1
   rotate: false
-  xy: 260, 2
+  xy: 260, 260
   size: 256, 222
   orig: 256, 222
   offset: 0, 0

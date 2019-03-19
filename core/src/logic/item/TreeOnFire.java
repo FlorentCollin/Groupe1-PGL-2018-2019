@@ -1,6 +1,6 @@
 package logic.item;
 
-public class TreeOnFire extends Tree {
+public class TreeOnFire extends Item {
 
 	public TreeOnFire() {
 		

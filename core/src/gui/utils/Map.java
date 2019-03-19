@@ -96,7 +96,6 @@ public class Map {
         selectedCells = (TiledMapTileLayer) map.getLayers().get("selectedTiles");
         tileSet = map.getTileSets().getTileSet("hex"); //le tileset des hexagones
         tileSetSelected = map.getTileSets().getTileSet("hexSelected");
-
         for (int i = 0; i < selectedCells.getWidth(); i++) {
             for (int j = 0; j < selectedCells.getHeight(); j++) {
                 selectedCells.setCell(i, j, new TiledMapTileLayer.Cell());
