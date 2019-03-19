@@ -36,6 +36,7 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
@@ -164,7 +165,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 return tile;
             }
         }
-        return null;
+        return map.getTileSet().getTile(5); //Parce que sinon ça ne veut pas prendre la cellule bleue :'(
     }
 
     @Override
@@ -428,9 +429,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                     playerId = cell.getDistrict().getPlayer().getId();
                 }
                 tile = getTile(playerId);
-                tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
-                tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
-                tmxCell.setTile(tile);
+	            tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
+	            tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
+	            tmxCell.setTile(tile);
             }
             board.getModificatedCells().clear();
         }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.XmlReader;
 import logic.board.Board;
 import logic.board.District;
@@ -129,7 +130,7 @@ public class Map {
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
         int height = Integer.parseInt(xmlElement.getAttribute("height"));
         if (naturalDisasters)
-            board = new Board(width, height, players, new NaturalDisastersController(), new Shop());
+            board = new Board(width, height, players, new NaturalDisastersController(board), new Shop());
         else
             board = new Board(width, height, players, new Shop());
     }
@@ -200,6 +201,10 @@ public class Map {
                 	cell.getDistrict().removeCapital();
                     cell.getDistrict().setGold(Integer.parseInt(item.getAttribute("golds")));
                     cell.getDistrict().addCapital(cell);
+                }
+                else if(itemClass.equals(Tree.class)) {
+                	board.addTree(Integer.parseInt(item.getAttribute("x")),
+                            Integer.parseInt(item.getAttribute("y")));
                 }
                 //TODO
             } catch (InstantiationException e) {

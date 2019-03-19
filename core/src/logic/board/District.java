@@ -1,12 +1,16 @@
 package logic.board;
 
-import logic.board.cell.Cell;
-import logic.item.*;
-import logic.player.Player;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import logic.board.cell.Cell;
+import logic.board.cell.LandCell;
+import logic.item.Capital;
+import logic.item.Item;
+import logic.item.Soldier;
+import logic.item.Tomb;
+import logic.item.Tree;
+import logic.player.Player;
 
 public class District {
 	private Player player;
@@ -108,14 +112,16 @@ public class District {
 		Item item;
 		synchronized (cells) {
             for(Cell cell : cells) {
-                item = cell.getItem();
-                setGold(getGold() + 1);
-                if(item instanceof Soldier) {
-                    setGold(getGold() - ((Soldier) item).getLevel().getSalary());
-                }
-                else if(item instanceof Tree) {
-                    setGold(getGold() - 1);
-                }
+            	if(cell instanceof LandCell) {
+	                item = cell.getItem();
+	                setGold(getGold() + 1);
+	                if(item instanceof Soldier) {
+	                    setGold(getGold() - ((Soldier) item).getLevel().getSalary());
+	                }
+	                else if(item instanceof Tree) {
+	                    setGold(getGold() - 1);
+	                }
+            	}
             }
         }
 	}

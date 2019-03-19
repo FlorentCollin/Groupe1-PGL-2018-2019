@@ -1,20 +1,21 @@
 package logic.board;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
 import logic.item.DestroyableItem;
 import logic.item.Item;
 import logic.item.Tree;
+import logic.myList.MyList;
 import logic.naturalDisasters.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
-import logic.player.ai.strategy.Strategy;
+import logic.player.ai.strategy.Strategy; 
 import logic.shop.Shop;
-
-
-import java.util.ArrayList;
-import java.util.Random;
 
 
 
@@ -36,8 +37,12 @@ public class Board{
 	private final int[][][] directions = {
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
-	private ArrayList<Cell> neutralCells;
+	private ArrayList<Cell> waterCells;
+	private ArrayList<Cell> treeCells;
 	private ArrayList<Cell> modificatedCells;
+	private HashMap<Player, ArrayList<Cell>> erodedCells;
+	
+	//Vérifier où on appelle checkDistricts() !!!!!
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
@@ -48,9 +53,11 @@ public class Board{
 		this.districts = new ArrayList<>();
 		this.shop = shop;
 		fullIn();
-		neutralCells = new ArrayList<>();
+		waterCells = new ArrayList<>();
+		treeCells = new ArrayList<>();
 		modificatedCells = new ArrayList<>();
-
+		erodedCells = new HashMap<>();
+		generateHashMap();
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -61,8 +68,18 @@ public class Board{
 		this.districts = new ArrayList<>();
 		this.shop = shop;
 		fullIn();
-		neutralCells = new ArrayList<>();
+		waterCells = new ArrayList<>();
+		treeCells = new ArrayList<>();
 		modificatedCells = new ArrayList<>();
+		erodedCells = new HashMap<>();
+		naturalDisastersController = new NaturalDisastersController(this);
+		generateHashMap();
+	}
+	
+	private void generateHashMap() {
+		for(Player p : players) {
+			erodedCells.put(p, new ArrayList<>());
+		}
 	}
 
 	/**
@@ -75,7 +92,12 @@ public class Board{
 			}
 		}
 	}
-
+	
+	/**
+	 * Permet de changer un joueur en une IA
+	 * @param nPlayer le numéro du joueur à changer en ia
+	 * @param strategy la stratégie qu'utilise l'ia
+	 */
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
 		ai.setId(players.get(nPlayer).getId());
@@ -96,6 +118,12 @@ public class Board{
 	 * */
 	public void changeToWaterCell(int i, int j) {
 		board[i][j] = new WaterCell(i,j);
+		waterCells.add(board[i][j]);
+	}
+	
+	public void changeToLandCell(int i, int j) {
+		waterCells.remove(board[i][j]);
+		board[i][j] = new LandCell(i, j);
 	}
 
 	public void setShopItem(Item item) {
@@ -166,6 +194,7 @@ public class Board{
 		shop.getSelectedItem().setHasMoved(true);
 		shop.buy(cell.getDistrict());
 		modificatedCells.add(cell);
+		checkDistricts();
 	}
 
 	/**
@@ -353,7 +382,7 @@ public class Board{
 	 * @return true si c'est possible
 	 * 			false sinon
 	 * */
-	private boolean canGoOn(Cell cell, Item item) {
+	public boolean canGoOn(Cell cell, Item item) {
 		Item cellItem = cell.getItem();
 		// Si il n'y a aucun item il est toujours possible de se placer sur la case
 		if(cellItem == null) {
@@ -395,7 +424,10 @@ public class Board{
 	 */
 	public void nextPlayer() {
 		hasChanged = true;
-		checkDistricts(); // Peut être à supprimer d'ici
+		if(naturalDisastersController != null) {
+			naturalDisastersController.isHappening();
+		}
+		checkDistricts();
 		checkWinner();
 		setSelectedCell(null);
 		shop.removeSelection();
@@ -560,6 +592,7 @@ public class Board{
 					}
 					if(rand.nextInt(100)*PROBA < calculateProb(nTrees)*100) {
 						board[i][j].setItem(new Tree());
+						treeCells.add(board[i][j]);
 					}
 				}
 			}
@@ -617,6 +650,7 @@ public class Board{
 		selectedCell.removeItem();
 		setSelectedCell(null);
 		modificatedCells.add(cell);
+		checkDistricts();
 	}
 
 	/**
@@ -723,7 +757,6 @@ public class Board{
 	}
 
 	private void checkDistricts() {
-		neutralCells.clear();
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
 			if (district.getCells().size() <= 1) {
@@ -789,8 +822,8 @@ public class Board{
 		}
 	}
 
-	public ArrayList<Cell> getNeutralCells(){
-		return neutralCells;
+	public ArrayList<Cell> getWaterCells(){
+		return waterCells;
 	}
 
 	public ArrayList<Cell> getModificatedCells(){
@@ -799,5 +832,17 @@ public class Board{
 
 	public Player getWinner() {
 		return winner;
+	}
+	
+	public void addTree(int i, int j) {
+		treeCells.add(board[i][j]);
+	}
+	
+	public ArrayList<Cell> getTreeCells(){
+		return treeCells;
+	}
+	
+	public void addModification(Cell cell) {
+		modificatedCells.add(cell);
 	}
 }

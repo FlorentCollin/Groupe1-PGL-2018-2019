@@ -1,4 +1,5 @@
-/logic/
 /gui/
 /communication/
 /roomController/
+/server/
+/logic/
