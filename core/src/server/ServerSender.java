@@ -13,7 +13,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,7 +43,6 @@ public class ServerSender extends Thread {
                 //Si le message est un message qui peut être envoyé à des clients
                 if (serverChannel.isOpen()  && selector.isOpen() && message instanceof NetworkMessage) {
                     NetworkMessage networkMessage = (NetworkMessage) message;
-                    System.out.println("Sending message to clients : " + message.getClass());
                     for (Client client : networkMessage.getClients()) { //Envoie du message à tous les clients
                         SocketChannel clientChannel = client.getSocketChannel();
                         if (clientChannel.isConnected()) {
@@ -52,16 +50,10 @@ public class ServerSender extends Thread {
                              * Ici on écrit le nom de la classe du message en plus du message sérialisé
                              * Pour permettre au client de retrouver le type du message
                               * Le "+" est le caractère signalisant la fin du message */
-                            String messageStr = (message.getClass().getSimpleName() + gson.toJson(message) + "+");
-                            ArrayList<String> array = new ArrayList<>();
-                            array.add(messageStr.substring(0, messageStr.length()/2));
-                            array.add(messageStr.substring(messageStr.length()/2));
-                            for (String str : array) {
-                                ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
-                                if (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
-                                    clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                                    clientChannel.write(buffer);
-                                }
+                            ByteBuffer buffer = ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message) + "+").getBytes());
+                            if (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
+                                clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                                clientChannel.write(buffer);
                             }
                         }
                     }
