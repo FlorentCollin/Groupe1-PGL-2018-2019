@@ -428,12 +428,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 if(cell.getDistrict() != null) {
                     playerId = cell.getDistrict().getPlayer().getId();
                 }
-	            if(cell instanceof WaterCell) {
-	            	tile = getTile(playerId, false);
-	            }
-	            else {
-	            	tile = getTile(playerId, true);
-	            }
+                tile = getTile(playerId);
 	            tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
 	            tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
 	            tmxCell.setTile(tile);
