@@ -12,6 +12,7 @@ import server.ServerSender;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -35,6 +36,7 @@ public class ServerLauncher {
                 .level(Level.INFO)
                 .activate();
         Logger.info("Starting server...");
+        Logger.info("Local address : " + Inet4Address.getLocalHost().getHostAddress());
         LinkedBlockingQueue<Message> messageToSend = new LinkedBlockingQueue<>();
         serverListener = new ServerListener(PORT, messageToSend);
         serverSender = new ServerSender(serverListener.getServerChannel(), serverListener.getSelector(), messageToSend);

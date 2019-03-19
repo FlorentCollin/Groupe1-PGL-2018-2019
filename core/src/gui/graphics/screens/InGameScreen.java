@@ -36,6 +36,7 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.board.cell.DroughtCell;
 import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
@@ -374,7 +375,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         return board;
     }
 
-    //TODO Reformater le code pour ne faire plus qu'une seule méthode
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
         if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
@@ -382,11 +382,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             for (Cell cell : selectedCells) {
                 // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
                 OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
-                // Récupération de la cellule dans la
-                TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                 TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
                 // On change la tile (l'image) de la cellule à sélectionner.
-                tmxSelectedCell.setTile(getSelectedTile(tmxCell.getTile()));
+                tmxSelectedCell.setTile(map.getTileSetSelected().iterator().next());
             }
         }
     }
@@ -403,15 +401,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             tmxSelectedCell.setTile(null);
         }
         selectedCells = new ArrayList<>();
-    }
-
-    private TiledMapTile getSelectedTile(TiledMapTile tile) {
-        for (TiledMapTile selectedTile : map.getTileSetSelected()) {
-            if((int) selectedTile.getProperties().get("player") == (int) tile.getProperties().get("player")) {
-                return selectedTile;
-            }
-        }
-        return null;
     }
 
     /**

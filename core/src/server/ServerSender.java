@@ -43,6 +43,7 @@ public class ServerSender extends Thread {
                 //Si le message est un message qui peut être envoyé à des clients
                 if (serverChannel.isOpen()  && selector.isOpen() && message instanceof NetworkMessage) {
                     NetworkMessage networkMessage = (NetworkMessage) message;
+                    System.out.println("Sending message to clients : " + message.getClass());
                     for (Client client : networkMessage.getClients()) { //Envoie du message à tous les clients
                         SocketChannel clientChannel = client.getSocketChannel();
                         if (clientChannel.isConnected()) {

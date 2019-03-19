@@ -26,7 +26,7 @@ public class Board{
 	private ArrayList<Player> players;
 	private volatile ArrayList<District> districts;
 	private Shop shop;
-	private NaturalDisastersController naturalDisastersController;
+	private transient NaturalDisastersController naturalDisastersController;
 	private volatile Cell selectedCell, firstCell;
 	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
 	private ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
@@ -37,10 +37,10 @@ public class Board{
 	private final int[][][] directions = {
 			{{+1,  0}, {+1, -1}, { 0, -1}, {-1, -1}, {-1,  0}, { 0, +1}}, //Colonne Pair
 			{{+1, +1}, {+1,  0}, { 0, -1}, {-1,  0}, {-1, +1}, { 0, +1}}}; //Colonne Impair
-	private ArrayList<Cell> waterCells;
-	private ArrayList<Cell> treeCells;
 	private ArrayList<Cell> modificatedCells;
-	private HashMap<Player, ArrayList<Cell>> erodedCells;
+	private transient ArrayList<Cell> waterCells;
+	private transient ArrayList<Cell> treeCells;
+	private transient HashMap<Player, ArrayList<Cell>> erodedCells;
 	
 	//Vérifier où on appelle checkDistricts() !!!!!
 

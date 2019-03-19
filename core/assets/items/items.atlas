@@ -1,6 +1,6 @@
 
 items.png
-size: 2048,512
+size: 2048,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -13,43 +13,43 @@ Capital
   index: -1
 Soldier_lvl1
   rotate: false
-  xy: 260, 260
+  xy: 260, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Soldier_lvl2
   rotate: false
-  xy: 260, 36
+  xy: 518, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Soldier_lvl3
   rotate: false
-  xy: 518, 260
+  xy: 776, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Soldier_lvl4
   rotate: false
-  xy: 518, 36
+  xy: 1034, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 Tree
   rotate: false
-  xy: 776, 260
+  xy: 1550, 2
   size: 256, 222
   orig: 256, 222
   offset: 0, 0
   index: -1
 TreeOnFire
   rotate: false
-  xy: 2, 226
-  size: 256, 256
-  orig: 256, 256
+  xy: 1292, 2
+  size: 256, 222
+  orig: 256, 222
   offset: 0, 0
   index: -1
