@@ -1,9 +1,12 @@
 package logic.naturalDisasters;
 
 import logic.board.Board;
+import logic.board.District;
 import logic.board.cell.Cell;
 import logic.board.cell.DroughtCell;
 import logic.board.cell.LandCell;
+import logic.item.Capital;
+import logic.item.Item;
 
 public class Drought extends NaturalDisasters{
 	int nDroughtCells;
@@ -27,7 +30,15 @@ public class Drought extends NaturalDisasters{
 	private void droughtFrom(Cell cell) {
 		nDroughtCells ++;
 		affectedCells.add(cell);
+		Item item = cell.getItem();
+		District district = cell.getDistrict();
 		cell = new DroughtCell(cell.getX(), cell.getY());
+		cell.setItem(item);
+		cell.setDistrict(district);
+		district.addCell(cell);
+		if(item instanceof Capital) {
+			district.addCapital(cell);
+		}
 		if(nDroughtCells < 10) {
 			for(Cell neighbour : board.getNeighbors(cell)) {
 				if(neighbour instanceof LandCell) {

@@ -41,7 +41,8 @@ public class Board{
 	private ArrayList<Cell> treeCells;
 	private ArrayList<Cell> modificatedCells;
 	private HashMap<Player, ArrayList<Cell>> erodedCells;
-	private MyList disasters;
+	
+	//Vérifier où on appelle checkDistricts() !!!!!
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
 		this.columns = columns;
@@ -57,7 +58,6 @@ public class Board{
 		modificatedCells = new ArrayList<>();
 		erodedCells = new HashMap<>();
 		generateHashMap();
-		disasters = new MyList();
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -74,7 +74,6 @@ public class Board{
 		erodedCells = new HashMap<>();
 		naturalDisastersController = new NaturalDisastersController(this);
 		generateHashMap();
-		disasters = new MyList();
 	}
 	
 	private void generateHashMap() {
@@ -93,7 +92,12 @@ public class Board{
 			}
 		}
 	}
-
+	
+	/**
+	 * Permet de changer un joueur en une IA
+	 * @param nPlayer le numéro du joueur à changer en ia
+	 * @param strategy la stratégie qu'utilise l'ia
+	 */
 	public void changeToAI(int nPlayer, Strategy strategy) {
 		AI ai = new AI(strategy, this);
 		ai.setId(players.get(nPlayer).getId());
@@ -119,7 +123,7 @@ public class Board{
 	
 	public void changeToLandCell(int i, int j) {
 		waterCells.remove(board[i][j]);
-		board[i][j] = new WaterCell(i, j);
+		board[i][j] = new LandCell(i, j);
 	}
 
 	public void setShopItem(Item item) {
@@ -190,6 +194,7 @@ public class Board{
 		shop.getSelectedItem().setHasMoved(true);
 		shop.buy(cell.getDistrict());
 		modificatedCells.add(cell);
+		checkDistricts();
 	}
 
 	/**
@@ -294,7 +299,7 @@ public class Board{
 		ArrayList<Cell> around = getNeighbors(cell);
 		ArrayList<Cell> subAround = new ArrayList<>();
 		if(cell.getItem() != null && cell.getItem().isMovable() && cell.getItem().canMove()) {
-			int i = 0;
+			int i = 1;
 			Item item = cell.getItem();
 			while(item != null && i < item.getMaxMove()) {
 				subAround.clear();
@@ -645,6 +650,7 @@ public class Board{
 		selectedCell.removeItem();
 		setSelectedCell(null);
 		modificatedCells.add(cell);
+		checkDistricts();
 	}
 
 	/**

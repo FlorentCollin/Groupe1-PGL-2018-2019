@@ -1,14 +1,12 @@
 package logic.naturalDisasters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
 import logic.item.Capital;
-import logic.player.Player;
 
 public class LandErosion extends NaturalDisasters{
 	

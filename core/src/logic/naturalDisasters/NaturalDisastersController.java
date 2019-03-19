@@ -17,18 +17,18 @@ public class NaturalDisastersController {
 	public NaturalDisastersController(Board board) {
 		enableDisasters = new ArrayList<>();
 		naturalDisasters = new ArrayList<>();
-		blizzard = new Blizzard(board);
-		naturalDisasters.add(blizzard);
-		drought = new Drought(board);
-		naturalDisasters.add(drought);
+//		blizzard = new Blizzard(board);
+//		naturalDisasters.add(blizzard);
+//		drought = new Drought(board);
+//		naturalDisasters.add(drought);
 		forestFire = new ForestFire(board);
 		naturalDisasters.add(forestFire);
-		landErosion = new LandErosion(board);
-		naturalDisasters.add(landErosion);
-		tsunami = new Tsunami(board);
-		naturalDisasters.add(tsunami);
-		volcanicEruption = new VolcanicEruption(board);
-		naturalDisasters.add(volcanicEruption);
+//		landErosion = new LandErosion(board);
+//		naturalDisasters.add(landErosion);
+//		tsunami = new Tsunami(board);
+//		naturalDisasters.add(tsunami);
+//		volcanicEruption = new VolcanicEruption(board);
+//		naturalDisasters.add(volcanicEruption);
 	}
 	
 	public void isHappening() {
