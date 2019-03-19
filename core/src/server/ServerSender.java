@@ -13,6 +13,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -51,10 +52,16 @@ public class ServerSender extends Thread {
                              * Ici on écrit le nom de la classe du message en plus du message sérialisé
                              * Pour permettre au client de retrouver le type du message
                               * Le "+" est le caractère signalisant la fin du message */
-                            ByteBuffer buffer = ByteBuffer.wrap((message.getClass().getSimpleName() + gson.toJson(message) + "+").getBytes());
-                            if (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
-                                clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                                clientChannel.write(buffer);
+                            String messageStr = (message.getClass().getSimpleName() + gson.toJson(message) + "+");
+                            ArrayList<String> array = new ArrayList<>();
+                            array.add(messageStr.substring(0, messageStr.length()/2));
+                            array.add(messageStr.substring(messageStr.length()/2));
+                            for (String str : array) {
+                                ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
+                                if (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
+                                    clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                                    clientChannel.write(buffer);
+                                }
                             }
                         }
                     }
