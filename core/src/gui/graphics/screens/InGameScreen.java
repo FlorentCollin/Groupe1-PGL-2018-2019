@@ -37,8 +37,12 @@ import roomController.Room;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gui.graphics.screens.animations.Animations.ANIMATION_DURATION;
+import static gui.graphics.screens.animations.Animations.slideFromRight;
+
 public class InGameScreen extends MenuScreen implements InputProcessor {
 
+    private final ImageButton arrowButton;
     private Map map;
     private Vector3 mouseLoc = new Vector3();
     private float worldHeight;
@@ -70,15 +74,16 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
         hud = new Hud(this, itemsSkin);
-        ImageButton arrow = generateArrowButton();
-        arrow.addListener(new ClickListener() {
+        arrowButton = generateArrowButton();
+        arrowButton.setX(25 * ratio);
+        arrowButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
                 parent.changeScreen(MainMenuScreen.class);
             }
         });
-        hud.addActor(arrow);
+        hud.addActor(arrowButton);
         Hud.Shop shop = hud.getShop();
         shop.soldierLvl1.addListener(new ClickListener() {
             @Override
@@ -262,7 +267,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
 
     @Override
     public void show() {
-
     }
 
     @Override
