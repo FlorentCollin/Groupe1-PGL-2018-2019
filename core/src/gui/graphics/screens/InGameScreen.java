@@ -1,14 +1,7 @@
 package gui.graphics.screens;
 
 
-import static gui.utils.Constants.N_TILES;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,9 +13,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-
 import communication.MessageListener;
 import communication.MessageSender;
 import communication.Messages.PlayMessage;
@@ -36,14 +29,15 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
-import logic.board.cell.DroughtCell;
-import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import roomController.Room;
 
-public class InGameScreen extends BasicScreen implements InputProcessor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class InGameScreen extends MenuScreen implements InputProcessor {
 
     private Map map;
     private Vector3 mouseLoc = new Vector3();
@@ -76,6 +70,15 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
         hud = new Hud(this, itemsSkin);
+        ImageButton arrow = generateArrowButton();
+        arrow.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                parent.changeScreen(MainMenuScreen.class);
+            }
+        });
+        hud.addActor(arrow);
         Hud.Shop shop = hud.getShop();
         shop.soldierLvl1.addListener(new ClickListener() {
             @Override
