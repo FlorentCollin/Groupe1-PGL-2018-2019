@@ -1,5 +1,6 @@
 package logic.item;
 
+import com.google.gson.annotations.SerializedName;
 import logic.item.level.Level;
 import logic.item.level.SoldierLevel;
 
@@ -10,7 +11,8 @@ public abstract class Item {
 	protected transient boolean movable = false;
 	protected transient boolean buyable = false;
 	protected transient boolean improvable = false;
-	
+
+	@SerializedName("m") //Permet de réduire considérablement la taille des messages envoyés par le serveur
 	protected boolean hasMoved = false;
 	protected transient boolean hasSalary = false;
 	
