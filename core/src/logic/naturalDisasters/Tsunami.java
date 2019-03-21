@@ -21,21 +21,6 @@ public class Tsunami extends NaturalDisasters{
 		saveChanges();
 	}
 	
-	private void destroy(Cell cell) {
-		nAffectedCells ++;
-		affectedCells.add(cell);
-		if(cell.getDistrict() != null) {
-			cell.getDistrict().removeCell(cell);
-		}
-		cell = new WaterCell(cell.getX(), cell.getY());
-		board.addModification(cell);
-		board.setCell(cell);
-		board.checkSplit(cell);
-		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
-			destroy(getOneFrom(board.getNeighbors(cell)));
-		}
-	}
-	
 	@Override
 	public void play() {
 		cancel();

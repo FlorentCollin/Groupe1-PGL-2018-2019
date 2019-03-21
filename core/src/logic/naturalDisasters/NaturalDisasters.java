@@ -67,11 +67,31 @@ public abstract class NaturalDisasters {
 	}
 	
 	protected Cell getOneFrom(ArrayList<Cell> cells) {
-		Cell cell;
-		do {
-			cell = cells.get(rand.nextInt(cells.size()));
-		}while(! (cell instanceof LandCell));
+		Cell cell = null;
+		if(cells.size() > 0) {
+			do {
+				cell = cells.get(rand.nextInt(cells.size()));
+			}while(! (cell instanceof LandCell));
+		}
 		return cell;
+	}
+	
+	protected void destroy(Cell cell) {
+		nAffectedCells ++;
+		affectedCells.add(cell);
+		if(cell.getDistrict() != null) {
+			cell.getDistrict().removeCell(cell);
+		}
+		cell = new WaterCell(cell.getX(), cell.getY());
+		board.addModification(cell);
+		board.setCell(cell);
+		board.checkSplit(cell);
+		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
+			Cell c = getOneFrom(board.getNeighbors(cell));
+			if(c != null) {
+				destroy(c);
+			}
+		}
 	}
 	
 	public void play() {

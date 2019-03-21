@@ -50,10 +50,9 @@ public class Blizzard extends NaturalDisasters{
 		cell.setItem(item);
 		cell.setDistrict(district);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
-			for(Cell nb : board.getNeighbors(cell)) {
-				if(nb instanceof LandCell) {
-					blizzardFrom(nb);
-				}
+			Cell c = getOneFrom(board.getNeighbors(cell));
+			if(c != null) {
+				destroy(c);
 			}
 		}
 	}
