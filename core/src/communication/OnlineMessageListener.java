@@ -50,10 +50,8 @@ public class OnlineMessageListener extends MessageListener{
             keyIterator = selector.selectedKeys().iterator();
             while(keyIterator.hasNext()) {
                 SelectionKey key = keyIterator.next();
-                System.out.println("Get key");
                 if(key.isReadable()) { //Si le serveur à envoyé un message
                     ArrayList<Message> messages = Message.readFromKey(key, gson);
-                    System.out.println("Messages.size() : " + messages.size());
                     messages.forEach(this::executeMessage);
                 }
                 keyIterator.remove();
