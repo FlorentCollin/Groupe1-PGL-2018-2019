@@ -2,6 +2,9 @@ package communication.Messages;
 
 import java.util.ArrayList;
 
+/**
+ * Message qui demande au serveur de créer une partie
+ */
 public class CreateRoomMessage extends Message {
 
     private String worldName;

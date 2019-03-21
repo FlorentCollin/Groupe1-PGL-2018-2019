@@ -53,7 +53,6 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
                         //Changement du raccourci dans le textButton correspondant
                         ShortcutsButton checkedButton = keyBindGroup.getChecked();
                         Integer[] value = userShortcuts.getShortcuts().get(checkedButton.getShortcutName());
-                        System.out.println(value.length);
                         value[checkedButton.getNumber()] = keycode;
                         userShortcuts.changeShortcut(checkedButton.getShortcutName(), value);
                         checkedButton.setText(Input.Keys.toString(keycode));

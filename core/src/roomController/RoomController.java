@@ -182,4 +182,14 @@ public class RoomController {
         }
         return temp.size();
     }
+
+    public void close() {
+        for(Room room : rooms.values()) {
+            try {
+                room.getMessagesFrom().put(new TextMessage("close"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

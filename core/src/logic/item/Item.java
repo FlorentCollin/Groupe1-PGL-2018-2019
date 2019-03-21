@@ -1,20 +1,22 @@
 package logic.item;
 
+import com.google.gson.annotations.SerializedName;
 import logic.item.level.Level;
 import logic.item.level.SoldierLevel;
 
 public abstract class Item {
 	protected SoldierLevel level;
     protected String type = getClass().getName();
+
+	protected transient boolean movable = false;
+	protected transient boolean buyable = false;
+	protected transient boolean improvable = false;
+
+	@SerializedName("m") //Permet de réduire considérablement la taille des messages envoyés par le serveur
+	protected boolean hasMoved = false;
+	protected transient boolean hasSalary = false;
 	
-	protected boolean movable = false;
-	protected boolean buyable = false;
-	protected boolean improvable = false;
-	
-	protected boolean hasMoved = false; //A remplacer par canMove
-	protected boolean hasSalary = false;
-	
-	protected int maxMove = 0;
+	protected transient int maxMove = 0;
 	
 	public Item() {
 		
@@ -32,6 +34,15 @@ public abstract class Item {
 	 * */
 	public void improve() {
 		
+	}
+
+	public void update() {
+		movable = false;
+		buyable = false;
+		improvable = false;
+		hasMoved = false;
+		hasSalary = false;
+		maxMove = 0;
 	}
 	
 	public Level getLevel() {

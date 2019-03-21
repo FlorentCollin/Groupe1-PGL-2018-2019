@@ -41,6 +41,7 @@ public class Map {
     protected TiledMapTileLayer selectedCells;
     protected TiledMapTileSet tileSet;
     protected TiledMapTileSet tileSetSelected;
+    protected TiledMapTileSet tileSetDisaster;
     protected Board board;
     protected int numberOfPlayers;
     private HashMap<String, Object>[][] onlineCells;
@@ -96,7 +97,7 @@ public class Map {
         selectedCells = (TiledMapTileLayer) map.getLayers().get("selectedTiles");
         tileSet = map.getTileSets().getTileSet("hex"); //le tileset des hexagones
         tileSetSelected = map.getTileSets().getTileSet("hexSelected");
-
+        tileSetDisaster = map.getTileSets().getTileSet("hexDisasters");
         for (int i = 0; i < selectedCells.getWidth(); i++) {
             for (int j = 0; j < selectedCells.getHeight(); j++) {
                 selectedCells.setCell(i, j, new TiledMapTileLayer.Cell());
@@ -242,7 +243,7 @@ public class Map {
         }
         return null;
     }
-    
+
     protected Class<?> getStrategy(String strategy){
     	try {
     		return Class.forName("logic.player.ai.strategy."+strategy);
@@ -285,5 +286,9 @@ public class Map {
 
     public TiledMapTileSet getTileSetSelected() {
         return tileSetSelected;
+    }
+
+    public TiledMapTileSet getTileSetDisaster() {
+        return tileSetDisaster;
     }
 }

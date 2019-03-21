@@ -15,6 +15,8 @@ import gui.graphics.screens.animations.RectangleActor;
 import gui.utils.Constants;
 import gui.utils.Language;
 
+import javax.xml.soap.Text;
+
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static gui.graphics.screens.animations.Animations.*;
 import static gui.utils.Constants.SERVER_ADDRESS;
@@ -105,20 +107,44 @@ public class MainMenuScreen extends MenuScreen {
         playLocalButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Skin uiSkin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
-                TextField ipField = new TextField("", uiSkin);
-                Dialog dialog = new Dialog(Language.bundle.get("connectionToLocalServer"), uiSkin, "dialog") {
-                    public void result(Object obj) {
-                        if((boolean) obj)
-                            parent.changeScreen(new OnlineMenuScreen(parent, stage, ipField.getText()));
+                //Ajout d'un dialogue qui permet d'entrer l'addresse ip d'un serveur local
+                Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+                labelStyle.font = textFont;
+                Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
+                windowStyle.titleFont = textFont;
+                TextButton.TextButtonStyle buttonStyle = uiSkin.get( "checked", TextButton.TextButtonStyle.class);
+                buttonStyle.font = textFont;
+                TextField.TextFieldStyle fieldStyle = uiSkin.get(TextField.TextFieldStyle.class);
+                fieldStyle.font = textFont;
+                TextField ipField = new TextField("", fieldStyle);
+                ipField.setMaxLength(15);
+                textFont.getData().padLeft = -10;
+                Dialog dialog = new Dialog("", windowStyle);
+                Table table = dialog.getContentTable();
+                //Ajout des différents éléments au dialogue
+                table.align(Align.topLeft);
+                table.add(new Label(Language.bundle.get("connectionToLocalServer"), labelStyle)).padTop(10).padLeft(10).row();
+                table.add(new Label(Language.bundle.get("ipAddressLocalServer"), uiSkin)).pad(10);
+                table.add(ipField).growX().align(Align.right).pad(10).row();
+                TextButton cancel = new TextButton(Language.bundle.get("cancel"), buttonStyle);
+                //Ajout d'un listener au bouton cancel (qui cache le dialogue)
+                cancel.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        dialog.hide();
                     }
-                };
-                dialog.add(new Label(Language.bundle.get("ipAddressLocalServer"), uiSkin)).pad(10);
-                dialog.add(ipField).align(Align.center);
-                dialog.getButtonTable().pad(10);
-                dialog.getButtonTable().align(Align.right);
-                dialog.button(Language.bundle.get("cancel"), false);
-                dialog.button(Language.bundle.get("joinServer"), true);
+                });
+                TextButton joinServer = new TextButton(Language.bundle.get("joinServer"), buttonStyle);
+                //Ajout d'un listener au bouton Join Server qui permet au client de rejoindre le serveur indiqué dans l'ipField
+                joinServer.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        parent.changeScreen(new OnlineMenuScreen(parent, stage, ipField.getText()));
+                        dialog.hide();
+                    }
+                });
+                table.add(cancel).expandY().pad(10).padRight(50).padLeft(50);
+                table.add(joinServer).expandY().pad(10).padRight(50).padLeft(50);
                 dialog.show(stage);
             }
         });

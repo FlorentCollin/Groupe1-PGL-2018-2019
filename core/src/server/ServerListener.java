@@ -79,6 +79,7 @@ public class ServerListener extends Thread{
             }
 
         }
+        roomController.close();
         Logger.info("ServerListener is close");
     }
 

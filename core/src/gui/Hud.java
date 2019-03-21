@@ -40,6 +40,7 @@ public class Hud extends Stage {
     public void resize(int width, int height) {
         this.getViewport().update(width, height, true);
         this.getBatch().setProjectionMatrix(this.getCamera().combined);
+        this.getCamera().update();
     }
 
     public Shop getShop() {
@@ -114,7 +115,6 @@ public class Hud extends Stage {
             table.addListener(new ClickListener() {
                 @Override
                 public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                    System.out.println("table exited");
                     soldierPrice.setText("");
                     gold.setVisible(false);
                 }

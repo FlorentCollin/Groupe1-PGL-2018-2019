@@ -16,9 +16,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-
 import communication.MessageListener;
 import communication.MessageSender;
 import communication.OnlineMessageSender;
@@ -27,6 +28,8 @@ import communication.Messages.ShopMessage;
 import communication.Messages.TextMessage;
 import gui.Hud;
 import gui.app.Slay;
+import gui.utils.Constants;
+import gui.utils.Language;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
@@ -37,10 +40,15 @@ import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
+import logic.player.Player;
 import roomController.Room;
 
-public class InGameScreen extends BasicScreen implements InputProcessor {
+import java.util.ArrayList;
+import java.util.List;
 
+public class InGameScreen extends MenuScreen implements InputProcessor {
+
+    private final ImageButton arrowButton;
     private Map map;
     private Vector3 mouseLoc = new Vector3();
     private float worldHeight;
@@ -72,6 +80,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
         hud = new Hud(this, itemsSkin);
+        arrowButton = generateArrowButton();
+        arrowButton.setX(25 * ratio);
+        arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
+        arrowButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                arrowListener();
+            }
+        });
+        hud.addActor(arrowButton);
         Hud.Shop shop = hud.getShop();
         shop.soldierLvl1.addListener(new ClickListener() {
             @Override
@@ -120,7 +138,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             }
         }
         if(board.getWinner() != null) {
-            parent.changeScreen(WinnerScreen.class);
+            showEndDialog(board.getWinner());
         }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
@@ -160,7 +178,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
     		return map.getTileSet().getTile(7);
     	}
     	if(isWater) {
-    		return map.getTileSet().getTile(5);	
+    		return map.getTileSet().getTile(5);
     	}
         for(int i = 0; i < map.getTileSet().size(); i++) {
             TiledMapTile tile = map.getTileSet().getTile(i+1); //Le i+1 vient du first gid de tiled
@@ -261,7 +279,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -283,8 +300,7 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         if(parent.getUserShortcuts().isShortcut("End turn", keycode)) {
             messageSender.send(new TextMessage("nextPlayer"));
         } else if(parent.getUserShortcuts().isShortcut("Menu", keycode)) {
-            parent.changeScreen(MainMenuScreen.class);
-            dispose();
+            arrowListener();
         }
         return true;
     }
@@ -377,7 +393,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         return board;
     }
 
-    //TODO Reformater le code pour ne faire plus qu'une seule méthode
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
         if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
@@ -385,11 +400,9 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             for (Cell cell : selectedCells) {
                 // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
                 OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
-                // Récupération de la cellule dans la
-                TiledMapTileLayer.Cell tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
                 TiledMapTileLayer.Cell tmxSelectedCell = selectedLayer.getCell(tmxCoords.col, tmxCoords.row);
                 // On change la tile (l'image) de la cellule à sélectionner.
-                tmxSelectedCell.setTile(getSelectedTile(tmxCell.getTile()));
+                tmxSelectedCell.setTile(map.getTileSetSelected().iterator().next());
             }
         }
     }
@@ -406,15 +419,6 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
             tmxSelectedCell.setTile(null);
         }
         selectedCells = new ArrayList<>();
-    }
-
-    private TiledMapTile getSelectedTile(TiledMapTile tile) {
-        for (TiledMapTile selectedTile : map.getTileSetSelected()) {
-            if((int) selectedTile.getProperties().get("player") == (int) tile.getProperties().get("player")) {
-                return selectedTile;
-            }
-        }
-        return null;
     }
 
     /**
@@ -450,5 +454,67 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
 
     private OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {
         return new OffsetCoords(boardCoords.col, Math.abs(cells.getHeight()-1 - boardCoords.row));
+    }
+
+
+    private void arrowListener() {
+        //Ajout d'un dialogue qui permet d'entrer l'addresse ip d'un serveur local
+        Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle.font = textFont;
+        Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
+        windowStyle.titleFont = textFont;
+        TextButton.TextButtonStyle buttonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+        buttonStyle.font = textFont;
+        Dialog dialog = new Dialog("", windowStyle);
+        Table table = dialog.getContentTable();
+        //Ajout des différents éléments au dialogue
+        table.align(Align.topLeft);
+        table.add(new Label(Language.bundle.get("quitGame"), labelStyle)).padTop(10).padLeft(10).row();
+        TextButton cancel = new TextButton(Language.bundle.get("no"), buttonStyle);
+        //Ajout d'un listener au bouton cancel (qui cache le dialogue)
+        cancel.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dialog.hide();
+            }
+        });
+        TextButton menuButton = new TextButton(Language.bundle.get("yes"), buttonStyle);
+        //Ajout d'un listener au bouton Join Server qui permet au client de rejoindre le serveur indiqué dans l'ipField
+        menuButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                parent.changeScreen(MainMenuScreen.class);
+                dispose();
+                dialog.hide();
+            }
+        });
+        table.add(cancel).expandY().pad(10).padRight(25).padLeft(25);
+        table.add(menuButton).expandY().pad(10).padRight(25).padLeft(25).align(Align.left);
+        dialog.show(hud);
+    }
+
+    private void showEndDialog(Player winner) {
+        Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle.font = textFont;
+        labelStyle.fontColor = winner.getColor();
+        Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
+        windowStyle.titleFont = textFont;
+        TextButton.TextButtonStyle buttonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+        buttonStyle.font = textFont;
+        Dialog dialog = new Dialog("", windowStyle);
+        Table table = dialog.getContentTable();
+        table.align(Align.topLeft);
+        table.add(new Label(winner.getName() + " " + Language.bundle.get("winner"), labelStyle)).align(Align.center).pad(50);
+        TextButton returnButton = new TextButton(Language.bundle.get("returnToMainMenu"), buttonStyle);
+        returnButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("clicked");
+                parent.changeScreen(MainMenuScreen.class);
+                dialog.hide();
+            }
+        });
+        table.add(returnButton).expandY().pad(10).padRight(25).padLeft(25).align(Align.center);
+        dialog.show(hud);
     }
 }

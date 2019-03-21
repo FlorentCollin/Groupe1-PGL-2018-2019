@@ -22,8 +22,6 @@ public class OnlineMessageSender implements MessageSender {
     private Gson gson;
 
     public OnlineMessageSender(String username, String serverAddress) throws IOException {
-        System.out.println(serverAddress);
-        System.out.println(serverAddress.length());
         gson = new Gson();
         //Ouverture de la connection au serveur
         clientChannel = SocketChannel.open(new InetSocketAddress(serverAddress, PORT));
