@@ -2,7 +2,7 @@
 <world name="World 3" map="g1_World3" width="32" height="32">
     <players number="2" />
     <items>
-    	<item type="Tree" x="21" y="11"/>
+    	<item type="Tree" x="24" y="14"/>
     	<item type="Tree" x="21" y="12"/>
     	<item type="Tree" x="21" y="13"/>
     	<item type="Tree" x="22" y="11"/>
@@ -11,6 +11,21 @@
     	<item type="Tree" x="23" y="11"/>
     	<item type="Tree" x="23" y="12"/>
     	<item type="Tree" x="23" y="13"/>
+    	<item type="Tree" x="23" y="14"/>
+    	<item type="Tree" x="6" y="11"/>
+    	<item type="Tree" x="7" y="10"/>
+    	<item type="Tree" x="8" y="10"/>
+    	<item type="Tree" x="9" y="9"/>
+    	<item type="Tree" x="4" y="20"/>
+    	<item type="Tree" x="5" y="20"/>
+    	<item type="Tree" x="4" y="21"/>
+    	<item type="Tree" x="5" y="21"/>
+    	<item type="Tree" x="13" y="26"/>
+    	<item type="Tree" x="15" y="26"/>
+    	<item type="Tree" x="16" y="26"/>
+    	<item type="Tree" x="26" y="22"/>
+    	<item type="Tree" x="27" y="21"/>
+    	<item type="Tree" x="28" y="21"/>
     </items>
 
 </world>

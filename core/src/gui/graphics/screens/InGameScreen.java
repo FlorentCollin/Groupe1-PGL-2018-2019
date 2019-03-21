@@ -42,9 +42,7 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import roomController.Room;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.pmw.tinylog.Logger;
 
 public class InGameScreen extends MenuScreen implements InputProcessor {
 
@@ -323,6 +321,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
+            Logger.info(String.format("%s, %s", boardCoords.col, boardCoords.row));
         }
         return true;
     }
