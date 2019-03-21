@@ -49,7 +49,8 @@ import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import roomController.Room;
 
-public class InGameScreen extends BasicScreen implements InputProcessor {
+public class InGameScreen extends MenuScreen implements InputProcessor {
+
 
     private Map map;
     private Vector3 mouseLoc = new Vector3();
@@ -82,19 +83,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
         hud = new Hud(this, itemsSkin);
+        ImageButton arrow = generateArrowButton();
+        arrow.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                parent.changeScreen(MainMenuScreen.class);
+            }
+        });
+        hud.addActor(arrow);
 
-//        arrowButton = generateArrowButton();
-//        arrowButton.setX(25 * ratio);
-//        arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
-
-//        ImageButton arrow = generateArrowButton();
-//        arrow.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                arrowListener();
-//            }
-//        });
-//        hud.addActor(arrow);
         Hud.Shop shop = hud.getShop();
         shop.soldierLvl1.addListener(new ClickListener() {
             @Override

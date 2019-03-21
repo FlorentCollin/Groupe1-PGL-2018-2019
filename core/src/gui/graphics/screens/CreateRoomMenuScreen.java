@@ -301,7 +301,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     private void delAI(int index) {
         Label aiName = aiNames.get(index);
         SelectBox<String> aiStrat = aiStrats.get(index);
-        //On reset les cellules correspondantes à l'ia associé à l'index pour les retirer de l'interface utilisateuro
+        //On reset les cellules correspondantes à l'ia associé à l'index pour les retirer de l'interface utilisateur
         scrollTable.getCell(aiName).reset();
         scrollTable.getCell(aiStrat).reset();
         scrollTable.row();
