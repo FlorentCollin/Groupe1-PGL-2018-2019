@@ -13,14 +13,12 @@ public class Tsunami extends NaturalDisasters{
 	}
 	
 	private void tsunami() {
-		if(mustHappen()) {
-			affectedCells.clear();
-			for(Cell cell : getNeighboursWaterCells()) {
-				nAffectedCells = 0;
-				destroy(cell);
-			}
-			saveChanges();
+		affectedCells.clear();
+		for(Cell cell : getNeighboursWaterCells()) {
+			nAffectedCells = 0;
+			destroy(cell);
 		}
+		saveChanges();
 	}
 	
 	private void destroy(Cell cell) {
@@ -33,7 +31,7 @@ public class Tsunami extends NaturalDisasters{
 		board.addModification(cell);
 		board.setCell(cell);
 		board.checkSplit(cell);
-		if(nAffectedCells < getMaxAffectedCells() && ok(50)) {
+		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			destroy(getOneFrom(board.getNeighbors(cell)));
 		}
 	}
@@ -41,6 +39,8 @@ public class Tsunami extends NaturalDisasters{
 	@Override
 	public void play() {
 		cancel();
-		tsunami();
+		if(mustHappen(getProba())) {
+			tsunami();
+		}
 	}
 }

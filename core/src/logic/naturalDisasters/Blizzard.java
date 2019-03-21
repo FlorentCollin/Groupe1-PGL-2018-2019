@@ -49,7 +49,7 @@ public class Blizzard extends NaturalDisasters{
 		cell = new BlizzardCell(cell.getX(), cell.getY());
 		cell.setItem(item);
 		cell.setDistrict(district);
-		if(nAffectedCells < getMaxAffectedCells() && ok(50)) {
+		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			for(Cell nb : board.getNeighbors(cell)) {
 				if(nb instanceof LandCell) {
 					blizzardFrom(nb);
@@ -64,7 +64,7 @@ public class Blizzard extends NaturalDisasters{
 			for(Cell cell : cells) {
 				if(cell.getItem() instanceof Soldier) {
 					level = cell.getItem().getLevel();
-					if(ok(deadProb.get(level))) {
+					if(mustHappen(deadProb.get(level))) {
 						cell.removeItem();
 					}
 				}
@@ -76,6 +76,8 @@ public class Blizzard extends NaturalDisasters{
 	public void play() {
 		kill();
 		cancel();
-		blizzard();
+		if(mustHappen(getProba())) {
+			blizzard();
+		}
 	}
 }

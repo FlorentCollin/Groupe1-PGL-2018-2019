@@ -13,12 +13,10 @@ public class VolcanicEruption extends NaturalDisasters{
 	}
 	
 	private void eruption() {
-		if(mustHappen()) {
-			affectedCells.clear();
-			nAffectedCells = 0;
-			destroy(getAnyCell());
-			saveChanges();
-		}
+		affectedCells.clear();
+		nAffectedCells = 0;
+		destroy(getAnyCell());
+		saveChanges();
 	}
 	
 	private void destroy(Cell cell) {
@@ -33,7 +31,7 @@ public class VolcanicEruption extends NaturalDisasters{
 		board.setCell(cell);
 		board.addModification(cell);
 		board.checkSplit(cell);
-		if(nAffectedCells < getMaxAffectedCells() && ok(50)) {
+		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			destroy(getOneFrom(board.getNeighbors(cell)));
 		}
 	}
@@ -41,6 +39,8 @@ public class VolcanicEruption extends NaturalDisasters{
 	@Override
 	public void play() {
 		cancel();
-		eruption();
+		if(mustHappen(getProba())) {
+			eruption();
+		}
 	}
 }

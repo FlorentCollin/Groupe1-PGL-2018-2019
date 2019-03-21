@@ -48,6 +48,8 @@ public class ForestFire extends NaturalDisasters{
 	@Override
 	public void play() {
 		wasOnFire();
-		fire();
+		if(mustHappen(getProba())) {
+			fire();
+		}
 	}
 }

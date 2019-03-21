@@ -52,11 +52,7 @@ public abstract class NaturalDisasters {
 		this.affectedCells = affectedCells;
 	}
 	
-	protected boolean mustHappen() {
-		return rand.nextInt(101) < proba;
-	}
-	
-	protected boolean ok(int x) {
+	protected boolean mustHappen(int x) {
 		return rand.nextInt(101) < x;
 	}
 	
