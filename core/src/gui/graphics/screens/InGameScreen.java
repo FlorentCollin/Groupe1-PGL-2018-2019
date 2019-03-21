@@ -35,6 +35,7 @@ import logic.board.cell.Cell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
+import logic.player.Player;
 import roomController.Room;
 
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
             }
         }
         if(board.getWinner() != null) {
-            parent.changeScreen(WinnerScreen.class);
+            showEndDialog(board.getWinner());
         }
         map.getTiledMapRenderer().setView(camera);
         map.getTiledMapRenderer().render(); //Rendering des cellules
@@ -470,6 +471,31 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         });
         table.add(cancel).expandY().pad(10).padRight(25).padLeft(25);
         table.add(menuButton).expandY().pad(10).padRight(25).padLeft(25).align(Align.left);
+        dialog.show(hud);
+    }
+
+    private void showEndDialog(Player winner) {
+        Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+        labelStyle.font = textFont;
+        labelStyle.fontColor = winner.getColor();
+        Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
+        windowStyle.titleFont = textFont;
+        TextButton.TextButtonStyle buttonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+        buttonStyle.font = textFont;
+        Dialog dialog = new Dialog("", windowStyle);
+        Table table = dialog.getContentTable();
+        table.align(Align.topLeft);
+        table.add(new Label(winner.getName() + " " + Language.bundle.get("winner"), labelStyle)).align(Align.center).pad(50);
+        TextButton returnButton = new TextButton(Language.bundle.get("returnToMainMenu"), buttonStyle);
+        returnButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("clicked");
+                parent.changeScreen(MainMenuScreen.class);
+                dialog.hide();
+            }
+        });
+        table.add(returnButton).expandY().pad(10).padRight(25).padLeft(25).align(Align.center);
         dialog.show(hud);
     }
 }
