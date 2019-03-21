@@ -57,7 +57,6 @@ public class ServerLauncher {
         boolean running = true;
         while(running) {
             String command = scan.nextLine();
-            System.out.println("get line");
             switch(command) {
                 case "/size":
                     Logger.info("Number of clients : " + ServerInfo.clients.size()); break;
