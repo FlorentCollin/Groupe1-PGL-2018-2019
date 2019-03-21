@@ -4,17 +4,27 @@ import logic.item.level.SoldierLevel;
 
 public class Soldier extends Item{
 
+
 	public Soldier(SoldierLevel level) {
 		this.level = level;
-		buyable = true;
-		movable = true;
 		improvable = true;
+		movable = true;
+		buyable = true;
+		hasSalary = true;
+		maxMove = 4;
+	}
+
+	@Override
+	public void update() {
+		improvable = true;
+		movable = true;
+		buyable = true;
 		hasSalary = true;
 		maxMove = 4;
 	}
 	
 	public SoldierLevel getLevel() {
-		return (SoldierLevel)this.level;
+		return this.level;
 	}
 	
 	public void setLevel(SoldierLevel level) {

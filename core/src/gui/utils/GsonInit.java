@@ -16,6 +16,7 @@ public class GsonInit {
                 .registerSubtype(Soldier.class, Soldier.class.getName())
                 .registerSubtype(Tree.class, Tree.class.getName())
                 .registerSubtype(Tomb.class, Tomb.class.getName())
+                .registerSubtype(TreeOnFire.class, TreeOnFire.class.getName())
                 .registerSubtype(DestroyableItem.class, DestroyableItem.class.getName());
 //        RuntimeTypeAdapterFactory<Level> levelTypeAdapter = RuntimeTypeAdapterFactory
 //                .of(Level.class, "type")

@@ -12,6 +12,12 @@ import logic.item.Tomb;
 import logic.item.Tree;
 import logic.player.Player;
 
+/**
+ * Classe représentant un district.
+ * Un district est un territoire qui appartient à un joueur.
+ * Si deux districts différents qui appartiennent au même joueur se touchent alors ceux-ci
+ * sont fusionnés.
+ */
 public class District {
 	private Player player;
 	private int gold;
@@ -32,7 +38,6 @@ public class District {
 		}
 	}
 
-	//TODO supprimer cette méthode
 	/**
 	 * Permet d'ajouter au district toutes les cellules d'un autre district
 	 * @param district le district dont on souhaite obtenir les cellules
@@ -50,12 +55,19 @@ public class District {
 		}
 	}
 
+	/**
+	 * Méthode qui permet de supprimer toutes les cellules d'un district
+	 * @param district le district duquel il faut supprimer toutes les cellules
+	 */
 	public void removeAll(District district) {
         synchronized (cells) {
             cells.removeAll(district.getCells());
         }
 	}
-	
+
+	/**
+	 * Méthode qui permet de supprimer un district
+	 */
 	public void delete() {
 		for(Cell cell : cells) {
 			cell.removeDistrict();
@@ -63,6 +75,10 @@ public class District {
 		}
 	}
 
+	/**
+	 * Méthode qui permet de supprimer tous les soldats d'un district et de les remplacer par une tombe
+	 * Cette méthode est appelé lorsqu'un district est en faillit
+	 */
 	public void removeSoldiers() {
 	    synchronized (cells) {
             for(Cell c : cells) {
@@ -72,7 +88,10 @@ public class District {
             }
         }
 	}
-	
+
+	/**
+	 * Méthode qui permet de remettre les soldats dans un état où ils peuvent se déplacer sur la map
+	 */
 	public void refreshSoldiers() {
 		for(Cell c : cells) {
 			if(c.getItem() != null && c.getItem().isMovable()) {
@@ -106,7 +125,6 @@ public class District {
 
 	/**
 	 * Permet de calculer le revenu du district
-	 * @return le revenu du district
 	 * */
 	public void calculateGold() {
 		Item item;

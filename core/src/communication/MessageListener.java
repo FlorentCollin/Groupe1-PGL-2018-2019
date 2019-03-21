@@ -51,6 +51,7 @@ public abstract class MessageListener extends Thread {
     protected void executeMessage(Message message) {
         if (message instanceof InitMessage) { //Initialisation du board
             board = ((InitMessage) message).getBoard();
+            board.init();
             board.updateBoard(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(), board.getActivePlayerNumber());
             playerNumber = ((InitMessage) message).getPlayerNumber();
         } else if (message instanceof GameUpdateMessage) { //Update du board

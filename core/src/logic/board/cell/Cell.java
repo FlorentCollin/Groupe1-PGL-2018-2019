@@ -3,6 +3,9 @@ package logic.board.cell;
 import logic.board.District;
 import logic.item.Item;
 
+/**
+ * Classe représentant une cellule du Board. Une cellule est un hexagone dans le jeu
+ */
 public class Cell {
 	private int x,y;
 	private Item item; // si null alors il n'y a pas d'item actuellement sur la cellule
@@ -52,6 +55,11 @@ public class Cell {
 		return y;
 	}
 
+	/**
+	 * Méthode qui retourne l'ID d'une cellule, l'ID est sa position en x et y dans le board
+	 * Note : Cet ID est unique
+	 * @return l'ID de la cellule
+	 */
 	public Integer[] getId() {
 	    return new Integer[] {x, y};
     }

@@ -53,8 +53,8 @@ public class OnlineMessageListener extends MessageListener{
                 if(key.isReadable()) { //Si le serveur à envoyé un message
                     ArrayList<Message> messages = Message.readFromKey(key, gson);
                     messages.forEach(this::executeMessage);
-                    keyIterator.remove();
                 }
+                keyIterator.remove();
             }
         }
     }

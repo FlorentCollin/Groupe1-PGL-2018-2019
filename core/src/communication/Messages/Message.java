@@ -92,6 +92,14 @@ public abstract class Message {
         return messageStr.toString().trim(); //Le trim permet d'enlever les espaces avant et après un string
     }
 
+    /**
+     * Méthode qui va s'occuper de lire le message du SocketChannel
+     * @param key la clé du SocketChannel qui est lisible
+     * @param gson Le gson qui doit s'occuper de deserialiser le message
+     * @return La liste des messages reçus par la clé (note : uniquement les messages complets, les autres
+     * sont gardé dans la clé (key.attach())
+     * @throws IOException
+     */
     public static ArrayList<Message> readFromKey(SelectionKey key, Gson gson) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
         String messageStr = Message.getStringFromBuffer(channel, (String) key.attachment());

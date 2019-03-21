@@ -1,9 +1,9 @@
 package logic.item;
 
-public class TreeOnFire extends Item {//Ne descend pas de Tree pour 
+public class TreeOnFire extends Item {
 
 	public TreeOnFire() {
-		
+
 	}
 
 }

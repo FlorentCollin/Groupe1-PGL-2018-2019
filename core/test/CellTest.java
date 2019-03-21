@@ -9,7 +9,6 @@ public class CellTest {
 		Player p = new Player();
 		Soldier s = new Soldier(p, SoldierLevel.level2);
 		for(SoldierLevel l : SoldierLevel.values()) {
-			System.out.println(l.hashCode());
 		}
 		System.out.println(s.getLevel().hashCode());
 	}
