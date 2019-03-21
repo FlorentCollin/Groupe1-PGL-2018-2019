@@ -18,8 +18,9 @@ import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
 
 
-
-
+/**
+ * Classe représentant un plateau de jeu.
+ */
 public class Board{
 	private Cell[][] board;
 	private int columns, rows, activePlayer;
@@ -120,7 +121,12 @@ public class Board{
 		board[i][j] = new WaterCell(i,j);
 		waterCells.add(board[i][j]);
 	}
-	
+
+	/**
+	 * Permet de changer une cellule d'eau en une cellule neutre
+	 * @param i la position en x
+	 * @param j la position en y
+	 */
 	public void changeToLandCell(int i, int j) {
 		waterCells.remove(board[i][j]);
 		board[i][j] = new LandCell(i, j);
@@ -135,7 +141,7 @@ public class Board{
 
 	/**
 	 * Permet de placer un item sur une cellule du plateau
-	 * @parm cell la cellule sur laquelle placer le nouvel item
+	 * @param cell la cellule sur laquelle placer le nouvel item
 	 * */
 	public void placeNewItem(Cell cell){
 		Item cellItem = cell.getItem();
@@ -159,7 +165,7 @@ public class Board{
 			// Le joueur souhaite se placer sur une case ennemie non vide
 			// L'item de la case doit être de niveau inférieur ou égal à celui que l'on souhaite placer
 			else {
-				// Si la cellule enemi contient une capitale il faut regénérer une capitale pour le district de cette cellule
+				// Si la cellule ennemi contient une capitale il faut régénérer une capitale pour le district de cette cellule
 				if(cellItem.getLevel() == null) {
 					conquerForNewItem(cell);
 				}
@@ -212,7 +218,7 @@ public class Board{
 				if(cellItem.isImprovable() && sameInstance(cellItem, selectedItem)) {
 					fusion(toCell);
 				}
-				else if(cellItem instanceof DestroyableItem) { // à modifier si on veut ajouter d'autre item procurant de l'argent
+				else if(cellItem instanceof DestroyableItem) {
 					toCell.getDistrict().addGold(((DestroyableItem) cellItem).getBonus());
 					updateCell(toCell);
 				}
@@ -230,7 +236,7 @@ public class Board{
 
 	/**
 	 * Permet de fusionner des items
-	 * @param cell la cellule surlaquelle la fusion doit être faîte
+	 * @param cell la cellule sur laquelle la fusion doit être faîte
 	 * */
 	private void fusion(Cell cell) {
 		cell.getItem().improve();
@@ -238,7 +244,7 @@ public class Board{
 	}
 
 	/**
-	 * Permet de fusinonner des items lors de l'ajout d'un nouvel item
+	 * Permet de fusionner des items lors de l'ajout d'un nouvel item
 	 * @param cell la cellule sur laquelle se trouve un item et qu'un nouvel item vient d'être placé
 	 * */
 	private void fusionForNewItem(Cell cell) {
@@ -249,21 +255,20 @@ public class Board{
 	/**
 	 * Permet de savoir si une cellule appartient à un joueur
 	 * @param cell la cellule à tester
-	 * @return true si la cellule appartient au joueuru qui est entrain de jouer le tour
-	 * 			false sinon
+	 * @return true si la cellule appartient au joueur qui est entrain de jouer le tour
+	 * 		   false sinon
 	 * */
 	private boolean isOnOwnTerritory(Cell cell) {
 		if(isNeutral(cell)) {
 			return false;
 		}
-		else if(cell.getDistrict().getPlayer() != getActivePlayer()) {
-			return false;
+		else {
+			return cell.getDistrict().getPlayer() == getActivePlayer();
 		}
-		return true;
 	}
 
 	/**
-	 * Permet de savoir si une cellule n'appartient à aucune joueur
+	 * Permet de savoir si une cellule n'appartient à aucun joueur
 	 * @param cell la cellule à tester
 	 * @return true si la cellule n'appartient à personne
 	 * 			false sinon
@@ -277,8 +282,8 @@ public class Board{
 
 	/**
 	 * Permet de savoir si la cellule sur laquelle on souhaite se placer possède un item identique
-	 * @param cell la cellule à tester
-	 * @param isNewItem détermine si l'item qu'on souhaite ajouter sur la cellule provient du shop
+	 * @param item1 le premier item
+	 * @param item2 le deuxième item
 	 * @return true si les items sont identiques
 	 * 			false sinon
 	 * */
@@ -346,14 +351,11 @@ public class Board{
 			}
 		}
 		return possible;
-
-
 	}
 
 	/**
-	 * Permet de récupérer les cellules autour d'une autre cellule sur lesquelles il est possible de placer un nouvel item
+	 * Permet de récupérer les cellules autour d'une cellule
 	 * @param cell la cellule de base
-	 * @param item l'item que l'on souhaite placer
 	 * @return la liste des cellules autour de cell pour lesquels c'est possible
 	 * */
 	public ArrayList<Cell> getNeighbors(Cell cell){
@@ -451,7 +453,7 @@ public class Board{
 				}
 			}
 			if(players.get(activePlayer) instanceof AI) {
-				((AI)players.get(activePlayer)).play(); //Vérifier coût d'un cast !!!!
+				((AI)players.get(activePlayer)).play();
 			}
 		}
 		else {
@@ -512,7 +514,6 @@ public class Board{
 		smaller.removeCapital();
 		bigger.addAll(smaller);
 		removeDistrict(smaller);
-//		checkDistricts();
 	}
 
 	/**
@@ -600,13 +601,13 @@ public class Board{
 	}
 
 	/**
-	 * Calcule la probabilité qu'un abre apparaisse sur une cellule
+	 * Calcule la probabilité qu'un arbre apparaisse sur une cellule
 	 * @param n le nombre d'arbres autour de la cellule
 	 * @return la probabilité qu'un arbre apparaisse sur la cellule
 	 * */
 	private double calculateProb(int n) {
 		if(n >= 0 && n <= 6) { // le nombre d'arbres au tour de la case doit être compris entre 0 et 6
-			return 1/100+(n*Math.log10(n+1))/10;
+			return 1/100f+(n*Math.log10(n+1))/10;
 		}
 		return 0;
 	}
@@ -714,12 +715,14 @@ public class Board{
 			setSelectedCell(null);
 			shop.removeSelection();
 		}
-		// cell != null vrmt utile ????
 		else if(cell != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() == players.get(activePlayer)){
 			setSelectedCell(cell);
 		}
 	}
 
+	/**
+	 * Méthode qui vérifier si un joueur à gagné
+	 */
 	private void checkWinner() {
 		ArrayList<Player> deadPlayers = new ArrayList<>();
 		for(Player player : players) {
@@ -756,6 +759,9 @@ public class Board{
 		return false;
 	}
 
+	/**
+	 * Vérifie si un district est vide
+	 */
 	private void checkDistricts() {
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
@@ -773,6 +779,10 @@ public class Board{
 		checkCapitals();
 	}
 
+	/**
+	 * Vérifie que chaque district possède bien une capitale
+	 * Si un district ne possède pas de capital une nouvelle est générer
+	 */
 	public void checkCapitals() {
 		ArrayList<District> toRemove = new ArrayList<>();
 		int returnValue;
@@ -803,6 +813,13 @@ public class Board{
 		return ret;
 	}
 
+	/**
+	 * Méthode qui permet d'update le board. Cette méthode est utilisé par le client pour que l'interface graphique soit à jour
+	 * @param districts les districts
+	 * @param shopItem l'item contenu dans le shop
+	 * @param players les joueurs
+	 * @param activePlayer le numéro du joueur actif
+	 */
 	public void updateBoard(ArrayList<District> districts, Item shopItem, ArrayList<Player> players, int activePlayer) {
 		this.districts = districts;
 		this.shop.setSelectedItem(shopItem);
