@@ -43,7 +43,6 @@ import java.util.List;
 
 public class InGameScreen extends MenuScreen implements InputProcessor {
 
-    private final ImageButton arrowButton;
     private Map map;
     private Vector3 mouseLoc = new Vector3();
     private float worldHeight;
@@ -75,16 +74,18 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
         hud = new Hud(this, itemsSkin);
-        arrowButton = generateArrowButton();
-        arrowButton.setX(25 * ratio);
-        arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
-        arrowButton.addListener(new ClickListener() {
+//        arrowButton = generateArrowButton();
+//        arrowButton.setX(25 * ratio);
+//        arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
+
+        ImageButton arrow = generateArrowButton();
+        arrow.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 arrowListener();
             }
         });
-        hud.addActor(arrowButton);
+        hud.addActor(arrow);
         Hud.Shop shop = hud.getShop();
         shop.soldierLvl1.addListener(new ClickListener() {
             @Override
@@ -268,6 +269,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
 
     @Override
     public void show() {
+
     }
 
     @Override
