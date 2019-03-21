@@ -6,15 +6,15 @@ import logic.item.level.SoldierLevel;
 public abstract class Item {
 	protected SoldierLevel level;
     protected String type = getClass().getName();
-	
-	protected static boolean movable = false;
-	protected static boolean buyable = false;
+
+	protected boolean movable = false;
+	protected boolean buyable = false;
 	protected boolean improvable = false;
 	
 	protected boolean hasMoved = false;
-	protected static boolean hasSalary = false;
+	protected boolean hasSalary = false;
 	
-	protected static int maxMove = 0;
+	protected int maxMove = 0;
 	
 	public Item() {
 		

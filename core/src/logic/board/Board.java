@@ -842,7 +842,7 @@ public class Board{
 				}
 			}
 		}
-		checkWinner();
+//		checkWinner();
 	}
 
 	public ArrayList<Cell> getWaterCells(){
