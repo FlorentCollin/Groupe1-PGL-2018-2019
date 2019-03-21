@@ -835,6 +835,8 @@ public class Board{
 				board[cell.getX()][cell.getY()] = cell;
 				cell.setDistrict(district);
 				modificatedCells.add(cell);
+				if(cell.getItem() != null)
+					cell.getItem().update();
 			}
 			for (int i = 0; i < players.size(); i++) {
 				if (district.getPlayer().getId() == players.get(i).getId()) {
@@ -842,7 +844,7 @@ public class Board{
 				}
 			}
 		}
-//		checkWinner();
+		checkWinner();
 	}
 
 	public ArrayList<Cell> getWaterCells(){

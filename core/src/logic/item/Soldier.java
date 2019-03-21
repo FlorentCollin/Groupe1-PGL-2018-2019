@@ -13,6 +13,15 @@ public class Soldier extends Item{
 		hasSalary = true;
 		maxMove = 4;
 	}
+
+	@Override
+	public void update() {
+		improvable = true;
+		movable = true;
+		buyable = true;
+		hasSalary = true;
+		maxMove = 4;
+	}
 	
 	public SoldierLevel getLevel() {
 		return this.level;
