@@ -92,14 +92,27 @@ public class OnlineMenuScreen extends SubMenuScreen{
             this.messageListener.start();
             messageSender.send(new TextMessage("getWaitingRooms"));
         } catch (IOException e) { //Cette exception arrive lorsqu'il y a eu un problème lors de la connection du client au serveur
-            Skin uiSkin = new Skin(Gdx.files.internal("skin/basic/uiskin.json"));
-            Dialog dialog = new Dialog(Language.bundle.get("serverConnectionFailed"), uiSkin, "dialog") {
-                public void result(Object obj) {
+            Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
+            windowStyle.titleFont = textFont;
+            Dialog dialog = new Dialog("", windowStyle);
+            Table table = dialog.getContentTable();
+            dialog.hide();
+            table.align(Align.topLeft);
+            labelStyle.font = textFont;
+            textButtonStyle.font = textFont;
+            TextButton b1 = new TextButton(Language.bundle.get("returnToMainMenu"), textButtonStyle);
+            b1.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
                     parent.changeScreen(MainMenuScreen.class);
+                    dialog.hide();
                 }
-            };
-            dialog.text(Language.bundle.get("connectionError"));
-            dialog.button(Language.bundle.get("returnToMainMenu"));
+            });
+            table.add(new Label(Language.bundle.get("connectionError"), labelStyle)).pad(50).row();
+            table.add(b1).expandY().align(Align.bottom).pad(50);
+//            dialog.text(Language.bundle.get("connectionError"));
+//            dialog.button(Language.bundle.get("returnToMainMenu"));
+//            stage.addActor(window);
             dialog.show(stage);
             parent.changeScreen(MainMenuScreen.class);
         }

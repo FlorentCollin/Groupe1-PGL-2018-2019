@@ -4,6 +4,10 @@ import logic.player.Player;
 
 import java.util.ArrayList;
 
+/**
+ * Message envoyé par le serveur aux clients pour leur indiquer qu'il y a eu une changement
+ * dans la Waiting Room
+ */
 public class RoomUpdateMessage extends NetworkMessage {
 
     private ArrayList<Player> players;

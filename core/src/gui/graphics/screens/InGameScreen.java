@@ -11,10 +11,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import communication.MessageListener;
 import communication.MessageSender;
@@ -24,6 +26,8 @@ import communication.Messages.TextMessage;
 import communication.OnlineMessageSender;
 import gui.Hud;
 import gui.app.Slay;
+import gui.utils.Constants;
+import gui.utils.Language;
 import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
@@ -76,13 +80,8 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         hud = new Hud(this, itemsSkin);
         arrowButton = generateArrowButton();
         arrowButton.setX(25 * ratio);
-        arrowButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                dispose();
-                parent.changeScreen(MainMenuScreen.class);
-            }
-        });
+        arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
+        arrowButton.addListener(arrowListener());
         hud.addActor(arrowButton);
         Hud.Shop shop = hud.getShop();
         shop.soldierLvl1.addListener(new ClickListener() {
@@ -436,4 +435,47 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
     private OffsetCoords boardToTmxCoords(OffsetCoords boardCoords) {
         return new OffsetCoords(boardCoords.col, Math.abs(cells.getHeight()-1 - boardCoords.row));
     }
+
+
+    private ClickListener arrowListener() {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //Ajout d'un dialogue qui permet d'entrer l'addresse ip d'un serveur local
+                Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+                labelStyle.font = textFont;
+                Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
+                windowStyle.titleFont = textFont;
+                TextButton.TextButtonStyle buttonStyle = uiSkin.get( "checked", TextButton.TextButtonStyle.class);
+                buttonStyle.font = textFont;
+                Dialog dialog = new Dialog("", windowStyle);
+                Table table = dialog.getContentTable();
+                //Ajout des différents éléments au dialogue
+                table.align(Align.topLeft);
+                table.add(new Label(Language.bundle.get("quitGame"), labelStyle)).padTop(10).padLeft(10).row();
+                TextButton cancel = new TextButton(Language.bundle.get("no"), buttonStyle);
+                //Ajout d'un listener au bouton cancel (qui cache le dialogue)
+                cancel.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        dialog.hide();
+                    }
+                });
+                TextButton menuButton = new TextButton(Language.bundle.get("yes"), buttonStyle);
+                //Ajout d'un listener au bouton Join Server qui permet au client de rejoindre le serveur indiqué dans l'ipField
+                menuButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        parent.changeScreen(MainMenuScreen.class);
+                        dispose();
+                        dialog.hide();
+                    }
+                });
+                table.add(cancel).expandY().pad(10).padRight(25).padLeft(25);
+                table.add(menuButton).expandY().pad(10).padRight(25).padLeft(25).align(Align.left);
+                dialog.show(hud);
+            }
+        };
+    }
+
 }

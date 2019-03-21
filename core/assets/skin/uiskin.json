@@ -47,8 +47,8 @@
   }
 
   WindowStyle: {
-    default: { background: room-background, titleFontColor: white },
-    dialog: { parent: default, stageBackground: room-background }
+    default: { background: dialog-background },
+    dialog: { parent: default, stageBackground: dialog-background }
   },
 
 }

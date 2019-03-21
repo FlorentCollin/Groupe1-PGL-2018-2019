@@ -3,6 +3,9 @@ package communication.Messages;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * Message qui demande au serveur la liste des Waiting Rooms qui ne sont pas encore pleines
+ */
 public class ListRoomsMessage extends NetworkMessage {
 
     private ArrayList<String> roomsName;
