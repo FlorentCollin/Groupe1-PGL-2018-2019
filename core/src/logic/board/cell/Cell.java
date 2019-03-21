@@ -16,10 +16,6 @@ public class Cell {
 		this.y = y;
 	}
 	
-	public Cell(District district) {
-		this.district = district;
-	}
-	
 	public void setItem(Item item) {
 		this.item = item;
 	}

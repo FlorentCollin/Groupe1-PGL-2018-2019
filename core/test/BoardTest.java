@@ -5,7 +5,7 @@ import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
-import logic.naturalDisasters.NaturalDisastersController;
+import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
 import org.junit.Before;

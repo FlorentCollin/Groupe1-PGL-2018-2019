@@ -11,7 +11,7 @@ import logic.item.DestroyableItem;
 import logic.item.Item;
 import logic.item.Tree;
 import logic.myList.MyList;
-import logic.naturalDisasters.NaturalDisastersController;
+import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
 import logic.player.ai.strategy.Strategy; 
@@ -41,23 +41,13 @@ public class Board{
 	private ArrayList<Cell> treeCells;
 	private ArrayList<Cell> modificatedCells;
 	private HashMap<Player, ArrayList<Cell>> erodedCells;
+	private int turn = 0;
 	
 	//Vérifier où on appelle checkDistricts() !!!!!
 
 	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
-		this.columns = columns;
-		this.rows = rows;
-		board = new Cell[columns][rows];
-		this.players = players;
+		this(columns, rows, players, shop);
 		this.naturalDisastersController = naturalDisastersController;
-		this.districts = new ArrayList<>();
-		this.shop = shop;
-		fullIn();
-		waterCells = new ArrayList<>();
-		treeCells = new ArrayList<>();
-		modificatedCells = new ArrayList<>();
-		erodedCells = new HashMap<>();
-		generateHashMap();
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -74,6 +64,11 @@ public class Board{
 		erodedCells = new HashMap<>();
 		naturalDisastersController = new NaturalDisastersController(this);
 		generateHashMap();
+		for(District district : districts) {
+			if(district.getPlayer() == players.get(0)) {
+				district.calculateGold();
+			}
+		}
 	}
 	
 	private void generateHashMap() {
@@ -91,6 +86,10 @@ public class Board{
 				board[i][j] = new LandCell(i,j);
 			}
 		}
+	}
+	
+	public void setCell(Cell cell) {
+		board[cell.getX()][cell.getY()] = cell;
 	}
 	
 	/**
@@ -423,6 +422,7 @@ public class Board{
 	 * Permet de passer au joueur suivant
 	 */
 	public void nextPlayer() {
+		turn ++;
 		hasChanged = true;
 		if(naturalDisastersController != null) {
 			naturalDisastersController.isHappening();
@@ -538,9 +538,16 @@ public class Board{
 	 * Permet de vérifier si il faut diviser un district
 	 * @param cell la cellule depuis laquelle on effectue la vérification
 	 * */
-	private void checkSplit(Cell cell) {
+	public void checkSplit(Cell cell) {
 		for(Cell c : getNeighbors(cell)) {
-			if(c.getDistrict() != null && c.getDistrict().getPlayer() != getActivePlayer()) {
+			if(cell.getDistrict() == null && c.getDistrict() != null) { //cas d'un désastre naturel
+				visited.clear();
+				firstCell = c;
+				if(numberOfWayToCapital(c) == 0) {
+					split(c.getDistrict());
+				}
+			}
+			else if(c.getDistrict() != null && c.getDistrict().getPlayer() != getActivePlayer()) {
 				visited.clear();
 				firstCell = c;
 				if(numberOfWayToCapital(c) == 0) {
@@ -844,5 +851,9 @@ public class Board{
 	
 	public void addModification(Cell cell) {
 		modificatedCells.add(cell);
+	}
+
+	public int getTurn() {
+		return turn;
 	}
 }

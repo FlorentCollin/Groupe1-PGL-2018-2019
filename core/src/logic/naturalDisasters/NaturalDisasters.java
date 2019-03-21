@@ -6,23 +6,26 @@ import java.util.Random;
 
 import logic.board.Board;
 import logic.board.cell.Cell;
-import logic.player.Player;
+import logic.board.cell.LandCell;
+import logic.board.cell.WaterCell;
 
 public abstract class NaturalDisasters {
 	private int proba;
-	private int	numberOfEffectedCells;
 	private int duration;
+	protected int nAffectedCells;
+	private int maxAffectedCells;
 	protected Random rand = new Random();
 	protected Board board;
 	
 	protected ArrayList<Cell> affectedCells;
-	protected HashMap<Player, ArrayList<Cell>> modificatedCells;
+	protected HashMap<Integer, ArrayList<Cell>> modificatedCells;
 	
 	public NaturalDisasters(Board board) {
 		affectedCells = new ArrayList<>();
 		modificatedCells = new HashMap<>();
 		this.board = board;
 		duration = 1;
+		proba = 50;
 	}
 
 	public int getProba() {
@@ -33,20 +36,12 @@ public abstract class NaturalDisasters {
 		this.proba = proba;
 	}
 
-	public int getNumberOfEffectedCells() {
-		return numberOfEffectedCells;
-	}
-
-	public void setNumberOfEffectedCells(int numberOfEffectedCells) {
-		this.numberOfEffectedCells = numberOfEffectedCells;
-	}
-
 	public int getDuration() {
 		return duration;
 	}
 
 	public void setDuration(int duration) {
-		this.duration = duration;
+		this.duration = duration * board.getPlayers().size();
 	}
 
 	public ArrayList<Cell> getAffectedCells() {
@@ -57,17 +52,77 @@ public abstract class NaturalDisasters {
 		this.affectedCells = affectedCells;
 	}
 	
+	protected boolean mustHappen() {
+		return rand.nextInt(101) < proba;
+	}
+	
+	protected boolean ok(int x) {
+		return rand.nextInt(101) < x;
+	}
+	
+	protected Cell getAnyCell() {
+		int i;
+		int j;
+		do {
+			i = rand.nextInt(board.getColumns());
+			j = rand.nextInt(board.getRows());
+		}while(board.getCell(i, j) instanceof WaterCell);
+		return board.getCell(i, j);
+	}
+	
+	protected Cell getOneFrom(ArrayList<Cell> cells) {
+		Cell cell;
+		do {
+			cell = cells.get(rand.nextInt(cells.size()));
+		}while(! (cell instanceof LandCell));
+		return cell;
+	}
+	
 	public void play() {
 		
 	}
 	
 	protected void cancel() {
-		ArrayList<Cell> toCancel = modificatedCells.get(board.getActivePlayer());
-		if(toCancel != null) {
-			for(Cell c : toCancel) {
-				board.changeToLandCell(c.getX(), c.getY());
+		ArrayList<Integer> keysToDelete = new ArrayList<>();
+		for(int key : modificatedCells.keySet()) {
+			if(board.getTurn() - key > getDuration()) {	
+				for(Cell c : modificatedCells.get(key)) {
+					c = new LandCell(c.getX(), c.getY());
+					board.setCell(c);
+					board.addModification(c);
+				}
+				keysToDelete.add(key);
 			}
 		}
+		//Réduire la taille de modificatedCells
+		for(int key : keysToDelete) {
+			modificatedCells.remove(key);			
+		}
+	}
+	
+	protected void saveChanges() {
+		ArrayList<Cell> save = (ArrayList<Cell>) affectedCells.clone();
+		modificatedCells.put(board.getTurn(), save);
+	}
+
+	public int getMaxAffectedCells() {
+		return maxAffectedCells;
+	}
+
+	public void setMaxAffectedCells(int maxAffectedCells) {
+		this.maxAffectedCells = maxAffectedCells;
+	}
+	
+	protected ArrayList<Cell> getNeighboursWaterCells(){
+		ArrayList<Cell> neighbours = new ArrayList<>();
+		for(Cell waterCell : board.getWaterCells()) {
+			for(Cell nc : board.getNeighbors(waterCell)) {
+				if(nc instanceof LandCell && neighbours.indexOf(nc) == -1) {
+					neighbours.add(nc);
+				}
+			}
+		}
+		return neighbours;
 	}
 	
 }

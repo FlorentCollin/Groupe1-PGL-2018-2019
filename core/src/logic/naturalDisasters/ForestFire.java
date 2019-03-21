@@ -12,18 +12,17 @@ public class ForestFire extends NaturalDisasters{
 
 	public ForestFire(Board board) {
 		super(board);
-		setProba(60);
 		treesOnFire = new ArrayList<>();
 	}
 	
 	private void fire() {
 		affectedCells.clear();
 		ArrayList<Cell> treeCells = board.getTreeCells();
-		if(treeCells.size() > 0 && rand.nextInt(100)>getProba()) {
+		if(treeCells.size() > 0 && rand.nextInt(101)>getProba()) {
 			Cell tree = treeCells.get(rand.nextInt(treeCells.size()));
 			destroyTreeFrom(tree);
 		}
-		modificatedCells.put(board.getActivePlayer(), affectedCells);
+		modificatedCells.put(board.getTurn(), affectedCells);
 	}
 	
 	private void destroyTreeFrom(Cell tree) {

@@ -4,135 +4,177 @@ size: 2048,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+Coin
+  rotate: false
+  xy: 1555, 756
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
 arrow
   rotate: false
-  xy: 1453, 451
+  xy: 332, 43
   size: 75, 75
   orig: 75, 75
   offset: 0, 0
   index: -1
 arrow-unover
   rotate: false
-  xy: 1886, 933
+  xy: 1333, 135
   size: 75, 75
   orig: 75, 75
   offset: 0, 0
   index: -1
+currentPlayer
+  rotate: false
+  xy: 1813, 756
+  size: 180, 256
+  orig: 180, 256
+  offset: 0, 0
+  index: -1
 cursor
   rotate: false
-  xy: 1555, 820
+  xy: 409, 98
   size: 4, 20
   orig: 4, 20
   offset: 0, 0
   index: -1
 default-button-checked
   rotate: false
-  xy: 1002, 152
+  xy: 1, 8
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-over
   rotate: false
-  xy: 1555, 954
+  xy: 1, 64
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-over-unchecked
   rotate: false
-  xy: 1555, 898
+  xy: 671, 100
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-button-uncheck
   rotate: false
-  xy: 671, 152
+  xy: 671, 156
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 default-scroll
   rotate: false
-  xy: 332, 94
+  xy: 1995, 992
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
   index: -1
 info-background
   rotate: false
-  xy: 1, 126
+  xy: 1, 130
   size: 668, 80
   orig: 668, 80
   offset: 0, 0
   index: -1
 line
   rotate: false
-  xy: 456, 119
+  xy: 1, 1
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 room-background
   rotate: false
-  xy: 1, 208
+  xy: 1, 212
   size: 1450, 800
   orig: 1450, 800
   offset: 0, 0
   index: -1
 scroll-knob
   rotate: false
-  xy: 1333, 186
+  xy: 1711, 230
   size: 8, 20
   orig: 8, 20
   offset: 0, 0
   index: -1
 selectBox
   rotate: false
-  xy: 1555, 842
+  xy: 1711, 252
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-background
   rotate: false
-  xy: 1, 60
+  xy: 1002, 156
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selectBox-selection
   rotate: false
-  xy: 1, 4
+  xy: 1002, 100
   size: 329, 54
   orig: 329, 54
   offset: 0, 0
   index: -1
 selection
   rotate: false
-  xy: 1, 1
+  xy: 456, 127
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 shop-background
   rotate: false
-  xy: 1453, 528
+  xy: 1453, 532
   size: 100, 480
   orig: 100, 480
   offset: 0, 0
   index: -1
+shop_soldier_lvl1
+  rotate: false
+  xy: 1555, 532
+  size: 256, 222
+  orig: 256, 222
+  offset: 0, 0
+  index: -1
+shop_soldier_lvl2
+  rotate: false
+  xy: 1453, 308
+  size: 256, 222
+  orig: 256, 222
+  offset: 0, 0
+  index: -1
+shop_soldier_lvl3
+  rotate: false
+  xy: 1453, 84
+  size: 256, 222
+  orig: 256, 222
+  offset: 0, 0
+  index: -1
+shop_soldier_lvl4
+  rotate: false
+  xy: 1711, 308
+  size: 256, 222
+  orig: 256, 222
+  offset: 0, 0
+  index: -1
 slider
   rotate: false
-  xy: 1, 116
+  xy: 1, 120
   size: 453, 8
   orig: 453, 8
   offset: 0, 0
   index: -1
 slider-button
   rotate: false
-  xy: 671, 126
+  xy: 1813, 730
   size: 24, 24
   orig: 24, 24
   offset: 0, 0

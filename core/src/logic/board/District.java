@@ -112,16 +112,16 @@ public class District {
 		Item item;
 		synchronized (cells) {
             for(Cell cell : cells) {
+            	item = cell.getItem();
             	if(cell instanceof LandCell) {
-	                item = cell.getItem();
 	                setGold(getGold() + 1);
-	                if(item instanceof Soldier) {
-	                    setGold(getGold() - ((Soldier) item).getLevel().getSalary());
-	                }
-	                else if(item instanceof Tree) {
-	                    setGold(getGold() - 1);
-	                }
             	}
+                if(item instanceof Soldier) {
+                    setGold(getGold() - ((Soldier) item).getLevel().getSalary());
+                }
+                else if(item instanceof Tree) {
+                    setGold(getGold() - 1);
+                }
             }
         }
 	}

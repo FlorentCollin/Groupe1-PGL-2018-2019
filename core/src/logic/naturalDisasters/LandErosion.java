@@ -1,7 +1,5 @@
 package logic.naturalDisasters;
 
-import java.util.ArrayList;
-
 import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
@@ -18,28 +16,24 @@ public class LandErosion extends NaturalDisasters{
 
 	private void erosion() {
 		affectedCells.clear();
-		ArrayList<Cell> waterCells = board.getWaterCells();
 		int nWaterCells;
 		double prob;
-		for(Cell waterCell : waterCells) {
-			for(Cell neighbour : board.getNeighbors(waterCell)) {
-				if(neighbour instanceof LandCell) {
-					nWaterCells = 0;
-					for(Cell cell : board.getNeighbors(neighbour)) {
-						if(cell instanceof WaterCell) {
-							nWaterCells ++;
-						}
+		for(Cell neighbour : getNeighboursWaterCells()) {
+			if(neighbour instanceof LandCell) {
+				nWaterCells = 0;
+				for(Cell cell : board.getNeighbors(neighbour)) {
+					if(cell instanceof WaterCell) {
+						nWaterCells ++;
 					}
-					prob = calcProb(nWaterCells);
-					if(rand.nextInt(101) <= prob) {
-						affectedCells.add(neighbour);
-						erode(neighbour);
-					}
+				}
+				prob = calcProb(nWaterCells);
+				if(rand.nextInt(101) <= prob) {
+					affectedCells.add(neighbour);
+					erode(neighbour);
 				}
 			}
 		}
-		modificatedCells.put(board.getActivePlayer(), affectedCells);
-		changeToWaterCells();
+		saveChanges();
 	}
 	
 	private void erode(Cell cell) {
@@ -55,6 +49,7 @@ public class LandErosion extends NaturalDisasters{
 					if(board.canGoOn(c, cell.getItem())) {
 						c.setDistrict(cell.getDistrict());
 						c.setItem(cell.getItem());
+						board.addModification(c);
 						break;
 					}
 				}
@@ -62,13 +57,10 @@ public class LandErosion extends NaturalDisasters{
 		}
 		cell.removeDistrict();
 		cell.removeItem();
+		cell = new WaterCell(cell.getX(), cell.getY());
+		board.setCell(cell);
+		board.checkCapitals();
 		board.addModification(cell);
-	}
-	
-	private void changeToWaterCells() {
-		for(Cell cell : modificatedCells.get(board.getActivePlayer())) {
-			board.changeToWaterCell(cell.getX(), cell.getY());
-		}
 	}
 	
 	private double calcProb(int n) {

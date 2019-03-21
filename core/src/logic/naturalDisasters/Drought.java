@@ -9,14 +9,13 @@ import logic.item.Capital;
 import logic.item.Item;
 
 public class Drought extends NaturalDisasters{
-	int nDroughtCells;
 
 	public Drought(Board board) {
 		super(board);
 	}
 	
 	private void drought() {
-		nDroughtCells = 0;
+		nAffectedCells = 0;
 		affectedCells.clear();
 		int i = rand.nextInt(board.getColumns());
 		int j = rand.nextInt(board.getRows());
@@ -24,11 +23,11 @@ public class Drought extends NaturalDisasters{
 		if(cell instanceof LandCell) {
 			droughtFrom(cell);
 		}
-		modificatedCells.put(board.getActivePlayer(), affectedCells);
+		modificatedCells.put(board.getTurn(), affectedCells);
 	}
 	
 	private void droughtFrom(Cell cell) {
-		nDroughtCells ++;
+		nAffectedCells ++;
 		affectedCells.add(cell);
 		Item item = cell.getItem();
 		District district = cell.getDistrict();
@@ -37,14 +36,11 @@ public class Drought extends NaturalDisasters{
 		cell.setDistrict(district);
 		district.addCell(cell);
 		if(item instanceof Capital) {
+			district.removeCapital();
 			district.addCapital(cell);
 		}
-		if(nDroughtCells < 10) {
-			for(Cell neighbour : board.getNeighbors(cell)) {
-				if(neighbour instanceof LandCell) {
-					droughtFrom(neighbour);
-				}
-			}
+		if(nAffectedCells < getMaxAffectedCells() && ok(50)) { //random car au maximum 10 cellules affectées
+			droughtFrom(getOneFrom(board.getNeighbors(cell)));
 		}
 	}
 	

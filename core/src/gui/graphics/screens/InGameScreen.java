@@ -1,14 +1,10 @@
 package gui.graphics.screens;
 
 
-import static gui.utils.Constants.N_TILES;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -25,10 +21,10 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 
 import communication.MessageListener;
 import communication.MessageSender;
+import communication.OnlineMessageSender;
 import communication.Messages.PlayMessage;
 import communication.Messages.ShopMessage;
 import communication.Messages.TextMessage;
-import communication.OnlineMessageSender;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Map;
@@ -36,6 +32,7 @@ import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
 import logic.board.cell.Cell;
+import logic.board.cell.LavaCell;
 import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
@@ -158,7 +155,13 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
      * @param id l'id du joueur
      * @return la tile correspondante
      */
-    private TiledMapTile getTile(int id) {
+    private TiledMapTile getTile(int id, boolean isLava, boolean isWater) {
+    	if(isLava) {
+    		return map.getTileSet().getTile(7);
+    	}
+    	if(isWater) {
+    		return map.getTileSet().getTile(5);	
+    	}
         for(int i = 0; i < map.getTileSet().size(); i++) {
             TiledMapTile tile = map.getTileSet().getTile(i+1); //Le i+1 vient du first gid de tiled
             if((int)tile.getProperties().get("player") == id && (boolean)tile.getProperties().get("available")) {
@@ -428,8 +431,16 @@ public class InGameScreen extends BasicScreen implements InputProcessor {
                 if(cell.getDistrict() != null) {
                     playerId = cell.getDistrict().getPlayer().getId();
                 }
-                tile = getTile(playerId);
-	            tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
+                if(cell instanceof LavaCell) {
+                	tile = getTile(playerId, true, false);
+                }
+                else if(cell instanceof WaterCell) {
+                	tile = getTile(playerId, false, true);
+                }
+                else {
+                	tile = getTile(playerId, false, false);
+                }
+                tmxCoords = boardToTmxCoords(new OffsetCoords(cell.getX(), cell.getY()));
 	            tmxCell = cells.getCell(tmxCoords.col, tmxCoords.row);
 	            tmxCell.setTile(tile);
             }

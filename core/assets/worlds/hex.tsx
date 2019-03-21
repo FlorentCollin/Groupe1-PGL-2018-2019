@@ -4,6 +4,7 @@
  <tile id="0">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="1"/>
   </properties>
   <image width="256" height="222" source="hex_green.png"/>
@@ -11,6 +12,7 @@
  <tile id="1">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="2"/>
   </properties>
   <image width="256" height="222" source="hex_orange.png"/>
@@ -18,6 +20,7 @@
  <tile id="2">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="3"/>
   </properties>
   <image width="256" height="222" source="hex_pink.png"/>
@@ -25,6 +28,7 @@
  <tile id="3">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="0"/>
   </properties>
   <image width="256" height="222" source="hex_neutral.png"/>
@@ -32,6 +36,7 @@
  <tile id="4">
   <properties>
    <property name="available" type="bool" value="false"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="0"/>
   </properties>
   <image width="256" height="222" source="hex_blue.png"/>
@@ -39,20 +44,23 @@
  <tile id="5">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="4"/>
   </properties>
   <image width="256" height="222" source="hex_yellow.png"/>
  </tile>
  <tile id="6">
   <properties>
-   <property name="available" type="bool" value="true"/>
-   <property name="player" type="int" value="5"/>
+   <property name="available" type="bool" value="false"/>
+   <property name="lava" type="bool" value="true"/>
+   <property name="player" type="int" value="0"/>
   </properties>
   <image width="256" height="222" source="hex_red.png"/>
  </tile>
  <tile id="7">
   <properties>
    <property name="available" type="bool" value="true"/>
+   <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="6"/>
   </properties>
   <image width="256" height="222" source="hex_cyan.png"/>
