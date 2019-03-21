@@ -7,14 +7,14 @@ public abstract class Item {
 	protected SoldierLevel level;
     protected String type = getClass().getName();
 	
-	protected boolean movable = false;
-	protected boolean buyable = false;
+	protected static boolean movable = false;
+	protected static boolean buyable = false;
 	protected boolean improvable = false;
 	
-	protected boolean hasMoved = false; //A remplacer par canMove
-	protected boolean hasSalary = false;
+	protected boolean hasMoved = false;
+	protected static boolean hasSalary = false;
 	
-	protected int maxMove = 0;
+	protected static int maxMove = 0;
 	
 	public Item() {
 		
