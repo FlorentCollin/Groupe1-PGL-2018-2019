@@ -130,10 +130,7 @@ public class Map {
         }
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
         int height = Integer.parseInt(xmlElement.getAttribute("height"));
-        if (naturalDisasters)
-            board = new Board(width, height, players, new NaturalDisastersController(board), new Shop());
-        else
-            board = new Board(width, height, players, new Shop());
+        board = new Board(width, height, players, naturalDisasters, new Shop());
     }
 
     /**

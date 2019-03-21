@@ -122,6 +122,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         textButtonStyle.font = defaultFontItalic;
         TextButton naturalOff = new TextButton("OFF", textButtonStyle);
         TextButton naturalOn = new TextButton("ON", textButtonStyle);
+        naturalOff.setName("off");
+        naturalOn.setName("on");
         //Par défaut l'extension est activée
         naturalOn.setChecked(true);
 
@@ -230,7 +232,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
      */
     private boolean isNaturalDisastersOn() {
         TextButton button = naturalGroup.getChecked();
-        return button.getText().equals("ON");
+        return button.getName().equals("on");
 
     }
 
@@ -257,6 +259,7 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                         playersName.add(parent.getUserSettings().getUsername());
                     }
                     aiNames.forEach((i) -> playersName.add(i.getText().toString()));
+                    System.out.println(isNaturalDisastersOn());
                     room = new GameRoom(world, isNaturalDisastersOn(), ai, playersName, messagesQueue);
                     messageSender = new OfflineMessageSender(messagesQueue);
                     //Démarrage du thread qui s'occupe de la partie hors-ligne

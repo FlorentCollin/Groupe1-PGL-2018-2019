@@ -46,10 +46,10 @@ public class Board{
 
 	//Vérifier où on appelle checkDistricts() !!!!!
 
-	public Board(int columns, int rows, ArrayList<Player> players,NaturalDisastersController naturalDisastersController, Shop shop){
+	public Board(int columns, int rows, ArrayList<Player> players, boolean naturalDisasters, Shop shop){
 		this(columns, rows, players, shop);
-		this.naturalDisastersController = naturalDisastersController;
-		System.out.println("yes");
+		if (naturalDisasters)
+			naturalDisastersController = new NaturalDisastersController(this);
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -64,7 +64,6 @@ public class Board{
 		treeCells = new ArrayList<>();
 		modificatedCells = new ArrayList<>();
 		erodedCells = new HashMap<>();
-		naturalDisastersController = new NaturalDisastersController(this);
 		generateHashMap();
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(0)) {
