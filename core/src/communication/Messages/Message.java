@@ -1,6 +1,8 @@
 package communication.Messages;
 
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
 import server.Client;
 

@@ -22,7 +22,7 @@ import logic.shop.Shop;
  * Classe représentant un plateau de jeu.
  */
 public class Board{
-	private Cell[][] board;
+	private transient Cell[][] board;
 	private int columns, rows, activePlayer;
 	private ArrayList<Player> players;
 	private volatile ArrayList<District> districts;
@@ -811,6 +811,11 @@ public class Board{
 		boolean ret = hasChanged;
 		hasChanged = false;
 		return ret;
+	}
+
+	public void init() {
+		board = new Cell[columns][rows];
+		fullIn();
 	}
 
 	/**
