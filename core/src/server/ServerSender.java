@@ -58,9 +58,9 @@ public class ServerSender extends Thread {
                                  * Ici on écrit le nom de la classe du message en plus du message sérialisé
                                  * Pour permettre au client de retrouver le type du message
                                  * Le "+" est le caractère signalisant la fin du message */
-                                if (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
+                                while (clientChannel.write(buffer) == 0) { //Signifie qu'on ne pouvait pas écrire dans le buffer du client
                                     clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                                    clientChannel.write(buffer);
+//                                    clientChannel.write(buffer);
                                 }
                             }
                         }
