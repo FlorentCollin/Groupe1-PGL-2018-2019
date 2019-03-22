@@ -42,12 +42,7 @@ public class Cell {
 	}
 	
 	public void removeItem() {
-		if(item instanceof Soldier) {
-			item = new Tomb();
-		}
-		else {
-			item = null;
-		}
+		item = null;
 	}
 	
 	public boolean isAccessible() {
