@@ -3,6 +3,7 @@ package gui.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import logic.board.cell.*;
 import logic.item.*;
 
 public class GsonInit {
@@ -18,9 +19,13 @@ public class GsonInit {
                 .registerSubtype(Tomb.class, Tomb.class.getName())
                 .registerSubtype(TreeOnFire.class, TreeOnFire.class.getName())
                 .registerSubtype(DestroyableItem.class, DestroyableItem.class.getName());
-//        RuntimeTypeAdapterFactory<Level> levelTypeAdapter = RuntimeTypeAdapterFactory
-//                .of(Level.class, "type")
-//                .registerSubtype(SoldierLevel.class, SoldierLevel.class.getName());
+        RuntimeTypeAdapterFactory<Cell> cellTypeAdapter = RuntimeTypeAdapterFactory
+                .of(Cell.class, "type")
+                .registerSubtype(WaterCell.class, WaterCell.class.getName())
+                .registerSubtype(LandCell.class, LandCell.class.getName())
+                .registerSubtype(DroughtCell.class, DroughtCell.class.getName())
+                .registerSubtype(LavaCell.class, LavaCell.class.getName())
+                .registerSubtype(BlizzardCell.class, BlizzardCell.class.getName());
         return new GsonBuilder().registerTypeAdapterFactory(itemTypeAdapter).create();
     }
 }

@@ -27,6 +27,7 @@ public class Board{
 	private ArrayList<Player> players;
 	private volatile ArrayList<District> districts;
 	private Shop shop;
+	private boolean naturalDisasters;
 	private transient NaturalDisastersController naturalDisastersController;
 	private volatile Cell selectedCell, firstCell;
 	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
@@ -48,8 +49,10 @@ public class Board{
 
 	public Board(int columns, int rows, ArrayList<Player> players, boolean naturalDisasters, Shop shop){
 		this(columns, rows, players, shop);
-		if (naturalDisasters)
+		this.naturalDisasters = naturalDisasters;
+		if (naturalDisasters) {
 			naturalDisastersController = new NaturalDisastersController(this);
+		}
 	}
 
 	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
@@ -839,6 +842,7 @@ public class Board{
 		this.activePlayer = activePlayer;
 		for (District district : districts) {
 			for (Cell cell : district.getCells()) {
+				System.out.println(cell);
 				board[cell.getX()][cell.getY()] = cell;
 				cell.setDistrict(district);
 				modificatedCells.add(cell);
@@ -882,11 +886,11 @@ public class Board{
 		return turn;
 	}
 
-	public boolean isNaturalsDisastersOn() {
-		return naturalDisastersController != null;
-	}
-
 	public NaturalDisastersController getNaturalDisastersController() {
 		return naturalDisastersController;
+	}
+
+	public boolean isNaturalDisasters() {
+		return naturalDisasters;
 	}
 }

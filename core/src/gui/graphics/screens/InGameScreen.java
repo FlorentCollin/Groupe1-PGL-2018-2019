@@ -79,7 +79,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         //Calcule de la grandeur de la carte
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
-        hud = new Hud(this, itemsSkin, board.isNaturalsDisastersOn());
+        hud = new Hud(this, itemsSkin, board.isNaturalDisasters());
         arrowButton = generateArrowButton();
         arrowButton.setX(25 * ratio);
         arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
@@ -332,6 +332,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
+            System.out.println(board.getCell(boardCoords.col, boardCoords.row).getClass().getSimpleName());
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
         }
         return true;
