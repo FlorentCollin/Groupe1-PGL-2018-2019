@@ -26,6 +26,6 @@ public class GsonInit {
                 .registerSubtype(DroughtCell.class, DroughtCell.class.getName())
                 .registerSubtype(LavaCell.class, LavaCell.class.getName())
                 .registerSubtype(BlizzardCell.class, BlizzardCell.class.getName());
-        return new GsonBuilder().registerTypeAdapterFactory(itemTypeAdapter).create();
+        return new GsonBuilder().registerTypeAdapterFactory(itemTypeAdapter).registerTypeAdapterFactory(cellTypeAdapter).create();
     }
 }
