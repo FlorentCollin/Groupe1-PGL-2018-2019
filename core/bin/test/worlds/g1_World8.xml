@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<world name="World 8" map="g1_World8" width="30" height="30">
+    <players number="6" />
+    <items>
+
+      <item type="Capital" golds="48" x="2" y="1" />
+      <item type="Capital" golds="48" x="26" y="1" />
+      <item type="Capital" golds="48" x="23" y="11" />
+      <item type="Capital" golds="48" x="6" y="20" />
+      <item type="Capital" golds="48" x="28" y="27" />
+      <item type="Capital" golds="24" x="2" y="10" />
+      <item type="Capital" golds="24" x="4" y="28" />
+
+      <item type="Tree" x="13" y="19" />
+      <item type="Tree" x="14" y="19" />
+      <item type="Tree" x="15" y="19" />
+
+      <item type="Tree" x="5" y="13" />
+      <item type="Tree" x="22" y="1" />
+      <item type="Tree" x="6" y="1" />
+      <item type="Tree" x="14" y="2" />
+      <item type="Tree" x="11" y="20" />
+      <item type="Tree" x="17" y="24" />
+      <item type="Tree" x="23" y="6" />
+      <item type="Tree" x="4" y="29" />
+      <item type="Tree" x="1" y="14" />
+      <item type="Tree" x="0" y="11" />
+    </items>
+
+</world>
