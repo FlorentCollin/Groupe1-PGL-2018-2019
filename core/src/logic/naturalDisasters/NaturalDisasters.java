@@ -9,17 +9,18 @@ import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
 
-public abstract class NaturalDisasters {
+public class NaturalDisasters {
 	private int proba;
 	private int duration;
 	protected int nAffectedCells;
 	private int maxAffectedCells;
 	protected Random rand = new Random();
-	protected Board board;
+	protected transient Board board;
 	
 	protected ArrayList<Cell> affectedCells;
 	protected HashMap<Integer, ArrayList<Cell>> modificatedCells;
-	
+
+
 	public NaturalDisasters(Board board) {
 		affectedCells = new ArrayList<>();
 		modificatedCells = new HashMap<>();
