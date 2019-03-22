@@ -14,13 +14,15 @@ import logic.naturalDisasters.VolcanicEruption;
 public class NaturalDisastersController {
 	private ArrayList<NaturalDisasters> enableDisasters;
 	private ArrayList<NaturalDisasters> naturalDisasters;
+
+
 	private Blizzard blizzard;
 	private Drought drought;
 	private ForestFire forestFire;
 	private LandErosion landErosion;
 	private Tsunami tsunami;
 	private VolcanicEruption volcanicEruption;
-	
+
 	public NaturalDisastersController(Board board) {
 		enableDisasters = new ArrayList<>();
 		naturalDisasters = new ArrayList<>();
@@ -37,7 +39,7 @@ public class NaturalDisastersController {
 		volcanicEruption = new VolcanicEruption(board);
 		naturalDisasters.add(volcanicEruption);
 	}
-	
+
 	public void isHappening() {
 		for(NaturalDisasters nd : naturalDisasters) {
 			nd.play();
@@ -45,5 +47,29 @@ public class NaturalDisastersController {
 				enableDisasters.add(nd);
 			}
 		}
+	}
+
+	public Blizzard getBlizzard() {
+		return blizzard;
+	}
+
+	public Drought getDrought() {
+		return drought;
+	}
+
+	public ForestFire getForestFire() {
+		return forestFire;
+	}
+
+	public LandErosion getLandErosion() {
+		return landErosion;
+	}
+
+	public Tsunami getTsunami() {
+		return tsunami;
+	}
+
+	public VolcanicEruption getVolcanicEruption() {
+		return volcanicEruption;
 	}
 }

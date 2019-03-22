@@ -26,6 +26,7 @@ public abstract class BasicScreen implements Screen {
     protected static BitmapFont defaultFontItalic;
     protected static BitmapFont logoFont;
     protected static BitmapFont textFont;
+    private static BitmapFont smallTextFont;
     protected static Skin uiSkin;
     protected FreeTypeFontGenerator generator;
     protected FreeTypeFontGenerator.FreeTypeFontParameter parameter;
@@ -115,12 +116,15 @@ public abstract class BasicScreen implements Screen {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Light.ttf"));
         parameter.size = 28;
         textFont = generator.generateFont(parameter);
+        parameter.size = 14;
+        smallTextFont = generator.generateFont(parameter);
 
         //Application d'un filtre qui permet de resize et d'éviter la pixellisation
         defaultFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         defaultFontItalic.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         textFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        smallTextFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         generator.dispose();
     }
 
@@ -148,6 +152,10 @@ public abstract class BasicScreen implements Screen {
 
     public BitmapFont getTextFont() {
         return textFont;
+    }
+
+    public BitmapFont getSmallTextFont() {
+        return smallTextFont;
     }
 
     public Skin getUiSkin() {

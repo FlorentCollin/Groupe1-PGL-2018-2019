@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import gui.graphics.screens.BasicScreen;
 import gui.utils.Constants;
+import gui.utils.Language;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 
@@ -20,12 +21,13 @@ import logic.player.Player;
  */
 public class Hud extends Stage {
     private final DistrictInfo districtInfo;
+    private DisastersInfo disastersInfo;
     protected BasicScreen parent;
     protected Skin uiSkin;
     protected TextureAtlas itemSkin;
     private Shop shop;
 
-    public Hud(BasicScreen parent, TextureAtlas itemSkin) {
+    public Hud(BasicScreen parent, TextureAtlas itemSkin, boolean naturalDisasters) {
         super();
         this.parent = parent;
         this.uiSkin = parent.getUiSkin();
@@ -34,6 +36,10 @@ public class Hud extends Stage {
         districtInfo = new DistrictInfo();
         districtInfo.addActorsToStage(this);
         shop.addActorsToStage(this);
+        if(naturalDisasters) {
+            disastersInfo = new DisastersInfo();
+            disastersInfo.addActorsToStage(this);
+        }
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -49,6 +55,10 @@ public class Hud extends Stage {
 
     public DistrictInfo getDistrictInfo() {
         return districtInfo;
+    }
+
+    public DisastersInfo getDisastersInfo() {
+        return disastersInfo;
     }
 
     /**
@@ -192,6 +202,61 @@ public class Hud extends Stage {
         public void setCurrentPlayer(Player player) {
             currentPlayer.setColor(player.getColor());
             currentPlayer.setText(player.getName());
+        }
+    }
+
+    public class DisastersInfo {
+        public Table table;
+        public Slider blizzard, drought, forestFire, landErosion, tsunami, volcanicEruption;
+        private int initValue = 50;
+        private float width, height;
+
+        public DisastersInfo() {
+            blizzard = new Slider(0, 100, 1, false, uiSkin);
+            blizzard.setValue(initValue);
+            drought = new Slider(0, 100, 1, false, uiSkin);
+            drought.setValue(initValue);
+            forestFire = new Slider(0, 100, 1, false, uiSkin);
+            forestFire.setValue(initValue);
+            landErosion = new Slider(0, 100, 1, false, uiSkin);
+            landErosion.setValue(50);
+            tsunami = new Slider(0, 100, 1, false, uiSkin);
+            tsunami.setValue(initValue);
+            volcanicEruption = new Slider(0, 100, 1, false, uiSkin);
+            volcanicEruption.setValue(initValue);
+            table = new Table(uiSkin);
+
+            Image background = new Image(uiSkin.getDrawable("disasters-background"));
+            width = background.getWidth() * Constants.getRatioX(Gdx.graphics.getWidth());
+            height = background.getHeight() * Constants.getRatioY(Gdx.graphics.getHeight());
+            table.setSize(width, height);
+            table.setBackground("disasters-background");
+            Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
+            labelStyle.font = parent.getSmallTextFont();
+            table.align(Align.topLeft);
+            table.add(new Label(Language.bundle.get("blizzard"), labelStyle)).maxWidth(width/2).maxHeight(height/6).align(Align.left).pad(5).expand();
+            table.add(blizzard).maxHeight(height/6).maxWidth(width/2).align(Align.right).pad(5);
+            table.row();
+            table.add(new Label(Language.bundle.get("drought"), labelStyle)).maxWidth(width/2).maxHeight(height/6).align(Align.left).pad(5).expand();
+            table.add(drought).maxHeight(height/6).maxWidth(width/2).align(Align.right).pad(5);
+            table.row();
+            table.add(new Label(Language.bundle.get("forestFire"), labelStyle)).maxWidth(width/2).maxHeight(height/6).align(Align.left).pad(5).expand();
+            table.add(forestFire).maxHeight(height/6).maxWidth(width/2).align(Align.right).pad(5);
+            table.row();
+            table.add(new Label(Language.bundle.get("landErosion"), labelStyle)).maxWidth(width/2).maxHeight(height/6).align(Align.left).pad(5).expand();
+            table.add(landErosion).maxHeight(height/6).maxWidth(width/2).align(Align.right).pad(5);
+            table.row();
+            table.add(new Label(Language.bundle.get("tsunami"), labelStyle)).maxWidth(width/2).maxHeight(height/6).align(Align.left).pad(5).expand();
+            table.add(tsunami).maxHeight(height/6).maxWidth(width/2).align(Align.right).pad(5);
+            table.row();
+            table.add(new Label(Language.bundle.get("volcanicEruption"), labelStyle)).maxWidth(width/2).maxHeight(height/6).align(Align.left).pad(5).expand();
+            table.add(volcanicEruption).maxHeight(height/6).maxWidth(width/2).align(Align.right).pad(5);
+        }
+
+        private void addActorsToStage(Hud hud) {
+            System.out.println(table.getWidth() + " : " + table.getHeight());
+            table.setPosition(0 , 0);
+            hud.addActor(table);
         }
     }
 }

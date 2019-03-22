@@ -1,9 +1,6 @@
 package gui.graphics.screens;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -14,18 +11,21 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import communication.MessageListener;
 import communication.MessageSender;
-import communication.OnlineMessageSender;
+import communication.Messages.NaturalDisasterMessage;
 import communication.Messages.PlayMessage;
 import communication.Messages.ShopMessage;
 import communication.Messages.TextMessage;
+import communication.OnlineMessageSender;
 import gui.Hud;
 import gui.app.Slay;
 import gui.utils.Constants;
@@ -42,7 +42,9 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import roomController.Room;
-import org.pmw.tinylog.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InGameScreen extends MenuScreen implements InputProcessor {
 
@@ -77,7 +79,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         //Calcule de la grandeur de la carte
         worldHeight = cells.getHeight() * cells.getTileHeight() + cells.getTileHeight() / 2;
 
-        hud = new Hud(this, itemsSkin);
+        hud = new Hud(this, itemsSkin, board.isNaturalsDisastersOn());
         arrowButton = generateArrowButton();
         arrowButton.setX(25 * ratio);
         arrowButton.setY(Gdx.graphics.getHeight() - 75 * Constants.getRatioY(Gdx.graphics.getHeight()));
@@ -109,6 +111,16 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
             public void clicked(InputEvent event, float x, float y) {
                 messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level4)));}
         });
+
+        Hud.DisastersInfo disaster = hud.getDisastersInfo();
+        if(disaster != null) {
+            disaster.blizzard.addListener(disasterListener("blizzard", disaster.blizzard));
+            disaster.drought.addListener(disasterListener("drought", disaster.drought));
+            disaster.forestFire.addListener(disasterListener("forestFire", disaster.forestFire));
+            disaster.landErosion.addListener(disasterListener("landErosion", disaster.landErosion));
+            disaster.tsunami.addListener(disasterListener("tsunami", disaster.tsunami));
+            disaster.volcanicEruption.addListener(disasterListener("volcanicEruption", disaster.volcanicEruption));
+        }
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(this);
         multiplexer.addProcessor(hud);
@@ -321,7 +333,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
-            Logger.info(String.format("%s, %s", boardCoords.col, boardCoords.row));
         }
         return true;
     }
@@ -515,5 +526,14 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         });
         table.add(returnButton).expandY().pad(10).padRight(25).padLeft(25).align(Align.center);
         dialog.show(hud);
+    }
+
+    private ChangeListener disasterListener(String name, Slider slider) {
+        return new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                messageSender.send(new NaturalDisasterMessage(name, (int)slider.getValue()));
+            }
+        };
     }
 }

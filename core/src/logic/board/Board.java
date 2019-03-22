@@ -881,4 +881,12 @@ public class Board{
 	public int getTurn() {
 		return turn;
 	}
+
+	public boolean isNaturalsDisastersOn() {
+		return naturalDisastersController != null;
+	}
+
+	public NaturalDisastersController getNaturalDisastersController() {
+		return naturalDisastersController;
+	}
 }
