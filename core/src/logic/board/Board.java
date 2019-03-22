@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import logic.allianceController.AllianceController;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
 import logic.item.DestroyableItem;
 import logic.item.Item;
+import logic.item.Soldier;
 import logic.item.Tree;
-import logic.myList.MyList;
 import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
@@ -42,8 +43,8 @@ public class Board{
 	private ArrayList<Cell> modificatedCells;
 	private transient ArrayList<Cell> waterCells;
 	private transient ArrayList<Cell> treeCells;
-	private transient HashMap<Player, ArrayList<Cell>> erodedCells;
 	private int turn = 0;
+	private AllianceController alliances;
 
 	//Vérifier où on appelle checkDistricts() !!!!!
 
@@ -66,19 +67,12 @@ public class Board{
 		waterCells = new ArrayList<>();
 		treeCells = new ArrayList<>();
 		modificatedCells = new ArrayList<>();
-		erodedCells = new HashMap<>();
-		generateHashMap();
 		for(District district : districts) {
 			if(district.getPlayer() == players.get(0)) {
 				district.calculateGold();
 			}
 		}
-	}
-
-	private void generateHashMap() {
-		for(Player p : players) {
-			erodedCells.put(p, new ArrayList<>());
-		}
+		alliances = new AllianceController(this);
 	}
 
 	/**
@@ -389,6 +383,16 @@ public class Board{
 	public boolean canGoOn(Cell cell, Item item) {
 		Item cellItem = cell.getItem();
 		// Si il n'y a aucun item il est toujours possible de se placer sur la case
+		if(alliances != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() != selectedCell.getDistrict().getPlayer()) {
+			if(alliances.areAllied(cell.getDistrict().getPlayer(), selectedCell.getDistrict().getPlayer())) {
+				return false;
+			}
+		}
+		for(Cell nb : getNeighbors(cell)) {
+			if(nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(selectedCell.getItem())) {
+				return false;
+			}
+		}
 		if(cellItem == null) {
 			return true;
 		}
