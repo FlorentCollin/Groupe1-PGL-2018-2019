@@ -5,7 +5,8 @@ import gui.utils.Map;
 import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.item.Item;
-import logic.player.ai.strategy.*;
+import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
+import logic.player.ai.strategy.RandomStrategy;
 import org.pmw.tinylog.Logger;
 import server.Client;
 
@@ -103,6 +104,39 @@ public class GameRoom extends Room {
             else if(textMessage.getMessage().equals("close")) {
                 stopRunning();
             }
+        } else if(message instanceof NaturalDisasterMessage) {
+            executeNDMessage((NaturalDisasterMessage) message);
+        }
+    }
+
+    /**
+     * Méthode qui permet d'exécuter un naturalDisasterMessage sur le board
+     * @param message le message à exécuter
+     */
+    private void executeNDMessage(NaturalDisasterMessage message) {
+        NaturalDisastersController controller = board.getNaturalDisastersController();
+        if (controller != null) {
+            switch (message.getNaturalName()) {
+                case "blizzard":
+                    controller.getBlizzard().setProba(message.getPourcent());
+                    break;
+                case "drought":
+                    controller.getDrought().setProba(message.getPourcent());
+                    break;
+                case "forestFire":
+                    controller.getForestFire().setProba(message.getPourcent());
+                    break;
+                case "landErosion":
+                    controller.getLandErosion().setProba(message.getPourcent());
+                    break;
+                case "tsunami":
+                    controller.getTsunami().setProba(message.getPourcent());
+                    break;
+                case "volcanicEruption":
+                    controller.getVolcanicEruption().setProba(message.getPourcent());
+                    break;
+            }
+            System.out.println(controller.getBlizzard().getProba());
         }
     }
 
