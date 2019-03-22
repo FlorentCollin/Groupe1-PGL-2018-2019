@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.2" orientation="hexagonal" renderorder="right-down" width="90" height="68" tilewidth="256" tileheight="222" infinite="0" hexsidelength="128" staggeraxis="x" staggerindex="odd" nextlayerid="10" nextobjectid="1">
  <tileset firstgid="1" source="hex.tsx"/>
- <tileset firstgid="10" source="hexSelected.tsx"/>
+ <tileset firstgid="9" source="hexSelected.tsx"/>
  <tileset firstgid="11" source="C:/Users/Justin/Documents/GitHub/Groupe1-PGL-2018-2019/core/assets/worlds/hex.tsx"/>
  <layer id="7" name="background" width="90" height="68">
   <data encoding="csv">
