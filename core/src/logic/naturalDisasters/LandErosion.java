@@ -70,6 +70,8 @@ public class LandErosion extends NaturalDisasters{
 	@Override
 	public void play() {
 		cancel();
-		erosion();
+		if(mustHappen(getProba())) {
+			erosion();
+		}
 	}
 }

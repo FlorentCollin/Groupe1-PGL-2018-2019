@@ -2,6 +2,8 @@ package logic.board.cell;
 
 import logic.board.District;
 import logic.item.Item;
+import logic.item.Soldier;
+import logic.item.Tomb;
 
 /**
  * Classe représentant une cellule du Board. Une cellule est un hexagone dans le jeu
@@ -40,7 +42,12 @@ public class Cell {
 	}
 	
 	public void removeItem() {
-		item = null;
+		if(item instanceof Soldier) {
+			item = new Tomb();
+		}
+		else {
+			item = null;
+		}
 	}
 	
 	public boolean isAccessible() {
