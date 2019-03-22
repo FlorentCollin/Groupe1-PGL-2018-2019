@@ -388,12 +388,7 @@ public class Board{
 	 * */
 	public boolean canGoOn(Cell cell, Item item) {
 		Item cellItem = cell.getItem();
-		// Vérification de la présence d'un soldat enemi de plus grand niveau
-		for(Cell nb : getNeighbors(cell)) {
-			if(nb.getDistrict() != null && nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(selectedCell.getItem())) {
-				return false;
-			}
-		}
+	
 		// Si il n'y a aucun item il est toujours possible de se placer sur la case
 		if(cellItem == null) {
 			return true;
