@@ -1,7 +1,6 @@
 package logic.board;
 
 import logic.allianceController.AllianceController;
-import logic.board.cell.BlizzardCell;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
