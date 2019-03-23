@@ -88,52 +88,52 @@ public class BoardTest {
 		assertSame(board.getCell(1, 0).getItem(), capital);
 	}
 
-//	@Test
-//	public void testFusion() {
-//		Soldier soldier = new Soldier(p1);
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(0, 0));
-//		Soldier soldier2 = new Soldier(p1);
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(soldier2, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(0, 0));
-//		assertTrue(board.getCell(0, 0).getItem().getLevel() == SoldierLevel.level2);
-//	}
-//
-//	@Test
-//	public void testNotFusion() {
-//		Soldier soldier = new Soldier(p1, SoldierLevel.level2);
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(0, 0));
-//		Soldier soldier2 = new Soldier(p1);
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(soldier2, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(0, 0));
-//		assertTrue(board.getCell(0, 0).getItem() == soldier);
-//	}
-//
-//	@Test
-//	public void testMoveFusion() {
-//		//Ajout d'un soldat en (0,0)
-//		Soldier firstSoldier = new Soldier(p1);
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(firstSoldier, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(0, 0));
-//		//Ajout d'un soldat en (0,1)
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(new Soldier(p1), board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(0, 1));
-//		//Déplacement
-//		board.setSelectedCell(board.getCell(0, 1));
-//		board.nextPlayer();
-//		board.nextPlayer();
-//		board.move(board.getCell(0, 0));
-//		assertTrue(board.getCell(0, 0).getItem().getLevel()==SoldierLevel.level2);
-//		assertTrue(board.getCell(0, 0).getItem() == firstSoldier);
-//		assertTrue(board.getCell(0, 1).getItem() == null);
-//	}
+	@Test
+	public void testFusion() {
+		Soldier soldier = new Soldier(SoldierLevel.level1);
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(0, 0));
+		Soldier soldier2 = new Soldier(SoldierLevel.level1);
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier2, board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(0, 0));
+		assertTrue(board.getCell(0, 0).getItem().getLevel() == SoldierLevel.level2);
+	}
+
+	@Test
+	public void testNotFusion() {
+		Soldier soldier = new Soldier(SoldierLevel.level2);
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier, board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(0, 0));
+		Soldier soldier2 = new Soldier(SoldierLevel.level1);
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(soldier2, board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(0, 0));
+		assertSame(board.getCell(0, 0).getItem(), soldier);
+	}
+
+	@Test
+	public void testMoveFusion() {
+		//Ajout d'un soldat en (0,0)
+		Soldier firstSoldier = new Soldier(SoldierLevel.level1);
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(firstSoldier, board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(0, 0));
+		//Ajout d'un soldat en (0,1)
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(0, 1));
+		//Déplacement
+		board.nextPlayer();
+		board.nextPlayer();
+		board.setSelectedCell(board.getCell(0, 1));
+		board.move(board.getCell(0, 0));
+		assertSame(board.getCell(0, 0).getItem().getLevel(), SoldierLevel.level2);
+		assertSame(board.getCell(0, 0).getItem(), firstSoldier);
+		assertNull(board.getCell(0, 1).getItem());
+	}
 
 //	@Test
 //	public void testPlaceNewItemOnEnemyTerritory() {
@@ -258,38 +258,65 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testMoveOnEnemyTerritory() {
+	public void testMoveOnEnemyTerritoryEmptyOrWithSameLevelSoldier() {
 		district.addCapital(board.getCell(0, 0));
-		district2.addCapital(board.getCell(4,4));
 		board.getCell(1, 2).setDistrict(board.getCell(2, 2).getDistrict());
 		board.getCell(2, 1).setDistrict(board.getCell(2, 2).getDistrict());
+		board.getCell(2, 2).getDistrict().addCell(board.getCell(1, 2));
+		board.getCell(2, 2).getDistrict().addCell(board.getCell(2, 1));
 		Soldier s = new Soldier(SoldierLevel.level1);
 		Soldier s2 = new Soldier(SoldierLevel.level1);
+		//Player 1
 		board.getCell(1, 1).setItem(s);
 		board.getCell(0, 1).setItem(s2);
-		board.getCell(2, 1).setItem(new Capital());
-		board.getCell(2, 2).setItem(new Soldier(SoldierLevel.level2));
+		//Player 2
+		board.getCell(2, 1).getDistrict().addCapital(board.getCell(2, 1));
 		board.getCell(1, 2).setItem(new Soldier(SoldierLevel.level1));
+
 		board.setSelectedCell(board.getCell(1, 1));
 		board.move(board.getCell(2, 2));
-		board.setSelectedCell(board.getCell(1, 1));
-		board.move(board.getCell(2, 1));
+		assertSame(s, board.getCell(2, 2).getItem());
+		assertSame(board.getCell(2, 2).getDistrict(), board.getCell(1, 1).getDistrict());
 		board.setSelectedCell(board.getCell(0, 1));
 		board.move(board.getCell(1, 2));
-		assertTrue(board.getCell(2, 1).getDistrict() == board.getCell(1, 1).getDistrict());
-		assertTrue(board.getCell(2, 1).getItem() == s);
-		assertTrue(board.getCell(1, 2).getDistrict() == board.getCell(1, 1).getDistrict());
-		assertTrue(board.getCell(1, 2).getItem() == s2);
-		assertTrue(board.getCell(2, 2).getDistrict() == board.getCell(2, 3).getDistrict());
+		assertSame(board.getCell(1, 2).getDistrict(), board.getCell(1, 1).getDistrict());
+		assertSame(board.getCell(1, 2).getItem(), s2);
 	}
 
-//	@Test
-//	public void testMerge() {
-//		district2.setPlayer(p1);
-//		board.setSelectedCell(board.getCell(1, 1));
-//		shop.setSelectedItem(new Soldier(p1), board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(1, 2));
-//		assertTrue(board.getCell(2, 2).getDistrict() == board.getCell(1, 1).getDistrict());
-//	}
+	@Test
+	public void testMoveOnEnemyTerritoryEmptyWithHigherSoldier() {
+		district.addCapital(board.getCell(0, 0));
+		district2.addCapital(board.getCell(4, 4));
+		board.getCell(2, 3).setDistrict(board.getCell(0, 0).getDistrict());
+		Soldier s = new Soldier(SoldierLevel.level1);
+		Soldier s2 = new Soldier(SoldierLevel.level1);
+		//Player 1
+		board.getCell(1, 1).setItem(s);
+		board.getCell(1, 2).setItem(s2);
+		//Player 2
+		Soldier s3 = new Soldier(SoldierLevel.level2);
+		board.getCell(2, 2).setItem(s3);
+		board.setSelectedCell(board.getCell(1, 1));
+		board.move(board.getCell(2, 2));
+		assertSame(s, board.getCell(1, 1).getItem());
+		assertSame(s3, board.getCell(2, 2).getItem());
+
+		//Test qui vérifie qu'on ne peut pas placer un soldat de niveau 1 à côté d'un soldat ennemi de niveau 2
+		board.setSelectedCell(board.getCell(1, 2));
+		board.move(board.getCell(2, 3));
+		assertSame(s2, board.getCell(1, 2).getItem());
+		assertSame(s3, board.getCell(2, 2).getItem());
+	}
+
+	@Test
+	public void testMerge() {
+		district2.setPlayer(p1);
+		board.setSelectedCell(board.getCell(1, 1));
+		shop.setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
+		board.placeNewItem(board.getCell(1, 2));
+		assertSame(board.getCell(2, 2).getDistrict(), board.getCell(1, 1).getDistrict());
+		System.out.println(district);
+		System.out.println(district2);
+	}
 	
 }
