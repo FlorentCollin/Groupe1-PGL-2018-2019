@@ -471,14 +471,16 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
     }
 
     private void changeTo(int x, int y, String name) {
+        System.out.println("Change to : " + x + ", " + y);
+        OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(x, y));
         TiledMapTileLayer disasterCell = map.getDisasterCells();
         TiledMapTileSet disasterTileSet = map.getTileSetDisaster();
         if(name == null) {
-            disasterCell.getCell(x, y).setTile(null);
+            disasterCell.getCell(tmxCoords.col, tmxCoords.row).setTile(null);
         } else {
             for (TiledMapTile tile : disasterTileSet) {
                 if (tile.getProperties().get("name").equals(name)) {
-                    disasterCell.getCell(x, y).setTile(tile);
+                    disasterCell.getCell(tmxCoords.col, tmxCoords.row).setTile(tile);
                     break;
                 }
             }
