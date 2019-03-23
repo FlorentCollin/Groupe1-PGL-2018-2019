@@ -59,8 +59,8 @@ public class Blizzard extends NaturalDisasters{
 		if(item instanceof Capital) {
 			district.addCapital(cell);
 		}
-		board.setCell(cell);
 		board.addModification(cell);
+		board.setCell(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {
