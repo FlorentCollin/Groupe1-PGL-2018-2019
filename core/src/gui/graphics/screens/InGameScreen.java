@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -34,9 +35,8 @@ import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
+import logic.board.cell.*;
 import logic.board.cell.Cell;
-import logic.board.cell.LavaCell;
-import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
@@ -44,6 +44,7 @@ import logic.player.Player;
 import roomController.Room;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class InGameScreen extends MenuScreen implements InputProcessor {
@@ -332,8 +333,8 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
-            System.out.println(board.getCell(boardCoords.col, boardCoords.row).getDistrict());
-
+//            System.out.println(board.getCell(boardCoords.col, boardCoords.row).getDistrict());
+            System.out.println(board.getCell(boardCoords.col, boardCoords.row).getClass().getSimpleName());
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
         }
         return true;
@@ -447,6 +448,13 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
                 if(cell.getDistrict() != null) {
                     playerId = cell.getDistrict().getPlayer().getId();
                 }
+                if(cell instanceof DroughtCell) {
+                    System.out.println("DroughtCell detected");
+                    changeTo(cell.getX(), cell.getY(), "drought");
+                } else if(cell instanceof BlizzardCell) {
+                    System.out.println("BlizzardCell detected");
+                    changeTo(cell.getX(), cell.getY(), "blizzard");
+                }
                 if(cell instanceof LavaCell) {
                 	tile = getTile(playerId, true, false);
                 }
@@ -461,6 +469,17 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
 	            tmxCell.setTile(tile);
             }
             board.getModificatedCells().clear();
+        }
+    }
+
+    private void changeTo(int x, int y, String name) {
+        TiledMapTileLayer disasterCell = map.getDisasterCells();
+        TiledMapTileSet disasterTileSet = map.getTileSetDisaster();
+        for (TiledMapTile tile : disasterTileSet) {
+            if(tile.getProperties().get("name").equals(name)) {
+                disasterCell.getCell(x, y).setTile(tile);
+                break;
+            }
         }
     }
 

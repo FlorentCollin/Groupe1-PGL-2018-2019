@@ -12,7 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class BoardTest {
@@ -27,12 +29,11 @@ public class BoardTest {
 		int columns = 5;
 		p1 = new Player();
 		p2 = new Player();
-		Player[] players = new Player[2];
-		players[0] = p1;
-		players[1] = p2;
-		NaturalDisastersController naturalDisastersController = new NaturalDisastersController();
+		CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
+		players.add(p1);
+		players.add(p2);
 		shop = new Shop();
-		board = new Board(rows,columns, players, naturalDisastersController, shop);
+		board = new Board(rows,columns, players, false, shop);
 		district = new District(p1);
 		district2 = new District(p2);
 		district.setGold(10000);
@@ -60,8 +61,8 @@ public class BoardTest {
 		Soldier s = new Soldier(p1);
 		shop.setSelectedItem(s, board.getSelectedCell().getDistrict());
 		board.placeNewItem(board.getCell(0,2));
-		assertTrue(board.getCell(0, 2).getItem() == s);
-		assertTrue(board.getCell(0, 2).getDistrict() == board.getCell(1, 1).getDistrict());
+		assertSame(board.getCell(0, 2).getItem(), s);
+		assertSame(board.getCell(0, 2).getDistrict(), board.getCell(1, 1).getDistrict());
 	}
 	
 	@Test 
