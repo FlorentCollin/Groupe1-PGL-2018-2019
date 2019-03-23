@@ -4,7 +4,6 @@ import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.Cell;
 import logic.board.cell.DroughtCell;
-import logic.board.cell.LandCell;
 import logic.item.Capital;
 import logic.item.Item;
 

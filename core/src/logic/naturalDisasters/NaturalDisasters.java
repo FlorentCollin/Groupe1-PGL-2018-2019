@@ -108,14 +108,15 @@ public class NaturalDisasters {
 	
 	protected void destroy(Cell cell) {
 		nAffectedCells ++;
-		affectedCells.add(cell);
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
 		}
-		if(this instanceof Tsunami)
+		if(this instanceof Tsunami) {
 			cell = new WaterCell(cell.getX(), cell.getY());
-		else if(this instanceof VolcanicEruption)
+		}
+		else if(this instanceof VolcanicEruption) {
 			cell = new LavaCell(cell.getX(), cell.getY());
+		}
 		else {
 			Item item = cell.getItem();
 			District district = cell.getDistrict();
@@ -135,6 +136,7 @@ public class NaturalDisasters {
 				district.addCapital(cell);
 			}
 		}
+		affectedCells.add(cell);
 		board.addModification(cell);
 		board.setCell(cell);
 		board.checkSplit(cell);
