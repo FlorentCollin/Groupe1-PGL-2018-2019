@@ -7,6 +7,7 @@ import java.util.Random;
 import logic.board.Board;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
+import logic.board.cell.LavaCell;
 import logic.board.cell.WaterCell;
 
 public class NaturalDisasters {
@@ -77,20 +78,25 @@ public class NaturalDisasters {
 		return cell;
 	}
 	
-	protected void destroy(Cell cell) {
+	protected void destroy(Cell cell, boolean mustBeWater) {
 		nAffectedCells ++;
 		affectedCells.add(cell);
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
 		}
-		cell = new WaterCell(cell.getX(), cell.getY());
+		if(mustBeWater) {
+			cell = new WaterCell(cell.getX(), cell.getY());
+		}
+		else {
+			cell = new LavaCell(cell.getX(), cell.getY());
+		}
 		board.addModification(cell);
 		board.setCell(cell);
 		board.checkSplit(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {
-				destroy(c);
+				destroy(c, mustBeWater);
 			}
 		}
 	}

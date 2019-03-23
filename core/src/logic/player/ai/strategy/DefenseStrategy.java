@@ -19,6 +19,7 @@ public class DefenseStrategy extends AbstractStrategy{
 		ArrayList<Cell> possibleMoves;
 		Cell choice;
 		for(Cell soldier : inactifSoldiers) {
+			board.setSelectedCell(soldier);
 			possibleMoves = board.possibleMove(soldier);
 			cellToDefend = cellToDefend(board, districts);
 			choice = killEnemy(soldier, possibleMoves);

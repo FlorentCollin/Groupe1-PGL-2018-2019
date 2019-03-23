@@ -194,6 +194,9 @@ public class Board{
 	private void updateCellForNewItem(Cell cell) {
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
+		if(cell.getDistrict() == null) {
+			System.out.println(cell.getX()+", "+cell.getY());
+		}
 		shop.buy(cell.getDistrict());
 		modificatedCells.add(cell);
 		checkDistricts();
@@ -384,13 +387,13 @@ public class Board{
 		Item cellItem = cell.getItem();
 	
 		// Si il n'y a aucun item il est toujours possible de se placer sur la case
-		if(alliances != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() != selectedCell.getDistrict().getPlayer()) {
-			if(alliances.areAllied(cell.getDistrict().getPlayer(), selectedCell.getDistrict().getPlayer())) {
-				return false;
-			}
-		}
+//		if(alliances != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() != selectedCell.getDistrict().getPlayer()) {
+//			if(alliances.areAllied(cell.getDistrict().getPlayer(), selectedCell.getDistrict().getPlayer())) {
+//				return false;
+//			}
+//		}
 		for(Cell nb : getNeighbors(cell)) {
-			if(nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(selectedCell.getItem())) {
+			if(nb.getDistrict() != null && nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(selectedCell.getItem())) {
 				return false;
 			}
 		}

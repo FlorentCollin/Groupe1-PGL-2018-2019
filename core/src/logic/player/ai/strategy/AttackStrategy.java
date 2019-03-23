@@ -16,6 +16,7 @@ public class AttackStrategy extends AbstractStrategy{
 		ArrayList<Cell> possibleMoves;
 
 		for(Cell cell : soldierCells(districts)) {
+			board.setSelectedCell(cell);
 			possibleMoves = board.possibleMove(cell);
 			choice = cutTrees(cell, possibleMoves);
 			if(choice != null) {

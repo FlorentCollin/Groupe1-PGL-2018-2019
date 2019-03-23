@@ -52,7 +52,7 @@ public class Blizzard extends NaturalDisasters{
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {
-				destroy(c);
+				blizzardFrom(c);
 			}
 		}
 	}

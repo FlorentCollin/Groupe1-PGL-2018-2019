@@ -20,6 +20,7 @@ public class RandomStrategy extends AbstractStrategy{
 		Cell randomCell;
 		ArrayList<Cell> possibleMoves;
 		for(Cell cell : soldierCells(districts)) {
+			board.setSelectedCell(cell);
 			possibleMoves = board.possibleMove(cell);
 			cutTree = cutTrees(cell, possibleMoves);
 			if(cutTree != null) {
