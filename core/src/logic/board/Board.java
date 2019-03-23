@@ -382,6 +382,7 @@ public class Board{
 	 * */
 	public boolean canGoOn(Cell cell, Item item) {
 		Item cellItem = cell.getItem();
+	
 		// Si il n'y a aucun item il est toujours possible de se placer sur la case
 		if(alliances != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() != selectedCell.getDistrict().getPlayer()) {
 			if(alliances.areAllied(cell.getDistrict().getPlayer(), selectedCell.getDistrict().getPlayer())) {

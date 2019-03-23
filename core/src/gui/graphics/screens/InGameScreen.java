@@ -185,7 +185,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
      */
     private TiledMapTile getTile(int id, boolean isLava, boolean isWater) {
     	if(isLava) {
-    		return map.getTileSet().getTile(7);
+    		return map.getTileSet().getTile(9);
     	}
     	if(isWater) {
     		return map.getTileSet().getTile(5);

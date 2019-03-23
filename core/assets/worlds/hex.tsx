@@ -51,9 +51,9 @@
  </tile>
  <tile id="6">
   <properties>
-   <property name="available" type="bool" value="true"/>
+   <property name="available" type="bool" value="false"/>
    <property name="lava" type="bool" value="false"/>
-   <property name="player" type="int" value="6"/>
+   <property name="player" type="int" value="5"/>
   </properties>
   <image width="256" height="222" source="hex_red.png"/>
  </tile>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<world name="World 5" map="g1_World5" width="90" height="68">
+    <players number="5" />
+    <items>
+      <item type="Soldier" level="1" x="19" y="1" />
+
+      <item type="Capital" golds="60" x="19" y="0" />
+
+      <item type="Tree" x="18" y="9" />
+    </items>
+
+</world>
