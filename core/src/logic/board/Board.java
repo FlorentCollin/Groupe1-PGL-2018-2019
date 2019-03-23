@@ -170,7 +170,7 @@ public class Board{
 					conquerForNewItem(cell);
 				}
 				// La cellule contient un arbre ou l'item est de niveau inférieur à celui que va être placé
-				else if(shopItem.isStronger(cellItem)) {
+				else if(shopItem.isStronger(cellItem) || shopItem.isEqual(cellItem)) {
 					conquerForNewItem(cell);
 				}
 			}
@@ -230,7 +230,7 @@ public class Board{
 				if(toCell.getItem().getLevel() == null) {
 					conquer(toCell);
 				}
-				else if(selectedItem.isStronger(cellItem)){
+				else if(selectedItem.isStronger(cellItem) || selectedItem.isEqual(cellItem)){
 					conquer(toCell);
 				}
 			}
