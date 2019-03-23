@@ -35,10 +35,8 @@ import gui.utils.Map;
 import logic.Coords.OffsetCoords;
 import logic.Coords.TransformCoords;
 import logic.board.Board;
+import logic.board.cell.*;
 import logic.board.cell.Cell;
-import logic.board.cell.DroughtCell;
-import logic.board.cell.LavaCell;
-import logic.board.cell.WaterCell;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
@@ -453,6 +451,9 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
                 if(cell instanceof DroughtCell) {
                     System.out.println("DroughtCell detected");
                     changeTo(cell.getX(), cell.getY(), "drought");
+                } else if(cell instanceof BlizzardCell) {
+                    System.out.println("BlizzardCell detected");
+                    changeTo(cell.getX(), cell.getY(), "blizzard");
                 }
                 if(cell instanceof LavaCell) {
                 	tile = getTile(playerId, true, false);
