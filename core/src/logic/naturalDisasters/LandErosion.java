@@ -11,7 +11,6 @@ public class LandErosion extends NaturalDisasters{
 	
 	public LandErosion(Board board) {
 		super(board);
-		// TODO Auto-generated constructor stub
 	}
 
 	private void erosion() {

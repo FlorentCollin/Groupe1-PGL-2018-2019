@@ -1,6 +1,5 @@
 package logic.board;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -106,11 +105,9 @@ public class District {
 	
 
 	public void addCapital(Cell cell) {
-		System.out.println("Tentative ajout capital");
 		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
-			System.out.println("------> capitale ajoutée");
 		}
 	}
 

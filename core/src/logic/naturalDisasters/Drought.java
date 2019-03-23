@@ -12,6 +12,7 @@ public class Drought extends NaturalDisasters{
 
 	public Drought(Board board) {
 		super(board);
+		setMaxAffectedCells(10);
 	}
 	
 	
@@ -47,6 +48,7 @@ public class Drought extends NaturalDisasters{
 		if(item instanceof Capital) {
 			district.addCapital(cell);
 		}
+		board.setCell(cell);
 		board.addModification(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));

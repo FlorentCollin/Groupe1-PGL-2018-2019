@@ -88,7 +88,10 @@ public class Board{
 	}
 
 	public void setCell(Cell cell) {
+		System.out.println("setCell for cell in "+cell.getX()+", "+cell.getY()+" : "+cell.getClass().getSimpleName());
 		board[cell.getX()][cell.getY()] = cell;
+		Cell cell2 = board[cell.getX()][cell.getY()];
+		System.out.println("setCell for cell2 in "+cell2.getX()+", "+cell2.getY()+" : "+cell2.getClass().getSimpleName());
 	}
 
 	/**

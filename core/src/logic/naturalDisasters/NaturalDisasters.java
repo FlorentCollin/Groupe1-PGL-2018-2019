@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.Random;
 
 import logic.board.Board;
+import logic.board.District;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.LavaCell;
 import logic.board.cell.WaterCell;
+import logic.item.Item;
+import logic.item.TreeOnFire;
 
 public class NaturalDisasters {
 	private int proba;
@@ -28,6 +31,7 @@ public class NaturalDisasters {
 		this.board = board;
 		duration = 1;
 		proba = 50;
+		maxAffectedCells = 1;
 	}
 
 	public int getProba() {
@@ -132,12 +136,26 @@ public class NaturalDisasters {
 	
 	protected void cancel() {
 		ArrayList<Integer> keysToDelete = new ArrayList<>();
+		Item item;
+		District district;
 		for(int key : modificatedCells.keySet()) {
 			if(board.getTurn() - key > getDuration()) {	
-				for(Cell c : modificatedCells.get(key)) {
-					c = new LandCell(c.getX(), c.getY());
-					board.setCell(c);
-					board.addModification(c);
+				for(Cell cell : modificatedCells.get(key)) {
+					item = cell.getItem();
+					district = cell.getDistrict();
+					if(district != null) {
+						district.removeCell(cell);
+					}
+					cell = new LandCell(cell.getX(), cell.getY());
+					cell.setDistrict(district);
+					if(district != null) {
+						district.addCell(cell);
+					}
+					if(!(item instanceof TreeOnFire)) {
+						cell.setItem(item);
+					}
+					board.setCell(cell);
+					board.addModification(cell);
 				}
 				keysToDelete.add(key);
 			}

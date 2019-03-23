@@ -8,11 +8,9 @@ import logic.item.Tree;
 import logic.item.TreeOnFire;
 
 public class ForestFire extends NaturalDisasters{
-	ArrayList<Cell> treesOnFire;
 
 	public ForestFire(Board board) {
 		super(board);
-		treesOnFire = new ArrayList<>();
 	}
 	
 	private void fire() {

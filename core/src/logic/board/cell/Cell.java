@@ -24,6 +24,7 @@ public class Cell {
 	public Cell(int x, int y) {
 		this.x = x;
 		this.y = y;
+		accessible = true;
 	}
 	
 	public void setItem(Item item) {
