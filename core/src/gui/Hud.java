@@ -254,7 +254,6 @@ public class Hud extends Stage {
         }
 
         private void addActorsToStage(Hud hud) {
-            System.out.println(table.getWidth() + " : " + table.getHeight());
             table.setPosition(0 , 0);
             hud.addActor(table);
         }

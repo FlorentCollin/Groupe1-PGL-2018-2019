@@ -471,7 +471,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
     }
 
     private void changeTo(int x, int y, String name) {
-        System.out.println("Change to : " + x + ", " + y);
         OffsetCoords tmxCoords = boardToTmxCoords(new OffsetCoords(x, y));
         TiledMapTileLayer disasterCell = map.getDisasterCells();
         TiledMapTileSet disasterTileSet = map.getTileSetDisaster();
