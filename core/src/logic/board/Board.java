@@ -24,6 +24,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Classe représentant un plateau de jeu.
  */
 public class Board{
+	protected static final Player godPlayer = new Player();
+	
 	private transient Cell[][] board;
 	private int columns, rows, activePlayer;
 	private CopyOnWriteArrayList<Player> players;
@@ -754,6 +756,9 @@ public class Board{
 			}
 		}
 		players.removeAll(deadPlayers);
+		if(players.size() == 0) {
+			winner = godPlayer;
+		}
 		if(players.size() == 1 || !realPlayer()) {
 			winner = players.get(0);
 		}
@@ -904,5 +909,9 @@ public class Board{
 
 	public boolean isNaturalDisasters() {
 		return naturalDisasters;
+	}
+	
+	public Player getGodPlayer() {
+		return godPlayer;
 	}
 }
