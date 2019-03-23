@@ -3,6 +3,7 @@ package communication.Messages;
 import logic.player.Player;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Message envoyé par le serveur aux clients pour leur indiquer qu'il y a eu une changement
@@ -10,19 +11,19 @@ import java.util.ArrayList;
  */
 public class RoomUpdateMessage extends NetworkMessage {
 
-    private ArrayList<Player> players;
+    private CopyOnWriteArrayList<Player> players;
     private ArrayList<Boolean> playersReady;
     private String mapName;
     private String roomName;
 
-    public RoomUpdateMessage(ArrayList<Player> players, ArrayList<Boolean> playersReady, String mapName, String roomName) {
+    public RoomUpdateMessage(CopyOnWriteArrayList<Player> players, ArrayList<Boolean> playersReady, String mapName, String roomName) {
         this.players = players;
         this.playersReady = playersReady;
         this.mapName = mapName;
         this.roomName = roomName;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public CopyOnWriteArrayList<Player> getPlayers() {
         return players;
     }
 

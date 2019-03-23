@@ -6,6 +6,7 @@ import logic.player.Player;
 import logic.shop.Shop;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Message qui est envoyé par une room à un(des) client(s) pour signaler que le board à été modifié et que le board
@@ -13,21 +14,21 @@ import java.util.ArrayList;
  */
 public class GameUpdateMessage extends NetworkMessage {
 
-    private ArrayList<District> districts;
+    private CopyOnWriteArrayList<District> districts;
     private Item shopItem;
-    private ArrayList<Player> players;
+    private CopyOnWriteArrayList<Player> players;
     private int activePlayer;
     private Integer x, y; // Correspond à la position en x et y de la cellule sélectionné si elle existe
 
     //TODO Need refactoring about what is updated in the board because here all is pass every time something has changed
-    public GameUpdateMessage(ArrayList<District> districts, Item shopItem, ArrayList<Player> players, int activePlayer) {
+    public GameUpdateMessage(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, int activePlayer) {
         this.districts = districts;
         this.shopItem = shopItem;
         this.players = players;
         this.activePlayer = activePlayer;
     }
 
-    public GameUpdateMessage(ArrayList<District> districts, Item shopItem, ArrayList<Player> players, int activePlayer, int x, int y) {
+    public GameUpdateMessage(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, int activePlayer, int x, int y) {
         this.districts = districts;
         this.shopItem = shopItem;
         this.players = players;
@@ -36,7 +37,7 @@ public class GameUpdateMessage extends NetworkMessage {
         this.y = y;
     }
 
-    public ArrayList<District> getDistricts() {
+    public CopyOnWriteArrayList<District> getDistricts() {
         return districts;
     }
 
@@ -48,7 +49,7 @@ public class GameUpdateMessage extends NetworkMessage {
         return y;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public CopyOnWriteArrayList<Player> getPlayers() {
         return players;
     }
 

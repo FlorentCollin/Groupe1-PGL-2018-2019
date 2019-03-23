@@ -76,7 +76,7 @@ public class NaturalDisasters {
 		}
 		return cell;
 	}
-	
+
 	protected void destroy(Cell cell) {
 		nAffectedCells ++;
 		affectedCells.add(cell);
