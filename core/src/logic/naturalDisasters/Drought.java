@@ -29,11 +29,18 @@ public class Drought extends NaturalDisasters{
 	private void droughtFrom(Cell cell) {
 		nAffectedCells ++;
 		affectedCells.add(cell);
+		//Récupération des info de cell
 		Item item = cell.getItem();
 		District district = cell.getDistrict();
+		//Suppression de la cellule du district
+		if(district != null) {
+			district.removeCell(cell);
+		}
+		//Réinitialisation de cell entant que DroughtCell avec les anciennes données
 		cell = new DroughtCell(cell.getX(), cell.getY());
 		cell.setItem(item);
 		cell.setDistrict(district);
+		//Ajout de la cellule au district
 		if(district != null) {
 			district.addCell(cell);			
 		}
