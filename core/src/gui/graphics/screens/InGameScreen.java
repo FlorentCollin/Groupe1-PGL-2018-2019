@@ -150,13 +150,17 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         if(board.getWinner() != null) {
             showEndDialog(board.getWinner());
         }
-        map.getTiledMapRenderer().setView(camera);
-        map.getTiledMapRenderer().render(); //Rendering des cellules
-        renderItems();
-        hud.getDistrictInfo().setCurrentPlayer(board.getActivePlayer());
-        hud.getViewport().apply();
-        hud.act(delta);
-        hud.draw();
+//        else {
+	        map.getTiledMapRenderer().setView(camera);
+	        map.getTiledMapRenderer().render(); //Rendering des cellules
+	        renderItems();
+	        if(board.getWinner() != board.getGodPlayer()) {
+	        	hud.getDistrictInfo().setCurrentPlayer(board.getActivePlayer());
+	        }
+	        hud.getViewport().apply();
+	        hud.act(delta);
+	        hud.draw();
+//        }
     }
 
     private void checkInput() {
@@ -530,7 +534,9 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
     private void showEndDialog(Player winner) {
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = textFont;
-        labelStyle.fontColor = winner.getColor();
+        if(winner != board.getGodPlayer()) {
+        	labelStyle.fontColor = winner.getColor();
+        }
         Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
         windowStyle.titleFont = textFont;
         TextButton.TextButtonStyle buttonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
@@ -538,7 +544,12 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         Dialog dialog = new Dialog("", windowStyle);
         Table table = dialog.getContentTable();
         table.align(Align.topLeft);
-        table.add(new Label(winner.getName() + " " + Language.bundle.get("winner"), labelStyle)).align(Align.center).pad(50);
+        if(winner != board.getGodPlayer()) {
+        	table.add(new Label(winner.getName() + " " + Language.bundle.get("winner"), labelStyle)).align(Align.center).pad(50);
+        }
+        else {
+        	table.add(new Label("Nature is the winner, humans are dead", labelStyle)).align(Align.center).pad(50);
+        }
         TextButton returnButton = new TextButton(Language.bundle.get("returnToMainMenu"), buttonStyle);
         returnButton.addListener(new ClickListener() {
             @Override

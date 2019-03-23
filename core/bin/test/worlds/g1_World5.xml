@@ -2,11 +2,65 @@
 <world name="World 5" map="g1_World5" width="90" height="68">
     <players number="5" />
     <items>
-      <item type="Soldier" level="1" x="19" y="1" />
 
-      <item type="Capital" golds="60" x="19" y="0" />
+      <item type="Capital" golds="60" x="12" y="4" />
+      <item type="Capital" golds="60" x="65" y="10" />
+      <item type="Capital" golds="60" x="13" y="51" />
+      <item type="Capital" golds="60" x="70" y="55" />
+      <item type="Capital" golds="60" x="41" y="14" />
+      <item type="Capital" golds="20" x="72" y="37" />
+      <item type="Capital" golds="60" x="40" y="58" />
+      <item type="Capital" golds="60" x="11" y="32" />
+      
+      <item type="Soldier" level="1" x="18" y="4" />
+      <item type="Soldier" level="1" x="5" y="15" />
+      <item type="Soldier" level="1" x="36" y="15" />
+      <item type="Soldier" level="1" x="48" y="15" />
+      <item type="Soldier" level="1" x="64" y="15" />
+      <item type="Soldier" level="1" x="77" y="19" />
+      <item type="Soldier" level="1" x="71" y="33" />
+      <item type="Soldier" level="1" x="72" y="40" />
+      <item type="Soldier" level="1" x="73" y="51" />
+      <item type="Soldier" level="1" x="65" y="61" />
+      <item type="Soldier" level="1" x="46" y="57" />
+      <item type="Soldier" level="1" x="35" y="58" />
+      <item type="Soldier" level="1" x="20" y="51" />
+      <item type="Soldier" level="1" x="10" y="35" />
+      <item type="Soldier" level="1" x="12" y="29" />
+      <item type="Soldier" level="1" x="15" y="56" />
 
-      <item type="Tree" x="18" y="9" />
+
+
+      <item type="Tree" x="7" y="53" />
+      <item type="Tree" x="85" y="57" />
+      <item type="Tree" x="89" y="62" />
+      <item type="Tree" x="5" y="5" />
+      <item type="Tree" x="20" y="8" />
+      <item type="Tree" x="26" y="4" />
+      <item type="Tree" x="74" y="33" />
+      <item type="Tree" x="52" y="64" />
+      <item type="Tree" x="18" y="64" />
+      <item type="Tree" x="3" y="44" />
+      <item type="Tree" x="72" y="32" />
+      <item type="Tree" x="46" y="52" />
+      <item type="Tree" x="77" y="53" />
+      <item type="Tree" x="85" y="40" />
+      <item type="Tree" x="84" y="9" />
+      <item type="Tree" x="30" y="39" />
+      <item type="Tree" x="58" y="50" />
+      <item type="Tree" x="18" y="21" />
+      <item type="Tree" x="40" y="16" />
+      <item type="Tree" x="73" y="55" />
+      <item type="Tree" x="30" y="25" />
+      <item type="Tree" x="71" y="57" />
+      <item type="Tree" x="33" y="55" />
+      <item type="Tree" x="22" y="21" />
+      <item type="Tree" x="71" y="46" />
+      <item type="Tree" x="56" y="32" />
+      <item type="Tree" x="9" y="57" />
+      <item type="Tree" x="33" y="40" />
+      <item type="Tree" x="59" y="42" />
+      <item type="Tree" x="46" y="49" />
     </items>
 
 </world>

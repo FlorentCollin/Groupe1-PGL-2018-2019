@@ -450,7 +450,9 @@ public class Board{
 		checkWinner();
 		setSelectedCell(null);
 		shop.removeSelection();
-		activePlayer = (activePlayer + 1)%(players.size());
+		if(players.size() > 0) {
+			activePlayer = (activePlayer + 1)%(players.size());
+		}
 		if(winner == null) {
 			generateTree();
 			for(District district : districts) {
@@ -499,7 +501,10 @@ public class Board{
 	}
 
 	public Player getActivePlayer() {
-		return players.get(activePlayer);
+		if(players.size() > 0) {
+			return players.get(activePlayer);			
+		}
+		return godPlayer;
 	}
 
 	/**
@@ -758,7 +763,7 @@ public class Board{
 		if(players.size() == 0) {
 			winner = godPlayer;
 		}
-		if(players.size() == 1 || !realPlayer()) {
+		else if(players.size() == 1 || !realPlayer()) {
 			winner = players.get(0);
 		}
 	}

@@ -8,7 +8,7 @@ public class Tsunami extends NaturalDisasters{
 	public Tsunami(Board board) {
 		super(board);
 		setDuration(10);
-		setMaxAffectedCells(3);
+		setMaxAffectedCells(2);
 	}
 	
 	private void tsunami() {

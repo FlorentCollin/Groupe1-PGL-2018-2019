@@ -51,7 +51,7 @@
  </tile>
  <tile id="6">
   <properties>
-   <property name="available" type="bool" value="false"/>
+   <property name="available" type="bool" value="true"/>
    <property name="lava" type="bool" value="false"/>
    <property name="player" type="int" value="5"/>
   </properties>
