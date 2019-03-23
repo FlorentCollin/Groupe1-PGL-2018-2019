@@ -399,7 +399,7 @@ public class Board{
 //		}
 		for(Cell nb : getNeighbors(cell)) {
 			if(nb.getDistrict() != null &&
-					nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(item)) {
+ 					nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(item)) {
 				return false;
 			}
 		}
