@@ -843,7 +843,6 @@ public class Board{
 		this.activePlayer = activePlayer;
 		for (District district : districts) {
 			for (Cell cell : district.getCells()) {
-				System.out.println(cell);
 				board[cell.getX()][cell.getY()] = cell;
 				cell.setDistrict(district);
 				modificatedCells.add(cell);

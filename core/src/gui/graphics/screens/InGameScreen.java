@@ -332,7 +332,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         OffsetCoords boardCoords = getCoordsFromMousePosition(getMouseLoc());
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
-            System.out.println(board.getCell(boardCoords.col, boardCoords.row).getClass().getSimpleName());
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
         }
         return true;
