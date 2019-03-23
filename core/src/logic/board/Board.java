@@ -1,11 +1,7 @@
 package logic.board;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import logic.allianceController.AllianceController;
+import logic.board.cell.BlizzardCell;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
@@ -18,6 +14,10 @@ import logic.player.Player;
 import logic.player.ai.AI;
 import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
