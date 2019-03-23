@@ -55,10 +55,9 @@ public class LandErosion extends NaturalDisasters{
 				}
 			}
 		}
-		cell.removeDistrict();
-		cell.removeItem();
 		cell = new WaterCell(cell.getX(), cell.getY());
 		board.setCell(cell);
+		board.checkSplit(cell);
 		board.checkCapitals();
 		board.addModification(cell);
 	}

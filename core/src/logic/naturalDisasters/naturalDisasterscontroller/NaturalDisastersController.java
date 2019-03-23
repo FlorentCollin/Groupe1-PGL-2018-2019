@@ -12,7 +12,6 @@ import logic.naturalDisasters.Tsunami;
 import logic.naturalDisasters.VolcanicEruption;
 
 public class NaturalDisastersController {
-	private ArrayList<NaturalDisasters> enableDisasters;
 	private ArrayList<NaturalDisasters> naturalDisasters;
 
 
@@ -24,7 +23,6 @@ public class NaturalDisastersController {
 	private VolcanicEruption volcanicEruption;
 
 	public NaturalDisastersController(Board board) {
-		enableDisasters = new ArrayList<>();
 		naturalDisasters = new ArrayList<>();
 		blizzard = new Blizzard(board);
 		naturalDisasters.add(blizzard);
@@ -44,9 +42,10 @@ public class NaturalDisastersController {
 		for(NaturalDisasters nd : naturalDisasters) {
 			nd.play();
 			if(nd.getAffectedCells().size() > 0) {
-				enableDisasters.add(nd);
+				System.out.println(nd.getClass().getSimpleName());
 			}
 		}
+		System.out.println("----------------------------------------");
 	}
 
 	public Blizzard getBlizzard() {

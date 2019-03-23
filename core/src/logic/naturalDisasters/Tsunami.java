@@ -2,7 +2,6 @@ package logic.naturalDisasters;
 
 import logic.board.Board;
 import logic.board.cell.Cell;
-import logic.board.cell.WaterCell;
 
 public class Tsunami extends NaturalDisasters{
 

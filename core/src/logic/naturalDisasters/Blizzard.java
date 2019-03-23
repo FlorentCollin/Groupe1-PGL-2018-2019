@@ -39,11 +39,12 @@ public class Blizzard extends NaturalDisasters{
 		affectedCells.clear();
 		nAffectedCells = 0;
 		blizzardFrom(getAnyCell());
-		modificatedCells.put(board.getTurn(), affectedCells);
+		saveChanges();
 	}
 	
 	private void blizzardFrom(Cell cell) {
 		nAffectedCells ++;
+		affectedCells.add(cell);
 		Item item = cell.getItem();
 		District district = cell.getDistrict();
 		if(district != null) {
@@ -58,6 +59,7 @@ public class Blizzard extends NaturalDisasters{
 		if(item instanceof Capital) {
 			district.addCapital(cell);
 		}
+		board.addModification(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {
@@ -83,7 +85,10 @@ public class Blizzard extends NaturalDisasters{
 	@Override
 	public void play() {
 		kill();
-		cancel();
+		for(int key : modificatedCells.keySet()) { // car la proba est variable
+			setProba(durationMap.get(key));
+			cancel();
+		}
 		if(mustHappen(getProba())) {
 			blizzard();
 		}

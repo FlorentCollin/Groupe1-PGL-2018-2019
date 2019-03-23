@@ -59,21 +59,46 @@ public class NaturalDisasters {
 	}
 	
 	protected Cell getAnyCell() {
-		int i;
-		int j;
-		do {
-			i = rand.nextInt(board.getColumns());
-			j = rand.nextInt(board.getRows());
-		}while(board.getCell(i, j) instanceof WaterCell);
+		int i = 0;
+		int j = 0;
+		switch(this.getClass().getSimpleName()) {
+		case "VolcanicEruption":
+			do {
+				i = rand.nextInt(board.getColumns());
+				j = rand.nextInt(board.getRows());
+			}while((board.getCell(i, j) instanceof WaterCell));
+			break;
+		case "Blizzard":
+			do {
+				i = rand.nextInt(board.getColumns());
+				j = rand.nextInt(board.getRows());
+			}while(!(board.getCell(i, j) instanceof LandCell || board.getCell(i, j) instanceof WaterCell));
+			break;
+		case "Drought":
+			do {
+				i = rand.nextInt(board.getColumns());
+				j = rand.nextInt(board.getRows());
+			}while(!(board.getCell(i, j) instanceof LandCell));
+			break;
+		}
 		return board.getCell(i, j);
 	}
 	
 	protected Cell getOneFrom(ArrayList<Cell> cells) {
 		Cell cell = null;
 		if(cells.size() > 0) {
-			do {
-				cell = cells.get(rand.nextInt(cells.size()));
-			}while(! (cell instanceof LandCell));
+			switch(this.getClass().getSimpleName()) {
+			case "Blizzard":
+				do {
+					cell = cells.get(rand.nextInt(cells.size()));
+				}while(!(cell instanceof LandCell || cell instanceof WaterCell));
+				break;
+			case "Drought":
+				do {
+					cell = cells.get(rand.nextInt(cells.size()));
+				}while(!(cell instanceof LandCell));
+				break;	
+			}
 		}
 		return cell;
 	}

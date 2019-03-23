@@ -18,11 +18,11 @@ public class ForestFire extends NaturalDisasters{
 	private void fire() {
 		affectedCells.clear();
 		ArrayList<Cell> treeCells = board.getTreeCells();
-		if(treeCells.size() > 0 && rand.nextInt(101)>getProba()) {
+		if(treeCells.size() > 0) {
 			Cell tree = treeCells.get(rand.nextInt(treeCells.size()));
 			destroyTreeFrom(tree);
+			saveChanges();
 		}
-		modificatedCells.put(board.getTurn(), affectedCells);
 	}
 	
 	private void destroyTreeFrom(Cell tree) {
@@ -36,18 +36,9 @@ public class ForestFire extends NaturalDisasters{
 		}
 	}
 	
-	private void wasOnFire() {
-		ArrayList<Cell> treesOnFire = modificatedCells.get(board.getActivePlayer());
-		if(treesOnFire != null) {
-			for(Cell treeOnFire : treesOnFire) {
-				treeOnFire.removeItem();
-			}
-		}
-	}
-	
 	@Override
 	public void play() {
-		wasOnFire();
+		cancel();
 		if(mustHappen(getProba())) {
 			fire();
 		}

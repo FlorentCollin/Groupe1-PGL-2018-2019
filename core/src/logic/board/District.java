@@ -51,6 +51,9 @@ public class District {
 	
 	public void removeCell(Cell cell) {
 		cells.remove(cell);
+		if(capital == null) {
+			System.out.println("prob de cap");
+		}
 		if(cell.getId() == capital.getId()) {
 			removeCapital();
 		}
@@ -103,9 +106,11 @@ public class District {
 	
 
 	public void addCapital(Cell cell) {
+		System.out.println("Tentative ajout capital");
 		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
+			System.out.println("------> capitale ajoutée");
 		}
 	}
 

@@ -18,13 +18,11 @@ public class Drought extends NaturalDisasters{
 	private void drought() {
 		nAffectedCells = 0;
 		affectedCells.clear();
-		int i = rand.nextInt(board.getColumns());
-		int j = rand.nextInt(board.getRows());
-		Cell cell = board.getCell(i, j);
+		Cell cell = getAnyCell();
 		if(cell instanceof LandCell) {
 			droughtFrom(cell);
 		}
-		modificatedCells.put(board.getTurn(), affectedCells);
+		saveChanges();
 	}
 	
 	private void droughtFrom(Cell cell) {
@@ -49,6 +47,7 @@ public class Drought extends NaturalDisasters{
 		if(item instanceof Capital) {
 			district.addCapital(cell);
 		}
+		board.addModification(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {

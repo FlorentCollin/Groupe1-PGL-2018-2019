@@ -1,8 +1,6 @@
 package logic.naturalDisasters;
 
 import logic.board.Board;
-import logic.board.cell.Cell;
-import logic.board.cell.LavaCell;
 
 public class VolcanicEruption extends NaturalDisasters{
 
