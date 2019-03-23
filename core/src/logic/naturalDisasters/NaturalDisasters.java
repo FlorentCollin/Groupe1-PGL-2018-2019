@@ -6,10 +6,13 @@ import java.util.Random;
 
 import logic.board.Board;
 import logic.board.District;
+import logic.board.cell.BlizzardCell;
 import logic.board.cell.Cell;
+import logic.board.cell.DroughtCell;
 import logic.board.cell.LandCell;
 import logic.board.cell.LavaCell;
 import logic.board.cell.WaterCell;
+import logic.item.Capital;
 import logic.item.Item;
 import logic.item.TreeOnFire;
 
@@ -29,7 +32,7 @@ public class NaturalDisasters {
 		affectedCells = new ArrayList<>();
 		modificatedCells = new HashMap<>();
 		this.board = board;
-		duration = 1;
+		setDuration(1);
 		proba = 50;
 		maxAffectedCells = 1;
 	}
@@ -65,25 +68,23 @@ public class NaturalDisasters {
 	protected Cell getAnyCell() {
 		int i = 0;
 		int j = 0;
-		switch(this.getClass().getSimpleName()) {
-		case "VolcanicEruption":
+		if(this instanceof VolcanicEruption) {
 			do {
 				i = rand.nextInt(board.getColumns());
 				j = rand.nextInt(board.getRows());
 			}while((board.getCell(i, j) instanceof WaterCell));
-			break;
-		case "Blizzard":
+		}
+		else if(this instanceof Blizzard) {
 			do {
 				i = rand.nextInt(board.getColumns());
 				j = rand.nextInt(board.getRows());
 			}while(!(board.getCell(i, j) instanceof LandCell || board.getCell(i, j) instanceof WaterCell));
-			break;
-		case "Drought":
+		}
+		else if(this instanceof Drought) {
 			do {
 				i = rand.nextInt(board.getColumns());
 				j = rand.nextInt(board.getRows());
 			}while(!(board.getCell(i, j) instanceof LandCell));
-			break;
 		}
 		return board.getCell(i, j);
 	}
@@ -91,41 +92,58 @@ public class NaturalDisasters {
 	protected Cell getOneFrom(ArrayList<Cell> cells) {
 		Cell cell = null;
 		if(cells.size() > 0) {
-			switch(this.getClass().getSimpleName()) {
-			case "Blizzard":
+			if(this instanceof Blizzard) {
 				do {
 					cell = cells.get(rand.nextInt(cells.size()));
 				}while(!(cell instanceof LandCell || cell instanceof WaterCell));
-				break;
-			case "Drought":
+			}
+			else if(this instanceof Drought) {
 				do {
 					cell = cells.get(rand.nextInt(cells.size()));
 				}while(!(cell instanceof LandCell));
-				break;	
 			}
 		}
 		return cell;
 	}
 	
-	protected void destroy(Cell cell, boolean mustBeWater) {
+	protected void destroy(Cell cell) {
 		nAffectedCells ++;
-		affectedCells.add(cell);
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
 		}
-		if(mustBeWater) {
+		if(this instanceof Tsunami) {
 			cell = new WaterCell(cell.getX(), cell.getY());
 		}
-		else {
+		else if(this instanceof VolcanicEruption) {
 			cell = new LavaCell(cell.getX(), cell.getY());
 		}
+		else {
+			Item item = cell.getItem();
+			District district = cell.getDistrict();
+			if(district != null) {
+				district.removeCell(cell);
+			}
+			if(this instanceof Drought)
+				cell = new DroughtCell(cell.getX(), cell.getY());
+			else if(this instanceof Blizzard)
+				cell = new BlizzardCell(cell.getX(), cell.getY());
+			cell.setItem(item);
+			cell.setDistrict(district);
+			if(district != null) {
+				district.addCell(cell);
+			}
+			if(item instanceof Capital) {
+				district.addCapital(cell);
+			}
+		}
+		affectedCells.add(cell);
 		board.addModification(cell);
 		board.setCell(cell);
 		board.checkSplit(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {
-				destroy(c, mustBeWater);
+				destroy(c);
 			}
 		}
 	}

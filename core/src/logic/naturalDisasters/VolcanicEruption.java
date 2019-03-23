@@ -13,7 +13,7 @@ public class VolcanicEruption extends NaturalDisasters{
 	private void eruption() {
 		affectedCells.clear();
 		nAffectedCells = 0;
-		destroy(getAnyCell(), false);
+		destroy(getAnyCell());
 		saveChanges();
 	}
 	
