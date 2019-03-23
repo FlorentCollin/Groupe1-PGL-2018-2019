@@ -54,7 +54,7 @@ public class District {
 		if(capital == null) {
 			System.out.println("prob de cap");
 		}
-		if(cell.getId() == capital.getId()) {
+		else if(cell.getId() == capital.getId()) {
 			removeCapital();
 		}
 	}
