@@ -6,7 +6,7 @@ import logic.item.level.SoldierLevel;
 
 public abstract class Item {
 	protected SoldierLevel level;
-    protected String type = getClass().getName();
+    protected String t = getClass().getName();
 
 	protected transient boolean movable = false;
 	protected transient boolean buyable = false;
@@ -86,6 +86,6 @@ public abstract class Item {
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		this.t = type;
 	}
 }

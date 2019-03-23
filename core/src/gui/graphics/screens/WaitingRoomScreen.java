@@ -16,6 +16,7 @@ import gui.utils.Language;
 import logic.player.Player;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static gui.graphics.screens.animations.Animations.*;
 
@@ -87,7 +88,7 @@ public class WaitingRoomScreen extends SubMenuScreen {
         table.add(new Label("Ready", labelStyle)).pad(10).padRight(50).align(Align.topRight);
         table.row();
         addLine(table); //Ajout d'une ligne blanche de séparation
-        ArrayList<Player> players = messageListener.getPlayers();
+        CopyOnWriteArrayList<Player> players = messageListener.getPlayers();
         ArrayList<Boolean> playersReady = messageListener.getPlayersReady();
         for (int i = 0; i < players.size(); i++){ //Itération sur la liste des joueurs
             //Si le nom du joueur n'est pas précisé c'est qu'on attend toujours qu'un joueur se connecte

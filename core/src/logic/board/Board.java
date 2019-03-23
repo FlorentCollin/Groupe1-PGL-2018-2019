@@ -3,6 +3,7 @@ package logic.board;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import logic.allianceController.AllianceController;
 import logic.board.cell.Cell;
@@ -25,8 +26,8 @@ import logic.shop.Shop;
 public class Board{
 	private transient Cell[][] board;
 	private int columns, rows, activePlayer;
-	private ArrayList<Player> players;
-	private volatile ArrayList<District> districts;
+	private CopyOnWriteArrayList<Player> players;
+	private CopyOnWriteArrayList<District> districts;
 	private Shop shop;
 	private boolean naturalDisasters;
 	private transient NaturalDisastersController naturalDisastersController;
@@ -48,7 +49,7 @@ public class Board{
 
 	//Vérifier où on appelle checkDistricts() !!!!!
 
-	public Board(int columns, int rows, ArrayList<Player> players, boolean naturalDisasters, Shop shop){
+	public Board(int columns, int rows, CopyOnWriteArrayList<Player> players, boolean naturalDisasters, Shop shop){
 		this(columns, rows, players, shop);
 		this.naturalDisasters = naturalDisasters;
 		if (naturalDisasters) {
@@ -56,12 +57,12 @@ public class Board{
 		}
 	}
 
-	public Board(int columns, int rows, ArrayList<Player> players, Shop shop) {
+	public Board(int columns, int rows, CopyOnWriteArrayList<Player> players, Shop shop) {
 		this.columns = columns;
 		this.rows = rows;
 		board = new Cell[columns][rows];
 		this.players = players;
-		this.districts = new ArrayList<>();
+		this.districts = new CopyOnWriteArrayList<>();
 		this.shop = shop;
 		fullIn();
 		waterCells = new ArrayList<>();
@@ -694,7 +695,7 @@ public class Board{
 		}
 	}
 
-	public ArrayList<District> getDistricts() {
+	public CopyOnWriteArrayList<District> getDistricts() {
 		return districts;
 	}
 
@@ -710,7 +711,7 @@ public class Board{
 		return rows;
 	}
 
-	public ArrayList<Player> getPlayers() {
+	public CopyOnWriteArrayList<Player> getPlayers() {
 		return players;
 	}
 
@@ -843,14 +844,13 @@ public class Board{
 	 * @param players les joueurs
 	 * @param activePlayer le numéro du joueur actif
 	 */
-	public void updateBoard(ArrayList<District> districts, Item shopItem, ArrayList<Player> players, int activePlayer) {
+	public void updateBoard(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, int activePlayer) {
 		this.districts = districts;
 		this.shop.setSelectedItem(shopItem);
 		this.players = players;
 		this.activePlayer = activePlayer;
 		for (District district : districts) {
 			for (Cell cell : district.getCells()) {
-				System.out.println(cell);
 				board[cell.getX()][cell.getY()] = cell;
 				cell.setDistrict(district);
 				modificatedCells.add(cell);

@@ -2,6 +2,7 @@ package logic.board;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
@@ -22,11 +23,11 @@ public class District {
 	private Player player;
 	private int gold;
 	private transient Cell capital;
-	private List<Cell> cells;
+	private CopyOnWriteArrayList<Cell> cells;
 
 
 	public District(Player player) {
-		cells = new ArrayList<>();
+		cells = new CopyOnWriteArrayList<>();
 		this.player = player;
 
 	}

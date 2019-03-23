@@ -1,5 +1,6 @@
 package logic.board.cell;
 
+import com.google.gson.annotations.SerializedName;
 import logic.board.District;
 import logic.item.Item;
 import logic.item.Soldier;
@@ -10,11 +11,15 @@ import logic.item.Tomb;
  */
 public class Cell {
 	private int x,y;
+	@SerializedName("i")
 	private Item item; // si null alors il n'y a pas d'item actuellement sur la cellule
+	@SerializedName("d")
 	private transient District district; // si null alors n'appartient actuellement à aucun district
-//	protected String type = this.getClass().getName();
+
+	protected String t = this.getClass().getName();
 //	private int numberOfAdjacentWaterCell; //?
 //	private boolean actifIncome; //?
+	@SerializedName("a")
 	protected boolean accessible;
 	public Cell(int x, int y) {
 		this.x = x;

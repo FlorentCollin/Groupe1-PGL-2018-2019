@@ -6,6 +6,7 @@ import logic.player.Player;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,7 +24,7 @@ public abstract class MessageListener extends Thread {
     protected ArrayList<UUID> ids;
     protected ArrayList<Integer> nPlayer, nPlayerIn;
     protected AtomicBoolean needRefresh = new AtomicBoolean(false);
-    protected ArrayList<Player> players = new ArrayList<>();
+    protected CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
     protected ArrayList<Boolean> playersReady = new ArrayList<>();
     //Variable permettant de stopper le thread quand il n'est plus nécessaire de le faire tourner
     protected AtomicBoolean running = new AtomicBoolean(false);
@@ -86,7 +87,7 @@ public abstract class MessageListener extends Thread {
         return board;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public CopyOnWriteArrayList<Player> getPlayers() {
         return players;
     }
 

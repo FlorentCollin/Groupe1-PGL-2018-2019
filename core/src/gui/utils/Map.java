@@ -27,6 +27,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /** Classe utilisé pour charger et convertir une map TMX en Board **/
 //TODO NEED XML VALIDATOR FOR VALIDATE THE XML FILE
@@ -117,7 +118,7 @@ public class Map {
      */
     private void generateBoard(XmlReader.Element xmlElement, boolean naturalDisasters, ArrayList<String> playersName) {
         numberOfPlayers = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-        ArrayList<Player> players = new ArrayList<>();
+        CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
         Player newPlayer;
         for (int i = 0; i < numberOfPlayers; i++) {
             if(playersName != null)
