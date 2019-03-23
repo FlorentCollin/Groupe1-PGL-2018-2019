@@ -5,6 +5,9 @@
   <property name="disaster" value="drought"/>
  </properties>
  <tile id="0">
+  <properties>
+   <property name="name" value="drought"/>
+  </properties>
   <image width="256" height="222" source="hex_drought.png"/>
  </tile>
 </tileset>

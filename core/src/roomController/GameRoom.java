@@ -136,7 +136,6 @@ public class GameRoom extends Room {
                     controller.getVolcanicEruption().setProba(message.getPourcent());
                     break;
             }
-            System.out.println(controller.getBlizzard().getProba());
         }
     }
 

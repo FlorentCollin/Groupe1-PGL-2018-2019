@@ -40,6 +40,7 @@ public class Map {
     protected HexagonalTiledMapRenderer tiledMapRenderer;
     protected TiledMapTileLayer cells;
     protected TiledMapTileLayer selectedCells;
+    protected TiledMapTileLayer disasterCells;
     protected TiledMapTileSet tileSet;
     protected TiledMapTileSet tileSetSelected;
     protected TiledMapTileSet tileSetDisaster;
@@ -56,7 +57,6 @@ public class Map {
     }
     /**
      * Méthode qui permet de charger un monde du jeu
-     * @param loadTmxRenderer true s'il faut charger le TmxRenderer, false sinon
      * @param naturalDisasters true s'il l'extension natural disasters est activé, false sinon
      * @return Le board initialisé si loadBoard == true, null sinon
      */
@@ -85,9 +85,6 @@ public class Map {
     /**
      * Méthode qui génère la map Tmx ainsi que le TmxRenderer à partir du fichier tmx
      * @param xmlElement l'xmlElement contenant les informations du monde
-     * @param loadTmxRenderer true s'il faut charger le TmxRenderer et false sinon.
-     *                        Cette variable permet au serveur de ne pas charger des variables inutiles
-     *                        pour son fonctionnement.
      */
     private void generateTmxMap(XmlReader.Element xmlElement) {
         String worldTmx = xmlElement.getAttribute("map");
@@ -96,12 +93,14 @@ public class Map {
 
         cells = (TiledMapTileLayer) map.getLayers().get("background"); //cellules
         selectedCells = (TiledMapTileLayer) map.getLayers().get("selectedTiles");
+        disasterCells = (TiledMapTileLayer) map.getLayers().get("disasters");
         tileSet = map.getTileSets().getTileSet("hex"); //le tileset des hexagones
         tileSetSelected = map.getTileSets().getTileSet("hexSelected");
         tileSetDisaster = map.getTileSets().getTileSet("hexDisasters");
         for (int i = 0; i < selectedCells.getWidth(); i++) {
             for (int j = 0; j < selectedCells.getHeight(); j++) {
                 selectedCells.setCell(i, j, new TiledMapTileLayer.Cell());
+                disasterCells.setCell(i,j, new TiledMapTileLayer.Cell());
             }
         }
     }
@@ -288,5 +287,9 @@ public class Map {
 
     public TiledMapTileSet getTileSetDisaster() {
         return tileSetDisaster;
+    }
+
+    public TiledMapTileLayer getDisasterCells() {
+        return disasterCells;
     }
 }
