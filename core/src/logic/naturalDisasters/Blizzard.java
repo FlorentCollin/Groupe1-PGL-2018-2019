@@ -38,7 +38,8 @@ public class Blizzard extends NaturalDisasters{
 		durationMap.put(board.getTurn(), proba);
 		affectedCells.clear();
 		nAffectedCells = 0;
-		blizzardFrom(getAnyCell());
+//		blizzardFrom(getAnyCell());
+		destroy(getAnyCell());
 		saveChanges();
 	}
 	

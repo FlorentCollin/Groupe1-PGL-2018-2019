@@ -19,10 +19,12 @@ public class Drought extends NaturalDisasters{
 	private void drought() {
 		nAffectedCells = 0;
 		affectedCells.clear();
-		Cell cell = getAnyCell();
-		if(cell instanceof LandCell) {
-			droughtFrom(cell);
-		}
+//		Cell cell = getAnyCell();
+//		if(cell instanceof LandCell) {
+//			droughtFrom(cell);
+//			saveChanges();
+//		}
+		destroy(getAnyCell());
 		saveChanges();
 	}
 	

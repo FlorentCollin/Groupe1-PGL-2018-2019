@@ -15,7 +15,7 @@ public class Tsunami extends NaturalDisasters{
 		affectedCells.clear();
 		for(Cell cell : getNeighboursWaterCells()) {
 			nAffectedCells = 0;
-			destroy(cell, true);
+			destroy(cell);
 		}
 		saveChanges();
 	}
