@@ -418,7 +418,7 @@ public class Board{
 			if(!cellItem.isImprovable()) { // Item quelconque
 				return true;
 			}
-			else if(item.isStronger(cellItem)) {
+			else if(item.isStronger(cellItem) || item.isEqual(cellItem)) {
 				return true;
 			}
 		}

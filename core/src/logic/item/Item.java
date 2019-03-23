@@ -29,6 +29,13 @@ public abstract class Item {
 		return false;
 	}
 	
+	public boolean isEqual(Item item) {
+		if(this.isImprovable() && item.isImprovable()) {
+			return this.level.compareTo(item) == 0; 
+		}
+		return false;
+	}
+	
 	/**
 	 * Permet d'améliorer l'item
 	 * */
