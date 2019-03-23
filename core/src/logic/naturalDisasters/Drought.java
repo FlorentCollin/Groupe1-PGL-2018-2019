@@ -14,6 +14,7 @@ public class Drought extends NaturalDisasters{
 		super(board);
 	}
 	
+	
 	private void drought() {
 		nAffectedCells = 0;
 		affectedCells.clear();
@@ -44,12 +45,15 @@ public class Drought extends NaturalDisasters{
 		if(district != null) {
 			district.addCell(cell);			
 		}
+		//Mise à jour de la cellule contenant la capital du district
 		if(item instanceof Capital) {
-			district.removeCapital();
 			district.addCapital(cell);
 		}
-		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) { //random car au maximum 10 cellules affectées
-			droughtFrom(getOneFrom(board.getNeighbors(cell)));
+		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
+			Cell c = getOneFrom(board.getNeighbors(cell));
+			if(c != null) {
+				droughtFrom(c);
+			}
 		}
 	}
 	

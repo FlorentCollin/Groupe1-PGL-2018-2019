@@ -7,7 +7,7 @@ import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.BlizzardCell;
 import logic.board.cell.Cell;
-import logic.board.cell.LandCell;
+import logic.item.Capital;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.level.Level;
@@ -46,9 +46,18 @@ public class Blizzard extends NaturalDisasters{
 		nAffectedCells ++;
 		Item item = cell.getItem();
 		District district = cell.getDistrict();
+		if(district != null) {
+			district.removeCell(cell);
+		}
 		cell = new BlizzardCell(cell.getX(), cell.getY());
 		cell.setItem(item);
 		cell.setDistrict(district);
+		if(district != null) {
+			district.addCell(cell);
+		}
+		if(item instanceof Capital) {
+			district.addCapital(cell);
+		}
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {

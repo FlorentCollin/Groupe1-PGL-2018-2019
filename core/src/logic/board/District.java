@@ -51,7 +51,7 @@ public class District {
 	
 	public void removeCell(Cell cell) {
 		cells.remove(cell);
-		if(cell == capital) {
+		if(cell.getId() == capital.getId()) {
 			removeCapital();
 		}
 	}
