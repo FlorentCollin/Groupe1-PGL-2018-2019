@@ -1,8 +1,3 @@
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,6 +12,8 @@ import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
 import logic.player.Player;
 import logic.shop.Shop;
+
+import static org.junit.Assert.*;
 
 public class BoardTest {
 	Board board;
@@ -139,56 +136,50 @@ public class BoardTest {
 		assertNull(board.getCell(0, 1).getItem());
 	}
 
-//	@Test
-//	public void testPlaceNewItemOnEnemyTerritory() {
-//		district.addCapital(board.getCell(0,0));
-//		district2.addCapital(board.getCell(4,4));
-//		//Ajout de soldats ennemi
-//		board.getCell(2,1).setDistrict(district2);
-//		board.getCell(2,2).setDistrict(district2);
-//		board.getCell(2,3).setDistrict(district2);
-//		board.getCell(2,1).setItem(new Soldier(SoldierLevel.level1));
-//		board.getCell(2,2).setItem(new Soldier(SoldierLevel.level2));
-//		board.getCell(2,3).setItem(new Soldier(SoldierLevel.level3));
-//		board.setSelectedCell(board.getCell(0,0));
-//		board.setShopItem(new Soldier(SoldierLevel.level3));
-//		board.play(board.getCell(2,1));
-//		assertSame(board.getCell(2,1).getDistrict(), district);
-//		//Ajout de cellules au district ennemi
-//		district.addCapital(board.getCell(0,0));
-//		district2.addCapital(board.getCell(4,4));
-//		board.getCell(1, 2).setDistrict(board.getCell(2, 2).getDistrict());
-//		board.getCell(2, 1).setDistrict(board.getCell(2, 2).getDistrict());
-//		board.getCell(2, 2).getDistrict().addCell(board.getCell(1, 2));
-//		board.getCell(2, 2).getDistrict().addCell(board.getCell(2, 1));
-//		//Ajout d'items ennemis
-//		board.getCell(2, 2).setItem(new Soldier(SoldierLevel.level1));
-//		board.getCell(1, 2).setItem(new Capital());
-//		Soldier highSoldier = new Soldier(SoldierLevel.level2);
-//		board.getCell(2, 1).setItem(highSoldier);
-//		//Place sur (2,2)
-//		board.setSelectedCell(board.getCell(1, 1));
-//		Soldier s1 = new Soldier(SoldierLevel.level1);
-//		shop.setSelectedItem(s1, board.getSelectedCell().getDistrict());
-//		board.play(board.getCell(2,2));
-//		//Place sur (1,2)
-//		board.setSelectedCell(board.getCell(1, 1));
-//		Soldier s2 = new Soldier(SoldierLevel.level2);
-//		shop.setSelectedItem(s2, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(1, 2));
-//		//Place sur (2,1)
-//		board.setSelectedCell(board.getCell(1, 1));
-//		Soldier s3 = new Soldier(SoldierLevel.level3);
-//		shop.setSelectedItem(s3, board.getSelectedCell().getDistrict());
-//		board.placeNewItem(board.getCell(2, 1));
-//
-//		assertSame(board.getCell(2, 2).getDistrict(), board.getCell(1, 1).getDistrict());
-//		assertSame(board.getCell(2, 2).getItem(), s1);
-//		assertSame(board.getCell(1, 2).getDistrict(), board.getCell(1, 1).getDistrict());
-//		assertSame(board.getCell(1, 2).getItem(), s2);
-//		assertNotSame(board.getCell(2, 1).getDistrict(), board.getCell(1, 1).getDistrict());
-//		assertSame(board.getCell(2, 1).getItem(), highSoldier);
-//	}
+	@Test
+	public void testPlaceNewItemOnEnemyTerritory() {
+		district.addCapital(board.getCell(0,0));
+		district2.addCapital(board.getCell(3,3));
+		district2.addCell(board.getCell(3,4));
+		board.getCell(3,4).setDistrict(district2);
+		//Ajout de soldats ennemi
+		board.getCell(2,1).setDistrict(district2);
+		board.getCell(2,2).setDistrict(district2);
+		board.getCell(2,3).setDistrict(district2);
+
+		//Test de placer un soldat de niveau 1 sur une cellule ennemi contenant un soldat de niveau 1
+		board.getCell(2,1).setItem(new Soldier(SoldierLevel.level1));
+		board.setSelectedCell(board.getCell(0,0));
+		board.setShopItem(new Soldier(SoldierLevel.level1));
+		board.play(board.getCell(2,1));
+		assertSame(board.getCell(2,1).getDistrict(), district);
+
+		//Test de placer un soldat de niveau 1 sur une cellule ennemi contenant un soldat de niveau 2
+		board.setSelectedCell(board.getCell(0,0));
+		board.getCell(2,2).setItem(new Soldier(SoldierLevel.level2));
+		board.setShopItem(new Soldier(SoldierLevel.level1));
+		board.play(board.getCell(2,2));
+		assertSame(board.getCell(2,2).getDistrict(), district2);
+
+		//Test de placer un soldat de niveau 2 sur une cellule ennemi contenant un soldat de niveau 2
+		board.setSelectedCell(board.getCell(0,0));
+		board.setShopItem(new Soldier(SoldierLevel.level2));
+		board.play(board.getCell(2,2));
+		assertSame(board.getCell(2,2).getDistrict(), district);
+
+		//Test de placer un soldat de niveau 1 sur une cellule ennemi vide
+		board.setSelectedCell(board.getCell(0,0));
+		board.setShopItem(new Soldier(SoldierLevel.level1));
+		board.play(board.getCell(2,3));
+		assertSame(board.getCell(2,3).getDistrict(), district);
+
+		//Test de placer un soldat de niveau 1 sur une capitale ennemi et test si la capitale à été recrée
+		board.setSelectedCell(board.getCell(0,0));
+		board.setShopItem(new Soldier(SoldierLevel.level1));
+		board.play(board.getCell(3,3));
+		assertSame(board.getCell(3,3).getDistrict(), district);
+		assertNotNull(district2.getCapital());
+	}
 
 	@Test
 	public void testPossibleMoveForDistrict() {
@@ -379,16 +370,20 @@ public class BoardTest {
 		district3.addCell(board.getCell(1,2));
 		district3.addCell(board.getCell(1,3));
 		district3.addCapital(board.getCell(1,3));
-		district3.setGold(10000);
 		board.nextPlayer();
+		district3.setGold(10000);
 		board.getCell(1,2).setItem(new Soldier(SoldierLevel.level1));
 		board.setSelectedCell(board.getCell(1,2));
 		board.move(board.getCell(2,2));
 		//On vérifie que le district du joueur un s'est bien divisé en deux
 		assertEquals(3, board.getDistricts().size());
+
+		//Vérification que l'ensemble des golds vaut toujours 20000 pour le joueur 1
+		assertEquals(20000, board.getDistricts().get(0).getGold() + board.getDistricts().get(1).getGold() + board.getDistricts().get(2).getGold() - 10000);
 		for(District d : board.getDistricts()) {
 			assertNotNull(d.getCapital());
 		}
+
 
 	}
 }
