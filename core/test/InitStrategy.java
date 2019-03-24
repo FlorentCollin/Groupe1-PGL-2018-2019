@@ -19,18 +19,22 @@ public class InitStrategy {
 	private Board board;
 	
 	public InitStrategy(Strategy strategy) {
-		ai = new AI(strategy, board);
-		ai = new AI(new RandomStrategy(), board);
+		Player player = new Player();
+		enemy = new Player();
 		CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
-		players.add(ai);
-		district = new District(ai);
-		board = new Board(4, 3, players, new Shop());
+		players.add(player);
+		players.add(enemy);
+		district = new District(player);
+		board = new Board(5, 5, players, false, new Shop());
+		System.out.println(board.getPlayers().size());
 		for(int i=0; i<3; i++) {
 			for(int j=0; j<3; j++) {
 				board.getCell(i, j).setDistrict(district);
 				district.addCell(board.getCell(i, j));
 			}
 		}
+		board.changeToAI(0, strategy);
+		ai = (AI) board.getPlayers().get(0);
 		board.getCell(0, 0).setItem(new Capital());
 		board.getCell(2, 1).setItem(new Tree());
 		board.getCell(1, 2).setItem(new Soldier(SoldierLevel.level1));
