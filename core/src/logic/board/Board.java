@@ -552,7 +552,6 @@ public class Board{
 				c.setDistrict(newDistrict);
 			}
 		}
-		district.removeAll(newDistrict);
 		int gold;
 		if(newDistrict.size() != district.size()) {
 			gold = (int)district.getGold()/(district.getCells().size()+newDistrict.getCells().size())*newDistrict.getCells().size();
@@ -564,6 +563,7 @@ public class Board{
 			newDistrict.setGold(gold);
 			district.setGold(gold);
 		}
+		district.removeAll(newDistrict);
 		addDistrict(newDistrict);
 		checkDistricts();
 	}
