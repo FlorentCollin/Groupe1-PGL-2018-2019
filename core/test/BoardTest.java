@@ -116,6 +116,8 @@ public class BoardTest {
 
 	@Test
 	public void testMoveFusion() {
+		district.addCapital(board.getCell(1,0));
+		district2.addCapital(board.getCell(3,3));
 		//Ajout d'un soldat en (0,0)
 		Soldier firstSoldier = new Soldier(SoldierLevel.level1);
 		board.setSelectedCell(board.getCell(1, 1));
@@ -308,15 +310,83 @@ public class BoardTest {
 		assertSame(s3, board.getCell(2, 2).getItem());
 	}
 
+	/**
+	 * Test qui vérifie que deux districts d'un même se fusionnent s'ils se touchent
+	 */
 	@Test
-	public void testMerge() {
-		district2.setPlayer(p1);
-		board.setSelectedCell(board.getCell(1, 1));
-		shop.setSelectedItem(new Soldier(SoldierLevel.level1), board.getSelectedCell().getDistrict());
-		board.placeNewItem(board.getCell(1, 2));
-		assertSame(board.getCell(2, 2).getDistrict(), board.getCell(1, 1).getDistrict());
-		System.out.println(district);
-		System.out.println(district2);
+	public void testMergeDistrict() {
+		int totalGold = district.getGold() + district2.getGold();
+		//On retire deux cellules qui appartiennent au joueur 2 pour montrer que c'est bien le plus petit district qui est supprimé
+		board.getCell(2,2).setDistrict(null);
+		board.getCell(3,3).setDistrict(null);
+		district2.setPlayer(board.getPlayers().get(0));
+		district.addCapital(board.getCell(0,0));
+		district2.addCapital(board.getCell(3,3));
+		assertEquals(2, board.getDistricts().size());
+		board.getCell(1,1).setItem(new Soldier(SoldierLevel.level1));
+		board.setSelectedCell(board.getCell(1,1));
+		board.move(board.getCell(2,2));
+		assertEquals(1, board.getDistricts().size());
+		assertEquals(totalGold, board.getDistricts().get(0).getGold());
+		int totalCapital = 0;
+		for(Cell cell : board.getDistricts().get(0).getCells()) {
+			if(cell.getItem() != null && cell.getItem() instanceof Capital)
+				totalCapital++;
+		}
+		//Vérification que les cellules du deuxième territoire appartiennent maintenant au plus grand territoire
+		assertEquals(district, board.getCell(2,3).getDistrict());
+		assertEquals(district, board.getCell(3,2).getDistrict());
+		assertEquals(1, totalCapital);
+		//Montre que c'est bien le plus grand district qui est conservé
+		assertTrue(board.getCell(0,0).getItem() instanceof Capital);
 	}
-	
+
+	/**
+	 * Test qui vérifie qu'un territoire est détruit si il ne lui reste plus qu'une seule cellule
+	 *
+	 */
+	@Test
+	public void testDestructionOfDistrict() {
+		district.addCapital(board.getCell(0,0));
+		board.getCell(2,0).setItem(new Soldier(SoldierLevel.level1));
+		board.getCell(2,2).setItem(new Soldier(SoldierLevel.level1));
+		board.getCell(2,0).setDistrict(board.getCell(2,2).getDistrict());
+		board.nextPlayer();
+		board.setSelectedCell(board.getCell(2,0));
+		board.move(board.getCell(1,0));
+		board.setSelectedCell(board.getCell(2,2));
+		board.move(board.getCell(1,1));
+		board.nextPlayer();
+		board.nextPlayer();
+		board.setSelectedCell(board.getCell(1,1));
+		board.move(board.getCell(0,1));
+		assertEquals(1, board.getDistricts().size());
+	}
+
+	/**
+	 * Test qui vérifie qu'un district est séparé si celui-ci est coupé en deux
+	 */
+	@Test
+	public void testSplit() {
+		//Initialisation du board
+		district2.setPlayer(district.getPlayer());
+		board.checkMerge(board.getCell(2,2)); //On veut que le joueur 1 ne possède qu'un seul district pour tester le split
+		//Création d'un troisième district qui va venir couper en deux le district du joueur 1
+		District district3 = new District(p2);
+		board.addDistrict(district3);
+		district3.addCell(board.getCell(1,2));
+		district3.addCell(board.getCell(1,3));
+		district3.addCapital(board.getCell(1,3));
+		district3.setGold(10000);
+		board.nextPlayer();
+		board.getCell(1,2).setItem(new Soldier(SoldierLevel.level1));
+		board.setSelectedCell(board.getCell(1,2));
+		board.move(board.getCell(2,2));
+		//On vérifie que le district du joueur un s'est bien divisé en deux
+		assertEquals(3, board.getDistricts().size());
+		for(District d : board.getDistricts()) {
+			assertNotNull(d.getCapital());
+		}
+
+	}
 }

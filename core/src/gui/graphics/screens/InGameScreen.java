@@ -60,6 +60,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
     private FillViewport fillViewport;
     private Hud hud;
     private int playerNumber;
+    private boolean alreadyShow = false;
 
     private MessageListener messageListener;
     private MessageSender messageSender;
@@ -147,20 +148,19 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
                 selectCells(board.possibleMove(board.getSelectedCell().getDistrict()));
             }
         }
-        if(board.getWinner() != null) {
+        if (board.getWinner() != null && !alreadyShow) {
             showEndDialog(board.getWinner());
+            alreadyShow = true;
         }
-//        else {
-	        map.getTiledMapRenderer().setView(camera);
-	        map.getTiledMapRenderer().render(); //Rendering des cellules
-	        renderItems();
-	        if(board.getWinner() != board.getGodPlayer()) {
-	        	hud.getDistrictInfo().setCurrentPlayer(board.getActivePlayer());
-	        }
-	        hud.getViewport().apply();
-	        hud.act(delta);
-	        hud.draw();
-//        }
+        map.getTiledMapRenderer().setView(camera);
+        map.getTiledMapRenderer().render(); //Rendering des cellules
+        renderItems();
+        if (board.getWinner() != board.getGodPlayer()) {
+            hud.getDistrictInfo().setCurrentPlayer(board.getActivePlayer());
+        }
+        hud.getViewport().apply();
+        hud.act(delta);
+        hud.draw();
     }
 
     private void checkInput() {
@@ -496,7 +496,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
 
 
     private void arrowListener() {
-        //Ajout d'un dialogue qui permet d'entrer l'addresse ip d'un serveur local
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = textFont;
         Window.WindowStyle windowStyle = uiSkin.get(Window.WindowStyle.class);
