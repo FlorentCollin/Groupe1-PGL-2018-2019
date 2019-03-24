@@ -552,10 +552,18 @@ public class Board{
 				c.setDistrict(newDistrict);
 			}
 		}
-		int gold = (int)district.getGold()/(district.getCells().size()+newDistrict.getCells().size())*newDistrict.getCells().size();
-		newDistrict.setGold(gold);
-		district.setGold(district.getGold() - newDistrict.getGold());
 		district.removeAll(newDistrict);
+		int gold;
+		if(newDistrict.size() != district.size()) {
+			gold = (int)district.getGold()/(district.getCells().size()+newDistrict.getCells().size())*newDistrict.getCells().size();
+			newDistrict.setGold(gold);
+			district.setGold(district.getGold() - newDistrict.getGold());			
+		}
+		else {
+			gold = (int) district.getGold()/2; 
+			newDistrict.setGold(gold);
+			district.setGold(gold);
+		}
 		addDistrict(newDistrict);
 		checkDistricts();
 	}
