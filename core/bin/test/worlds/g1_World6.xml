@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<world name="World 6" map="g1_World6" width="25" height="13">
+    <players number="3" />
+    <items>
+      <item type="Capital" golds="20" x="5" y="3" />
+      <item type="Capital" golds="20" x="20" y="3" />
+      <item type="Capital" golds="20" x="13" y="7" />
+
+      <item type="Soldier" level="1" x="7" y="3" />
+      <item type="Soldier" level="1" x="7" y="4" />
+      <item type="Soldier" level="1" x="17" y="2" />
+      <item type="Soldier" level="1" x="17" y="4" />
+      <item type="Soldier" level="1" x="10" y="7" />
+      <item type="Soldier" level="1" x="14" y="7" />
+
+      <item type="Tree" x="15" y="10" />
+      <item type="Tree" x="22" y="4" />
+      <item type="Tree" x="10" y="9" />
+      <item type="Tree" x="6" y="0" />
+      <item type="Tree" x="1" y="0" />
+      <item type="Tree" x="14" y="8" />
+      <item type="Tree" x="5" y="8" />
+      <item type="Tree" x="22" y="0" />
+      <item type="Tree" x="2" y="5" />
+      <item type="Tree" x="3" y="0" />
+    </items>
+
+</world>

@@ -1,20 +1,22 @@
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import logic.board.Board;
 import logic.board.District;
 import logic.board.cell.Cell;
 import logic.item.Capital;
 import logic.item.Soldier;
 import logic.item.level.SoldierLevel;
-import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
 import logic.player.Player;
 import logic.shop.Shop;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static org.junit.Assert.*;
 
 public class BoardTest {
 	Board board;
