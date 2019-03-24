@@ -1,4 +1,8 @@
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,30 +23,45 @@ public class RandomStrategyTest {
 	private District district;
 	private Board board;
 	
-//	@Before
-//	public void init() {
-//		ai = new AI(new RandomStrategy(), board);
-//		Player[] players = new Player[1];
-//		players[0] = ai;
-//		district = new District(ai);
-//		board = new Board(4, 3, players, new Shop());
-//		for(int i=0; i<2; i++) {
-//			for(int j=0; j<3; j++) {
-//				board.getCell(i, j).setDistrict(district);
-//				district.addCell(board.getCell(i, j));
-//			}
-//		}
-//	}
-//
-//	@Test
-//	public void testMoveInTree() {
-//		board.getCell(0, 0).setItem(new Capital());
-//		board.getCell(0, 1).setItem(new Tree());
-//		board.getCell(1, 0).setItem(new Soldier(SoldierLevel.level1));
-//
-//		ai.play();
-//
-//		assertTrue(board.getCell(1, 0).getItem() == null);
-//	}
+	@Before
+	public void initRandom() {
+		ai = new AI(new RandomStrategy(), board);
+		CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
+		players.add(ai);
+		district = new District(ai);
+		board = new Board(4, 3, players, new Shop());
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<3; j++) {
+				board.getCell(i, j).setDistrict(district);
+				district.addCell(board.getCell(i, j));
+			}
+		}
+		board.getCell(0, 0).setItem(new Capital());
+		board.getCell(2, 1).setItem(new Tree());
+	}
+
+	@Test
+	public void randomMove() {
+		district.setGold(0);
+		
+		Soldier soldier = new Soldier(SoldierLevel.level1);
+		board.getCell(1, 1).setItem(soldier);
+
+		ai.play();
+
+		assertNull(board.getCell(1, 1).getItem());
+		assertSame(board.getCell(2, 1).getItem(), soldier);
+	}
+	
+	@Test
+	public void randomBuy() {
+		district.setGold(10);
+		
+		ai.play();
+		
+		assertTrue(board.getCell(2, 1).getItem() instanceof Soldier);
+		assertSame(board.getCell(2, 1).getItem().getLevel(), SoldierLevel.level1);
+		assertTrue(district.getGold() == 0);
+	}
 
 }
