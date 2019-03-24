@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import logic.item.Tomb;
+import logic.item.Tree;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -221,6 +223,8 @@ public class BoardTest {
 
 	@Test
 	public void testMoveOnFreeTerritory() {
+		district.addCapital(board.getCell(0,0));
+		district2.addCapital(board.getCell(3,3));
 		Soldier s = new Soldier(SoldierLevel.level1);
 		board.getCell(1, 1).setItem(s);
 		board.setSelectedCell(board.getCell(1, 1));
@@ -383,7 +387,50 @@ public class BoardTest {
 		for(District d : board.getDistricts()) {
 			assertNotNull(d.getCapital());
 		}
+	}
 
+	@Test
+	public void testGenerateGold() {
+		district.addCapital(board.getCell(0,0));
+		district2.addCapital(board.getCell(1,1));
+		board.getCell(1,1).setItem(new Tree());
+		board.nextPlayer();
 
+		int numberOfTree = 0;
+		for(Cell cell : district2.getCells()) {
+			if(cell.getItem() != null && cell.getItem() instanceof Tree)
+				numberOfTree++;
+		}
+		//Test de la génération de gold d'un district avec uniquement des cellules vide et une capitale
+		assertEquals(10000 + district2.size() - numberOfTree, district2.getGold());
+		board.nextPlayer();
+
+		numberOfTree = 0;
+		for(Cell cell : district.getCells()) {
+			if(cell.getItem() != null && cell.getItem() instanceof Tree)
+				numberOfTree++;
+		}
+		//Test de la génération de gold d'un district avec un arbre sur une des cellules et une capitale
+		assertEquals(10000 + district.size() - numberOfTree, district.getGold());
+		district2.setGold(10000);
+		board.getCell(2,2).setItem(new Soldier(SoldierLevel.level1));
+		board.nextPlayer();
+		//Test de la génération de gold d'un district avec un soldat de niveau 1 sur le district et une capitale
+		numberOfTree = 0;
+		for(Cell cell : district2.getCells()) {
+			if(cell.getItem() != null && cell.getItem() instanceof Tree)
+				numberOfTree++;
+		}
+		assertEquals(10000 + district2.size() - numberOfTree - SoldierLevel.level1.getSalary(), district2.getGold());
+	}
+
+	@Test
+	public void testSoldierDiedWhenCapitalCanNotPaidSalary() {
+		district.setGold(0);
+		district.addCapital(board.getCell(0,0));
+		board.getCell(0,1).setItem(new Soldier(SoldierLevel.level4));
+		board.nextPlayer();
+		board.nextPlayer();
+		assertTrue(board.getCell(0,1).getItem() instanceof Tomb);
 	}
 }

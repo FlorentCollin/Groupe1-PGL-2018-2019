@@ -52,6 +52,6 @@ public class Player {
 
     public void setId(int id) {
 	    this.id = id;
-	    this.color = Constants.colors[id];
+	    this.color = Constants.colors[id-1];
     }
 }
