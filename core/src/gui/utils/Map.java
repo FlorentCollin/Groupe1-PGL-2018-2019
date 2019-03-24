@@ -125,7 +125,7 @@ public class Map {
             else
                 newPlayer = new Player();
             //Ajout de l'id du player
-            newPlayer.setId(i); //Car i=0 correspond aux cellules neutres
+            newPlayer.setId(i+1); //Car i=0 correspond aux cellules neutres
             players.add(newPlayer);
         }
         int width = Integer.parseInt(xmlElement.getAttribute("width"));
