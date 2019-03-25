@@ -28,7 +28,7 @@ public class WaitingRoom extends Room {
         mapName = message.getWorldName();
         roomName = message.getRoomName();
         Map map = new Map(mapName);
-        board = map.loadBoard(message.isNaturalDisastersOn(), null);
+        board = map.loadBoard(false, null);
         changeToAI(board, message.getAiStrats());
         //Création d'une liste qui indique si le joueur est prêt à lancer la partie ou non
         for (int i = 0; i < board.getPlayers().size(); i++) {

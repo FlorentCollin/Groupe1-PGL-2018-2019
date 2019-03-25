@@ -183,7 +183,8 @@ public class NaturalDisasters {
 			modificatedCells.remove(key);			
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	protected void saveChanges() {
 		ArrayList<Cell> save = (ArrayList<Cell>) affectedCells.clone();
 		modificatedCells.put(board.getTurn(), save);

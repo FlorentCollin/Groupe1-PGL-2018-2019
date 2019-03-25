@@ -25,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Board{
 	protected static final Player godPlayer = new Player();
 	
-	private transient Cell[][] board;
+	private Cell[][] board;
 	private int columns, rows, activePlayer;
 	private CopyOnWriteArrayList<Player> players;
 	private CopyOnWriteArrayList<District> districts;
@@ -215,6 +215,7 @@ public class Board{
 		Item cellItem = toCell.getItem();
 		Item selectedItem = selectedCell.getItem();
 		if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
+			System.out.println("POSSIBLE MOVE ");
 			if(cellItem == null) {
 				conquer(toCell);
 			}
@@ -746,10 +747,12 @@ public class Board{
 	 * */
 	public void play(Cell cell) {
 		if(selectedCell != null) {
+			System.out.println("SelectedCell != null");
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
 			}
 			else if(selectedCell.getItem() != null && selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {
+				System.out.println("MOVE");
 				move(cell);
 			}
 			setSelectedCell(null);
@@ -878,8 +881,8 @@ public class Board{
 				board[cell.getX()][cell.getY()] = cell;
 				cell.setDistrict(district);
 				modificatedCells.add(cell);
-				if(cell.getItem() != null)
-					cell.getItem().update();
+//				if(cell.getItem() != null)
+//					cell.getItem().update();
 			}
 			for (int i = 0; i < players.size(); i++) {
 				if (district.getPlayer().getId() == players.get(i).getId()) {

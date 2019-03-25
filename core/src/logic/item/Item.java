@@ -8,15 +8,20 @@ public abstract class Item {
 	protected SoldierLevel level;
     protected String t = getClass().getName();
 
-	protected transient boolean movable = false;
-	protected transient boolean buyable = false;
-	protected transient boolean improvable = false;
+    @SerializedName("m")
+	protected  boolean movable = false;
+    @SerializedName("b")
+	protected  boolean buyable = false;
+    @SerializedName("i")
+	protected  boolean improvable = false;
 
-	@SerializedName("m") //Permet de réduire considérablement la taille des messages envoyés par le serveur
+	@SerializedName("hm") //Permet de réduire considérablement la taille des messages envoyés par le serveur
 	protected boolean hasMoved = false;
-	protected transient boolean hasSalary = false;
-	
-	protected transient int maxMove = 0;
+	@SerializedName("hs")
+	protected boolean hasSalary = false;
+
+	@SerializedName("mm")
+	protected int maxMove = 0;
 	
 	public Item() {
 		
