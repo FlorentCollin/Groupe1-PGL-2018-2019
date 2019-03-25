@@ -37,6 +37,11 @@ public class DefendStrategyTest extends StrategyTest{
 				|| init.getBoard().getCell(1, 0).getItem() instanceof Soldier);
 	}
 	
+	@Test
+	public void buyTest() {
+		init.getDistrict().setGold(0);
+	}
+	
 	private void show() {
 		for(int i=0; i<5; i++) {
 			for(int j=0; j<5; j++) {
