@@ -18,50 +18,34 @@ import logic.player.ai.AI;
 import logic.player.ai.strategy.RandomStrategy;
 import logic.shop.Shop;
 
-public class RandomStrategyTest {
-	private AI ai;
-	private District district;
-	private Board board;
+public class RandomStrategyTest extends StrategyTest{
 	
 	@Before
 	public void initRandom() {
-		ai = new AI(new RandomStrategy(), board);
-		CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
-		players.add(ai);
-		district = new District(ai);
-		board = new Board(4, 3, players, new Shop());
-		for(int i=0; i<3; i++) {
-			for(int j=0; j<3; j++) {
-				board.getCell(i, j).setDistrict(district);
-				district.addCell(board.getCell(i, j));
-			}
-		}
-		board.getCell(0, 0).setItem(new Capital());
-		board.getCell(2, 1).setItem(new Tree());
+		init = new InitStrategy(new RandomStrategy());
 	}
 
 	@Test
 	public void randomMove() {
-		district.setGold(0);
+		init.getDistrict().setGold(0);
 		
 		Soldier soldier = new Soldier(SoldierLevel.level1);
-		board.getCell(1, 1).setItem(soldier);
+		init.getBoard().getCell(1, 1).setItem(soldier);
 
-		ai.play();
+		init.getAI().play();
 
-		assertNull(board.getCell(1, 1).getItem());
-		assertSame(board.getCell(2, 1).getItem(), soldier);
+		assertNull(init.getBoard().getCell(1, 1).getItem());
+		assertSame(init.getBoard().getCell(2, 1).getItem(), soldier);
 	}
 	
 	@Test
 	public void randomBuy() {
-		district.setGold(10);
+		init.getDistrict().setGold(10);
 		
-		ai.play();
+		init.getAI().play();
 		
-		assertTrue(board.getCell(2, 1).getItem() instanceof Soldier);
-		assertSame(board.getCell(2, 1).getItem().getLevel(), SoldierLevel.level1);
-		assertTrue(district.getGold() == 0);
+		assertTrue(init.getBoard().getCell(2, 1).getItem() instanceof Soldier);
+		assertSame(init.getBoard().getCell(2, 1).getItem().getLevel(), SoldierLevel.level1);
 	}
 
 }

@@ -50,11 +50,7 @@ public class District {
 	
 	public void removeCell(Cell cell) {
 		cells.remove(cell);
-		if(capital == null) {
-			System.out.println("prob de cap");
-		}
-		else if(cell == capital) {
-			System.out.println("capital destroyed");
+		if(cell == capital) {
 			removeCapital();
 		}
 	}
