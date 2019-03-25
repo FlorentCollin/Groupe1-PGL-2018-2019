@@ -50,14 +50,15 @@ public class ServerSender extends Thread {
                         messageParts.add(messageStr.substring(i, Math.min(length, i + 20000)));
                     }
                     for (String str : messageParts) {
-                        ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
                         for (Client client : networkMessage.getClients()) { //Envoie du message à tous les clients
+                            ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
                             SocketChannel clientChannel = client.getSocketChannel();
                             if (clientChannel.isConnected()) {
                                 /* Écriture du message dans le buffer du client
                                  * Ici on écrit le nom de la classe du message en plus du message sérialisé
                                  * Pour permettre au client de retrouver le type du message
                                  * Le "+" est le caractère signalisant la fin du message */
+                                System.out.println("SERVER SENDER : SENDING MESSAGE TO CLIENT");
                                 while (buffer.hasRemaining()) {
                                     if(!clientChannel.isConnected())
                                         break;
