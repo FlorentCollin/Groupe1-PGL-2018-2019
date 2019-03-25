@@ -553,8 +553,8 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("clicked");
                 parent.changeScreen(MainMenuScreen.class);
+                dispose();
                 dialog.hide();
             }
         });

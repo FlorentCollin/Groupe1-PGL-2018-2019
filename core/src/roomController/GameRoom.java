@@ -145,10 +145,10 @@ public class GameRoom extends Room {
             if (board.getSelectedCell() != null) { //Création d'un GameUpdateMessage avec selectedCell
                 Cell selectedCell = board.getSelectedCell();
                 updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(), board.getPlayers(),
-                        board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
+                        board.getWinner(), board.getActivePlayerNumber(), selectedCell.getX(), selectedCell.getY());
             } else { //Création d'un GameUpdateMessage sans selectedCell
                 updateMessage = new GameUpdateMessage(board.getDistricts(), board.getShop().getSelectedItem(),
-                        board.getPlayers(), board.getActivePlayerNumber());
+                        board.getPlayers(), board.getWinner(), board.getActivePlayerNumber());
             }
             updateMessage.setClients(clients); //Ajout des clients au message
             try {
@@ -156,6 +156,9 @@ public class GameRoom extends Room {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        if(board.getWinner() != null) {
+            stopRunning();
         }
     }
 

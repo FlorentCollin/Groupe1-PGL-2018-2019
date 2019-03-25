@@ -17,22 +17,21 @@ public class GameUpdateMessage extends NetworkMessage {
     private CopyOnWriteArrayList<District> districts;
     private Item shopItem;
     private CopyOnWriteArrayList<Player> players;
+    private Player winner;
     private int activePlayer;
     private Integer x, y; // Correspond à la position en x et y de la cellule sélectionné si elle existe
 
     //TODO Need refactoring about what is updated in the board because here all is pass every time something has changed
-    public GameUpdateMessage(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, int activePlayer) {
+    public GameUpdateMessage(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, Player winner, int activePlayer) {
         this.districts = districts;
         this.shopItem = shopItem;
         this.players = players;
+        this.winner = winner;
         this.activePlayer = activePlayer;
     }
 
-    public GameUpdateMessage(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, int activePlayer, int x, int y) {
-        this.districts = districts;
-        this.shopItem = shopItem;
-        this.players = players;
-        this.activePlayer = activePlayer;
+    public GameUpdateMessage(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, Player winner, int activePlayer, int x, int y) {
+        this(districts, shopItem, players, winner, activePlayer);
         this.x = x;
         this.y = y;
     }
@@ -51,6 +50,10 @@ public class GameUpdateMessage extends NetworkMessage {
 
     public CopyOnWriteArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public Player getWinner() {
+        return winner;
     }
 
     public int getActivePlayer() {
