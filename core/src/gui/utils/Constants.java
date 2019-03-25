@@ -29,6 +29,8 @@ public class Constants {
     public static final String USER_SETTINGS_FILE = "settings/userSettings.json";
     public static final String USER_SHORTCUTS_FILE = "settings/userShortcuts.json";
 
+    public static final int MAP_NUMBER = 10;
+
     public static float getRatioX(float width) {
         return width / MAX_RES_X;
     }

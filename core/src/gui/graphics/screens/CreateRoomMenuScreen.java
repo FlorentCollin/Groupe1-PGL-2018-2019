@@ -15,9 +15,11 @@ import communication.*;
 import communication.Messages.CreateRoomMessage;
 import communication.Messages.Message;
 import gui.app.Slay;
+import gui.utils.Constants;
 import gui.utils.Language;
 import roomController.GameRoom;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -207,13 +209,13 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
      */
     private Array<String> initWorldsNames() {
         //Répertoire des maps
-        FileHandle dirHandle = Gdx.files.internal("worlds");
         XmlReader xml = new XmlReader();
         nameToFileName = new HashMap<>();
         nameToXml = new HashMap<>();
         Array<String> worldsNames = new Array<>();
         //On itère sur l'ensemble des fichiers du répertoires
-        for(FileHandle file : dirHandle.list()) {
+        for(int i=1; i <= Constants.MAP_NUMBER; i++) {
+            FileHandle file = Gdx.files.internal("worlds/g1_World" + i + ".xml");
             if(file.extension().equals("xml")) { //Si le fichier est un fichier xml alors c'est que c'est un fichier d'une map
                 XmlReader.Element xmlElement = xml.parse(file);
                 String worldName = xmlElement.getAttribute("name");
@@ -259,7 +261,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                         playersName.add(parent.getUserSettings().getUsername());
                     }
                     aiNames.forEach((i) -> playersName.add(i.getText().toString()));
-                    System.out.println(isNaturalDisastersOn());
                     room = new GameRoom(world, isNaturalDisastersOn(), ai, playersName, messagesQueue);
                     messageSender = new OfflineMessageSender(messagesQueue);
                     //Démarrage du thread qui s'occupe de la partie hors-ligne

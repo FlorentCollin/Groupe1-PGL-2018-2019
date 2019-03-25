@@ -46,7 +46,7 @@ public class ShortcutsMenuScreen extends SubMenuScreen {
                     for (ShortcutsButton button : keyBindGroup.getButtons()) {
                         if (button.getText().toString().equals(Input.Keys.toString(keycode))) {
                             Integer[] value = userShortcuts.getShortcuts().get(button.getShortcutName());
-                            value[button.getNumber()] = null;
+                            value[button.getNumber()] = -2;
                             userShortcuts.changeShortcut(button.getShortcutName(), value);
                             button.setText("");
                         }
