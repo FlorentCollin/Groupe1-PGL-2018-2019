@@ -215,7 +215,6 @@ public class Board{
 		Item cellItem = toCell.getItem();
 		Item selectedItem = selectedCell.getItem();
 		if(isInPossibleMove(possibleMove(selectedCell), toCell)) {
-			System.out.println("POSSIBLE MOVE ");
 			if(cellItem == null) {
 				conquer(toCell);
 			}
@@ -747,12 +746,10 @@ public class Board{
 	 * */
 	public void play(Cell cell) {
 		if(selectedCell != null) {
-			System.out.println("SelectedCell != null");
 			if(shop.getSelectedItem() != null) {
 				placeNewItem(cell);
 			}
 			else if(selectedCell.getItem() != null && selectedCell.getItem().isMovable() && selectedCell.getItem().canMove()) {
-				System.out.println("MOVE");
 				move(cell);
 			}
 			setSelectedCell(null);

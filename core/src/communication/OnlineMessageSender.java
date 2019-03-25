@@ -5,7 +5,9 @@ import communication.Messages.Message;
 import communication.Messages.UsernameMessage;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -24,6 +26,7 @@ public class OnlineMessageSender implements MessageSender {
     public OnlineMessageSender(String username, String serverAddress) throws IOException {
         gson = new Gson();
         //Ouverture de la connection au serveur
+//        clientChannel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(serverAddress), PORT));
         clientChannel = SocketChannel.open(new InetSocketAddress(serverAddress, PORT));
         clientChannel.configureBlocking(false);
         selector = Selector.open();

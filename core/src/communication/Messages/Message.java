@@ -116,7 +116,6 @@ public abstract class Message {
         }
         ArrayList<Message> messages = new ArrayList<>();
         for (int i = 0; i < len; i++) {
-            System.out.println("Split : " + split[i]);
             messages.add(getMessage(split[i], gson));
         }
         return messages;

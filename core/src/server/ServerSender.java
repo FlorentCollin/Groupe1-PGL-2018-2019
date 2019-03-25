@@ -58,7 +58,6 @@ public class ServerSender extends Thread {
                                  * Ici on écrit le nom de la classe du message en plus du message sérialisé
                                  * Pour permettre au client de retrouver le type du message
                                  * Le "+" est le caractère signalisant la fin du message */
-                                System.out.println("SERVER SENDER : SENDING MESSAGE TO CLIENT");
                                 while (buffer.hasRemaining()) {
                                     if(!clientChannel.isConnected())
                                         break;

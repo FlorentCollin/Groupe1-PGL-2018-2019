@@ -35,7 +35,7 @@ public class OnlineMessageListener extends MessageListener{
             try {
                 readFromServer();
             } catch (IOException e) {
-                e.printStackTrace();
+                stopRunning();
             }
         }
     }
@@ -53,7 +53,6 @@ public class OnlineMessageListener extends MessageListener{
                 if(key.isReadable()) { //Si le serveur à envoyé un message
                     ArrayList<Message> messages = Message.readFromKey(key, gson);
                     for(Message message : messages) {
-                        System.out.println("RECEIVE MESSAGE : " + message.getClass().getSimpleName());
                     }
                     messages.forEach(this::executeMessage);
                 }
