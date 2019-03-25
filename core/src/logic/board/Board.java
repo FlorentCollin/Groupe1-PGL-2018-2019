@@ -33,7 +33,7 @@ public class Board{
 	private boolean naturalDisasters;
 	private transient NaturalDisastersController naturalDisastersController;
 	private volatile Cell selectedCell, firstCell;
-	private final int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
+	private int PROBA = 1; //plus PROBA augmente plus la génération d'arbre est lente et inversement (base : PROBA = 1)
 	private ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
 	private boolean hasChanged;
 	private Player winner;
@@ -89,10 +89,8 @@ public class Board{
 	}
 
 	public void setCell(Cell cell) {
-		System.out.println("setCell for cell in "+cell.getX()+", "+cell.getY()+" : "+cell.getClass().getSimpleName());
 		board[cell.getX()][cell.getY()] = cell;
 		Cell cell2 = board[cell.getX()][cell.getY()];
-		System.out.println("setCell for cell2 in "+cell2.getX()+", "+cell2.getY()+" : "+cell2.getClass().getSimpleName());
 	}
 
 	/**
@@ -199,9 +197,6 @@ public class Board{
 	private void updateCellForNewItem(Cell cell) {
 		cell.setItem(shop.getSelectedItem());
 		shop.getSelectedItem().setHasMoved(true);
-		if(cell.getDistrict() == null) {
-			System.out.println(cell.getX()+", "+cell.getY());
-		}
 		shop.buy(cell.getDistrict());
 		modificatedCells.add(cell);
 		checkDistricts();
@@ -399,7 +394,9 @@ public class Board{
 //		}
 		for(Cell nb : getNeighbors(cell)) {
 			if(nb.getDistrict() != null &&
- 					nb.getDistrict() != selectedCell.getDistrict() && nb.getItem() instanceof Soldier && nb.getItem().isStronger(item)) {
+ 					nb.getDistrict() != selectedCell.getDistrict() && 
+ 					nb.getItem() instanceof Soldier && 
+ 					nb.getItem().isStronger(item)) {
 				return false;
 			}
 		}
@@ -463,21 +460,25 @@ public class Board{
 					}
 					else {
 						district.refreshSoldiers();
-						for (Cell c : district.getCells()) {
-							if (c.getItem() != null && c.getItem().isMovable()) {
-								c.getItem().setHasMoved(false);
-							}
-						}
 					}
 				}
 			}
 			if(players.get(activePlayer) instanceof AI) {
-				((AI)players.get(activePlayer)).play();
+				try {
+					Thread.sleep(500);
+					((AI)players.get(activePlayer)).play();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		else {
 			if(!(winner instanceof AI)) {
-				System.out.println(winner+" wins");
+				if(winner == godPlayer) {
+					System.out.println("Everyone lose");
+				}
+				else
+					System.out.println(winner+" wins");
 			}
 			else {
 				System.out.println("You lose");
@@ -631,7 +632,7 @@ public class Board{
 							nTrees += 1;
 						}
 					}
-					if(rand.nextInt(100)*PROBA < calculateProb(nTrees)*100) {
+					if(rand.nextInt(100)*PROBA > calculateProb(nTrees)*100) {
 						board[i][j].setItem(new Tree());
 						treeCells.add(board[i][j]);
 					}
@@ -799,6 +800,7 @@ public class Board{
 				return true;
 			}
 		}
+		System.out.println(player+" is dead because he has no district");
 		return false;
 	}
 
@@ -928,5 +930,9 @@ public class Board{
 	
 	public Player getGodPlayer() {
 		return godPlayer;
+	}
+	
+	public void setProbTrees(int i) {
+		PROBA = i;
 	}
 }
