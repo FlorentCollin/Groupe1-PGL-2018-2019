@@ -92,6 +92,7 @@ public class WaitingRoom extends Room {
     @Override
     public void addClient(Client client){
         super.addClient(client);
+        System.out.println("ADDING CLIENT TO ROOM");
         board.getPlayers().get(clients.size()-1).setName(client.getUsername());
         sendUpdateMessage();
     }

@@ -17,10 +17,9 @@ public class Cell {
 	private transient District district; // si null alors n'appartient actuellement à aucun district
 
 	protected String t = this.getClass().getName();
-//	private int numberOfAdjacentWaterCell; //?
-//	private boolean actifIncome; //?
 	@SerializedName("a")
 	protected boolean accessible;
+
 	public Cell(int x, int y) {
 		this.x = x;
 		this.y = y;

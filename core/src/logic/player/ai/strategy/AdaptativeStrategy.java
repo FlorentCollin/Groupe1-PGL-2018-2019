@@ -9,9 +9,9 @@ import logic.item.Soldier;
 import logic.player.Player;
 
 public class AdaptativeStrategy extends AbstractStrategy{
-    private int previous;
-    private DefenseStrategy defense;
-    private AttackStrategy attack;
+    private transient int previous;
+    private transient DefenseStrategy defense;
+    private transient AttackStrategy attack;
 
     public AdaptativeStrategy() {
         previous = 0;

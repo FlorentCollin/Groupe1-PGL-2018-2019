@@ -81,10 +81,13 @@ public class RoomController {
             TextMessage textMessage = (TextMessage) message;
             switch (textMessage.getMessage()) {
                 case "launchGame":
-                    WaitingRoom room = (WaitingRoom) rooms.get(client);
-                    if(room.isReady()) {
-                        launchGame(room);
-                    } break;
+                    if(rooms.get(client) instanceof WaitingRoom) {
+                        WaitingRoom room = (WaitingRoom) rooms.get(client);
+                        if (room.isReady()) {
+                            launchGame(room);
+                        }
+                        break;
+                    }
                 case "getWaitingRooms":
                     sendWaitingRooms(client); break;
                 default:

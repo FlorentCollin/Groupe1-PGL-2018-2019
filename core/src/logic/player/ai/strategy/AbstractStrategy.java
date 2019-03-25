@@ -14,9 +14,9 @@ import logic.item.level.SoldierLevel;
 import logic.player.Player;
 
 public abstract class AbstractStrategy implements Strategy {
-	protected HashMap<District, Integer> visitedDistricts;
-	protected ArrayList<Cell> soldierCells;
-	protected Random rand;
+	protected transient HashMap<District, Integer> visitedDistricts;
+	protected transient ArrayList<Cell> soldierCells;
+	protected transient Random rand;
 
 	public AbstractStrategy() {
 		soldierCells = new ArrayList<>();
