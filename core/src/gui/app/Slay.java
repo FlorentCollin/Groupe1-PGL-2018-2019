@@ -78,7 +78,7 @@ public class Slay extends Game {
             }
             nextScreen = shortcutsMenuScreen;
         } else if(screen == CreateRoomMenuScreen.class) {
-			createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage());
+			createRoomMenuScreen = new CreateRoomMenuScreen(this, mainMenuScreen.getStage(), false);
             nextScreen = createRoomMenuScreen;
         }
 		this.setScreen(nextScreen);

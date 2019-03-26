@@ -97,8 +97,12 @@ public class WaitingRoom extends Room {
     @Override
     public void addClient(Client client){
         super.addClient(client);
-        for(int i = 0; i < client.getNumberOfPlayer(); i++) {
+        if(client.getNumberOfPlayer() == 1) {
             board.getPlayers().get(sizeOfClients++).setName(client.getUsername());
+        } else {
+            for(int i = 0; i < client.getNumberOfPlayer(); i++) {
+                board.getPlayers().get(sizeOfClients++).setName(client.getUsername() + "#" + (i + 1));
+            }
         }
         sendUpdateMessage();
     }
@@ -146,8 +150,17 @@ public class WaitingRoom extends Room {
         return i;
     }
 
-    public boolean isFull() {
-        return getNumberOfClients() == getMaxClients();
+    public int waitingPlayer() {
+        int i = 0;
+        for (Client client : clients) {
+            i += client.getNumberOfPlayer();
+        }
+        int numberOfAi = 0;
+        for(Player player : board.getPlayers()) {
+            if(player instanceof AI)
+                numberOfAi += 1;
+        }
+        return board.getPlayers().size() - numberOfAi - i;
     }
 }
 

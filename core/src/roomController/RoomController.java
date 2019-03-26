@@ -71,7 +71,7 @@ public class RoomController {
             Logger.info("A client has just joined a room");
             JoinRoomMessage joinRoomMessage = (JoinRoomMessage) message;
             for (Room room: rooms.values()) {
-                if(room.getUUID().equals(joinRoomMessage.getId()) && ! room.isFull()) {
+                if(room.getUUID().equals(joinRoomMessage.getId()) && room.waitingPlayer() >= client.getNumberOfPlayer()) {
                     room.addClient(client);
                     rooms.put(client, room);
                     break;

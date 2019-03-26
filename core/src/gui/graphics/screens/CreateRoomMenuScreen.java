@@ -54,8 +54,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     /**
      * Constructeur pour une partie en ligne
      */
-    public CreateRoomMenuScreen(Slay parent, Stage stage, MessageSender messageSender, MessageListener messageListener) {
-        this(parent, stage);
+    public CreateRoomMenuScreen(Slay parent, Stage stage, boolean online, MessageSender messageSender, MessageListener messageListener) {
+        this(parent, stage, online);
         this.online = true;
         this.messageSender = messageSender;
         this.messageListener = messageListener;
@@ -64,9 +64,9 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
     /**
      * Constructeur pour une partie hors-ligne
      */
-    public CreateRoomMenuScreen(Slay parent, Stage stage) {
+    public CreateRoomMenuScreen(Slay parent, Stage stage, boolean online) {
         super(parent, stage, Language.bundle.get("createRoom"));
-        this.online = false;
+        this.online = online;
         Label.LabelStyle labelStyle = uiSkin.get(Label.LabelStyle.class);
         labelStyle.font = defaultFont;
 
@@ -220,7 +220,8 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 XmlReader.Element xmlElement = xml.parse(file);
                 String worldName = xmlElement.getAttribute("name");
                 int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-                if (online || maxValue >= parent.getUserSettings().getNumberOfPlayers()) {
+                System.out.println(online);
+                if (!online || maxValue >= parent.getUserSettings().getNumberOfPlayers()) {
                     worldsNames.add(worldName);
                     worldsNames.sort();
                     nameToFileName.put(worldName, file.nameWithoutExtension());
@@ -280,7 +281,11 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         //Récupération de la valeur maximum
         XmlReader.Element xmlElement = nameToXml.get(mapSelectBox.getSelected());
         int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-        aiSlider.setRange(0, maxValue - 1);
+        if(online)
+            aiSlider.setRange(0, maxValue - parent.getUserSettings().getNumberOfPlayers());
+        else
+            aiSlider.setRange(0, maxValue - 1);
+
     }
 
     /**

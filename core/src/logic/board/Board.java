@@ -465,7 +465,7 @@ public class Board{
 			}
 			if(players.get(activePlayer) instanceof AI) {
 				try {
-					Thread.sleep(500);
+					Thread.sleep(0);
 					((AI)players.get(activePlayer)).play();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -870,18 +870,18 @@ public class Board{
 	 * @param players les joueurs
 	 * @param activePlayer le numéro du joueur actif
 	 */
-	public void updateBoard(CopyOnWriteArrayList<District> districts, Item shopItem, CopyOnWriteArrayList<Player> players, int activePlayer) {
+	public void updateBoard(CopyOnWriteArrayList<District> districts, Item shopItem,
+							CopyOnWriteArrayList<Player> players, int activePlayer, Player winner) {
 		this.districts = districts;
 		this.shop.setSelectedItem(shopItem);
 		this.players = players;
 		this.activePlayer = activePlayer;
+		this.winner = winner;
 		for (District district : districts) {
 			for (Cell cell : district.getCells()) {
 				board[cell.getX()][cell.getY()] = cell;
 				cell.setDistrict(district);
 				modificatedCells.add(cell);
-//				if(cell.getItem() != null)
-//					cell.getItem().update();
 			}
 			for (int i = 0; i < players.size(); i++) {
 				if (district.getPlayer().getId() == players.get(i).getId()) {
@@ -889,7 +889,6 @@ public class Board{
 				}
 			}
 		}
-		checkWinner();
 	}
 
 	public ArrayList<Cell> getWaterCells(){
