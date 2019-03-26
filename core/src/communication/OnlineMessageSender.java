@@ -26,8 +26,7 @@ public class OnlineMessageSender implements MessageSender {
     public OnlineMessageSender(String username, String serverAddress) throws IOException {
         gson = new Gson();
         //Ouverture de la connection au serveur
-//        clientChannel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(serverAddress), PORT));
-        clientChannel = SocketChannel.open(new InetSocketAddress(serverAddress, PORT));
+        clientChannel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(serverAddress), PORT));
         clientChannel.configureBlocking(false);
         selector = Selector.open();
         //On associe le channel à un selector
