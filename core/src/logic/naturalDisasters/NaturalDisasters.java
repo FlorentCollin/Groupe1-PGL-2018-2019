@@ -138,6 +138,7 @@ public class NaturalDisasters {
 		}
 		affectedCells.add(cell);
 		board.addModification(cell);
+		board.checkCapitals();
 		board.setCell(cell);
 		board.checkSplit(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {

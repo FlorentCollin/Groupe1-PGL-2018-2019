@@ -13,7 +13,6 @@ import logic.naturalDisasters.VolcanicEruption;
 
 public class NaturalDisastersController {
 	private ArrayList<NaturalDisasters> naturalDisasters;
-	private enum disaster{BLIZZARD, DROUGHT, FORESTFIRE, LANDEROSION, TSUNAMI, VOLCANICERUPTION};
 
 	private Blizzard blizzard;
 	private Drought drought;
@@ -21,6 +20,7 @@ public class NaturalDisastersController {
 	private LandErosion landErosion;
 	private Tsunami tsunami;
 	private VolcanicEruption volcanicEruption;
+	private NaturalDisasters[] disasters = {blizzard, drought, forestFire, landErosion, tsunami, volcanicEruption};
 
 	public NaturalDisastersController(Board board) {
 		naturalDisasters = new ArrayList<>();
@@ -36,6 +36,7 @@ public class NaturalDisastersController {
 		naturalDisasters.add(tsunami);
 		volcanicEruption = new VolcanicEruption(board);
 		naturalDisasters.add(volcanicEruption);
+		
 	}
 
 	public void isHappening() {
@@ -44,32 +45,36 @@ public class NaturalDisastersController {
 		}
 	}
 	
-	public void setProba(int proba, disaster disaster) {
-		if(proba >-1 && proba <101) {
-			switch(disaster) {
-			case BLIZZARD:
-				blizzard.setProba(proba);
-				break;
-			case DROUGHT:
-				drought.setProba(proba);
-				break;
-			case FORESTFIRE:
-				forestFire.setProba(proba);
-				break;
-			case LANDEROSION:
-				landErosion.setProba(proba);
-				break;
-			case TSUNAMI:
-				tsunami.setProba(proba);
-				break;
-			case VOLCANICERUPTION:
-				volcanicEruption.setProba(proba);
-				break;
-			default:
-				break;
-				
-			}
-		}
+//	public void setProba(int proba) {
+//		if(proba >-1 && proba <101) {
+//			switch(disaster) {
+//			case BLIZZARD:
+//				blizzard.setProba(proba);
+//				break;
+//			case DROUGHT:
+//				drought.setProba(proba);
+//				break;
+//			case FORESTFIRE:
+//				forestFire.setProba(proba);
+//				break;
+//			case LANDEROSION:
+//				landErosion.setProba(proba);
+//				break;
+//			case TSUNAMI:
+//				tsunami.setProba(proba);
+//				break;
+//			case VOLCANICERUPTION:
+//				volcanicEruption.setProba(proba);
+//				break;
+//			default:
+//				break;
+//				
+//			}
+//		}
+//	}
+	
+	public NaturalDisasters[] getDisasters() {
+		return disasters;
 	}
 
 	public Blizzard getBlizzard() {
