@@ -108,6 +108,9 @@ public class NaturalDisasters {
 	
 	protected void destroy(Cell cell) {
 		nAffectedCells ++;
+		if(cell.getItem() instanceof Capital) {
+			cell.getDistrict().removeCapital();
+		}
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
 		}

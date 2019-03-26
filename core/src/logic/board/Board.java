@@ -464,12 +464,12 @@ public class Board{
 				}
 			}
 			if(players.get(activePlayer) instanceof AI) {
-				try {
-					Thread.sleep(500);
+//				try {
+//					Thread.sleep(500);
 					((AI)players.get(activePlayer)).play();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 		else {
@@ -600,6 +600,9 @@ public class Board{
 	private int numberOfWayToCapital(Cell cell) {
 		if(visited.indexOf(cell) == -1) {
 			visited.add(cell);
+			if(firstCell == null) {
+				System.out.println("sheiBe");
+			}
 			if(cell == firstCell.getDistrict().getCapital()) {
 				return 1;
 			}
@@ -841,6 +844,8 @@ public class Board{
 		}
 		for(District district : toRemove) {
 			for(Cell c : district.getCells()) {
+				c.removeDistrict();
+				c.removeItem();
 				modificatedCells.add(c);
 			}
 			removeDistrict(district);

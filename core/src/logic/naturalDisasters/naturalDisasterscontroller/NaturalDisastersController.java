@@ -3,6 +3,7 @@ package logic.naturalDisasters.naturalDisasterscontroller;
 import java.util.ArrayList;
 
 import logic.board.Board;
+import logic.board.District;
 import logic.naturalDisasters.Blizzard;
 import logic.naturalDisasters.Drought;
 import logic.naturalDisasters.ForestFire;
@@ -21,8 +22,10 @@ public class NaturalDisastersController {
 	private Tsunami tsunami;
 	private VolcanicEruption volcanicEruption;
 	private NaturalDisasters[] disasters = {blizzard, drought, forestFire, landErosion, tsunami, volcanicEruption};
+	private Board board;
 
 	public NaturalDisastersController(Board board) {
+		this.board = board;
 		naturalDisasters = new ArrayList<>();
 		blizzard = new Blizzard(board);
 		naturalDisasters.add(blizzard);
@@ -43,6 +46,12 @@ public class NaturalDisastersController {
 		for(NaturalDisasters nd : naturalDisasters) {
 			nd.play();
 		}
+		for(District d : board.getDistricts()) {
+			if(d.getCapital() == null) {
+				System.out.println("FuCK");
+			}
+		}
+		board.checkCapitals();
 	}
 	
 //	public void setProba(int proba) {
