@@ -165,6 +165,7 @@ public class Hud extends Stage {
 
         private final float width, height;
         private final Table table;
+        public final TextButton endTurn;
         private Label currentPlayer;
         public Label goldLabel;
 
@@ -185,18 +186,25 @@ public class Hud extends Stage {
             labelStyle.font = parent.getDefaultFontItalic();
             currentPlayer = new Label("", labelStyle);
 
+            TextButton.TextButtonStyle textButtonStyle = uiSkin.get("checked", TextButton.TextButtonStyle.class);
+            textButtonStyle.font = parent.getDefaultFontItalic();
+            endTurn = new TextButton(Language.bundle.get("Endturn"), textButtonStyle);
+            endTurn.setWidth(220);
+
             table = new Table(uiSkin);
             table.setSize(width, height);
             table.setBackground("info-background");
             table.add(currentPlayerImage).maxWidth(50).padLeft(10).padRight(2);
             table.add(currentPlayer).expandX().pad(10).align(Align.left);
-            table.add(goldLabel).expandX().pad(10).align(Align.right);
-            table.add(gold).maxWidth(50).align(Align.right).pad(10);
+            table.add(goldLabel).expandX().pad(10);
+            table.add(gold).expandX().maxWidth(50);
         }
 
         private void addActorsToStage(Hud hud) {
             table.setPosition(hud.getWidth() - width, 0);
+            endTurn.setPosition(hud.getWidth() - endTurn.getWidth() - 5, table.getHeight() + 10);
             hud.addActor(table);
+            hud.addActor(endTurn);
         }
 
         public void setCurrentPlayer(Player player) {
