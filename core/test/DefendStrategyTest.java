@@ -26,8 +26,6 @@ public class DefendStrategyTest extends StrategyTest{
 		Item soldier12 = init.getBoard().getCell(1, 2).getItem();
 		Item soldier22 = init.getBoard().getCell(2, 2).getItem();
 		init.getAI().play();
-	
-		show();
 		
 		assertSame(init.getBoard().getCell(1, 3).getDistrict().getPlayer(), init.getAI());
 		assertSame(init.getBoard().getCell(1, 2).getItem(), soldier12);
@@ -38,17 +36,46 @@ public class DefendStrategyTest extends StrategyTest{
 	}
 	
 	@Test
-	public void buyTest() {
-		init.getDistrict().setGold(0);
+	public void buyTestForTree() {
+		init.getDistrict().setGold(20);
+		
+		lockSoldiers();
+		
+		init.getAI().play();
+		
+		assertTrue(init.getBoard().getCell(2, 1).getItem() instanceof Soldier);
 	}
 	
-	private void show() {
-		for(int i=0; i<5; i++) {
-			for(int j=0; j<5; j++) {
-				if(init.getBoard().getCell(i, j).getItem() instanceof Soldier)
-					System.out.println(i+", "+j+" "+init.getBoard().getCell(i, j).getItem()+" "+init.getBoard().getCell(i, j).getItem().getLevel()+" "+init.getBoard().getCell(i, j).getDistrict().getPlayer().getClass().getSimpleName());
-			}
-		}
+	@Test
+	public void buyTestForEnemy() {
+		init.getBoard().getCell(2, 1).removeItem(); //Retrait de l'arbre
+		
+		lockSoldiers();
+		
+		init.getDistrict().setGold(20);
+		
+		init.getAI().play();
+		
+		assertSame(init.getBoard().getCell(1, 3).getDistrict().getPlayer(), init.getAI());
+		assertTrue(init.getBoard().getCell(1, 3).getItem() instanceof Soldier);
+	}
+	
+	@Test
+	public void buyTestForDefense() {
+		init.getBoard().getCell(2, 1).removeItem(); //Retrait de l'arbre
+		init.getBoard().getCell(1, 3).setItem(new Soldier(SoldierLevel.level2)); //Mise en place d'un soldat de niveau supérieur à fin d'empêcher l'attaque du district
+		
+		lockSoldiers();
+		
+		init.getDistrict().setGold(20);
+		
+		init.getAI().play();
+		
+		assertTrue(init.getBoard().getCell(0, 1).getItem() instanceof Soldier
+				|| init.getBoard().getCell(1, 0).getItem() instanceof Soldier
+				|| init.getBoard().getCell(0, 3).getItem() instanceof Soldier
+				|| init.getBoard().getCell(0, 4).getItem() instanceof Soldier
+				|| init.getBoard().getCell(1, 4).getItem() instanceof Soldier);
 	}
 
 }

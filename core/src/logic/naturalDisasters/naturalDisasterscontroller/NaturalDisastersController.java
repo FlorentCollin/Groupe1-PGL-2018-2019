@@ -13,7 +13,7 @@ import logic.naturalDisasters.VolcanicEruption;
 
 public class NaturalDisastersController {
 	private ArrayList<NaturalDisasters> naturalDisasters;
-
+	private enum disaster{BLIZZARD, DROUGHT, FORESTFIRE, LANDEROSION, TSUNAMI, VOLCANICERUPTION};
 
 	private Blizzard blizzard;
 	private Drought drought;
@@ -41,11 +41,35 @@ public class NaturalDisastersController {
 	public void isHappening() {
 		for(NaturalDisasters nd : naturalDisasters) {
 			nd.play();
-			if(nd.getAffectedCells().size() > 0) {
-				System.out.println(nd.getClass().getSimpleName());
+		}
+	}
+	
+	public void setProba(int proba, disaster disaster) {
+		if(proba >-1 && proba <101) {
+			switch(disaster) {
+			case BLIZZARD:
+				blizzard.setProba(proba);
+				break;
+			case DROUGHT:
+				drought.setProba(proba);
+				break;
+			case FORESTFIRE:
+				forestFire.setProba(proba);
+				break;
+			case LANDEROSION:
+				landErosion.setProba(proba);
+				break;
+			case TSUNAMI:
+				tsunami.setProba(proba);
+				break;
+			case VOLCANICERUPTION:
+				volcanicEruption.setProba(proba);
+				break;
+			default:
+				break;
+				
 			}
 		}
-		System.out.println("----------------------------------------");
 	}
 
 	public Blizzard getBlizzard() {
