@@ -632,7 +632,7 @@ public class Board{
 							nTrees += 1;
 						}
 					}
-					if(rand.nextInt(100)*PROBA > calculateProb(nTrees)*100) {
+					if(rand.nextInt(100)*PROBA < calculateProb(nTrees)*100) {
 						board[i][j].setItem(new Tree());
 						treeCells.add(board[i][j]);
 					}
