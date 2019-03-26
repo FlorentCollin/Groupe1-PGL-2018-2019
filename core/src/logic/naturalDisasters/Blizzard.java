@@ -87,7 +87,7 @@ public class Blizzard extends NaturalDisasters{
 	@Override
 	public void play() {
 		kill();
-		for(int key : modificatedCells.keySet()) { // car la proba est variable
+		for(int key : durationMap.keySet()) { // car la proba est variable
 			setProba(durationMap.get(key));
 			cancel();
 		}
