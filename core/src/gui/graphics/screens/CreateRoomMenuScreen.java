@@ -11,15 +11,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
-import communication.*;
+import communication.MessageListener;
+import communication.MessageSender;
 import communication.Messages.CreateRoomMessage;
 import communication.Messages.Message;
+import communication.OfflineMessageSender;
+import communication.OnlineMessageSender;
 import gui.app.Slay;
 import gui.utils.Constants;
 import gui.utils.Language;
 import roomController.GameRoom;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -148,13 +150,16 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
         scrollTable.add(new Label(Language.bundle.get("nameMap"), labelStyle)).align(Align.left);
         scrollTable.add(mapName).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
         scrollTable.row();
-        scrollTable.add(new Label(Language.bundle.get("map"), labelStyle)).align(Align.left);
+        scrollTable.add(new Label(Language.bundle.get("map"), labelStyle)).fillX().align(Align.left);
         scrollTable.add(mapSelectBox).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(2);
+        scrollTable.add().expandX().align(Align.right);
         scrollTable.row();
-        scrollTable.add(new Label(Language.bundle.get("naturalDisasters"), labelStyle)).align(Align.left);
-        scrollTable.add(naturalOn).maxWidth(175*ratio).pad(PAD).align(Align.center);
-        scrollTable.add(naturalOff).maxWidth(175*ratio).pad(PAD).align(Align.center);
-        scrollTable.row();
+        if (!online) {
+            scrollTable.add(new Label(Language.bundle.get("naturalDisasters"), labelStyle)).align(Align.left);
+            scrollTable.add(naturalOn).maxWidth(175 * ratio).pad(PAD).align(Align.center);
+            scrollTable.add(naturalOff).maxWidth(175 * ratio).pad(PAD).align(Align.center);
+            scrollTable.row();
+        }
         scrollTable.add(new Label(Language.bundle.get("numberOfAI"), labelStyle)).align(Align.left);
         scrollTable.add(aiSlider).minWidth(350*ratio).pad(PAD).align(Align.left).colspan(1);
         scrollTable.add(aiSliderNumber).pad(PAD).align(Align.left);
