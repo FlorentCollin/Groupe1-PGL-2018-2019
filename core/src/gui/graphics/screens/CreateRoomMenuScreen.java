@@ -219,10 +219,13 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
             if(file.extension().equals("xml")) { //Si le fichier est un fichier xml alors c'est que c'est un fichier d'une map
                 XmlReader.Element xmlElement = xml.parse(file);
                 String worldName = xmlElement.getAttribute("name");
-                worldsNames.add(worldName);
-                worldsNames.sort();
-                nameToFileName.put(worldName, file.nameWithoutExtension());
-                nameToXml.put(worldName, xmlElement);
+                int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
+                if (online || maxValue >= parent.getUserSettings().getNumberOfPlayers()) {
+                    worldsNames.add(worldName);
+                    worldsNames.sort();
+                    nameToFileName.put(worldName, file.nameWithoutExtension());
+                    nameToXml.put(worldName, xmlElement);
+                }
             }
         }
         return worldsNames;

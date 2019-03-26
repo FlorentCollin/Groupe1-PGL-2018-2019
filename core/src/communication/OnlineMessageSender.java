@@ -23,7 +23,7 @@ public class OnlineMessageSender implements MessageSender {
     private Selector selector;
     private Gson gson;
 
-    public OnlineMessageSender(String username, String serverAddress) throws IOException {
+    public OnlineMessageSender(String username, int numberOfPlayer, String serverAddress) throws IOException {
         gson = new Gson();
         //Ouverture de la connection au serveur
         clientChannel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(serverAddress), PORT));
@@ -32,7 +32,7 @@ public class OnlineMessageSender implements MessageSender {
         //On associe le channel à un selector
         clientChannel.register(selector, SelectionKey.OP_READ);
 
-        send(new UsernameMessage(username)); //Envoie de l'username du Client
+        send(new UsernameMessage(username, numberOfPlayer)); //Envoie de l'username du Client
     }
 
     @Override

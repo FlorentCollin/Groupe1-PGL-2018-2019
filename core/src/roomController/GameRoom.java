@@ -21,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class GameRoom extends Room {
 
     private final Board board;
-    private HashMap<Client, Integer> playersNumber = new HashMap<>();
+    private HashMap<Client, ArrayList<Integer>> playersNumber = new HashMap<>();
 
     /**
      * Constructeur d'une partie hors-ligne
@@ -86,11 +86,11 @@ public class GameRoom extends Room {
      * @param message Le message à exécuter
      */
     private void executeMessage(Message message) { //TODO REFACTOR
-        if(message instanceof PlayMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
+        if(message instanceof PlayMessage && (message.getClient() == null || isActivePlayer(message.getClient()))) {
             PlayMessage playMessage = (PlayMessage) message;
             Cell cell = board.getCell(playMessage.getX(), playMessage.getY());
             board.play(cell);
-        } else if(message instanceof ShopMessage && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
+        } else if(message instanceof ShopMessage && (message.getClient() == null || isActivePlayer(message.getClient()))) {
             Item item = ((ShopMessage) message).getItem();
             //On refixe le type qui n'a pas survécu au transfert
             //Ce qui permet de renvoyer l'item au client par la suite
@@ -98,7 +98,7 @@ public class GameRoom extends Room {
             board.setShopItem(item);
         } else if(message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
-            if(textMessage.getMessage().equals("nextPlayer") && (message.getClient() == null || playersNumber.get(message.getClient()) == board.getActivePlayerNumber())) {
+            if(textMessage.getMessage().equals("nextPlayer") && (message.getClient() == null || isActivePlayer(message.getClient()))) {
                 board.nextPlayer();
             }
             else if(textMessage.getMessage().equals("close")) {
@@ -168,9 +168,17 @@ public class GameRoom extends Room {
      */
     public void addClient(Client client) {
         clients.add(client);
-        playersNumber.put(client, clients.size() - 1);
+        ArrayList<Integer> numbers;
+        for(int i = 0; i < client.getNumberOfPlayer(); i++) {
+            if(playersNumber.get(client) == null)
+                numbers = new ArrayList<>();
+            else
+                numbers = playersNumber.get(client);
+            numbers.add(sizeOfClients++);
+            playersNumber.put(client, numbers);
+        }
         try {
-            InitMessage initMessage = new InitMessage(board, clients.size() - 1);
+            InitMessage initMessage = new InitMessage(board, playersNumber.get(client));
             initMessage.setClients(Arrays.asList(client));
             if(messagesToSend != null) {
                 //Envoie d'un message d'initialisation au client qui vient d'être ajouté
@@ -185,12 +193,16 @@ public class GameRoom extends Room {
     @Override
     public boolean remove(Client client) {
         //On change le joueur par une AI pour que les autres joueurs puissent continuer de jouer
-        board.changeToAI(clients.indexOf(client), new RandomStrategy());
-        if(board.getActivePlayerNumber() == clients.indexOf(client)) {
+        playersNumber.get(client).forEach((i) -> board.changeToAI(i, new RandomStrategy()));
+        if(isActivePlayer(client)) {
             board.nextPlayer();
             sendUpdateMessage();
         }
         return super.remove(client);
+    }
+
+    private boolean isActivePlayer(Client client) {
+        return playersNumber.get(client).indexOf(board.getActivePlayerNumber()) != -1;
     }
 
     public Board getBoard() {

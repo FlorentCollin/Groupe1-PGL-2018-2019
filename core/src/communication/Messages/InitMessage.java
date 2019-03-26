@@ -2,6 +2,8 @@ package communication.Messages;
 
 import logic.board.Board;
 
+import java.util.ArrayList;
+
 /**
  * Message contenant l'état actuel du Board.
  * Ce message est utilisé lorsqu'un nouveau joueur se connecte à une room ou lors de la création de celle-ci.
@@ -10,9 +12,9 @@ import logic.board.Board;
 public class InitMessage extends NetworkMessage {
 
     private Board board;
-    private int playerNumber;
+    private ArrayList<Integer> playerNumber;
 
-    public InitMessage(Board board, int playerNumber) {
+    public InitMessage(Board board, ArrayList<Integer> playerNumber) {
         this.board = board;
         this.playerNumber = playerNumber;
     }
@@ -21,7 +23,7 @@ public class InitMessage extends NetworkMessage {
         return board;
     }
 
-    public int getPlayerNumber() {
+    public ArrayList<Integer> getPlayerNumber() {
         return playerNumber;
     }
 }

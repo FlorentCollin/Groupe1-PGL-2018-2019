@@ -87,7 +87,7 @@ public class OnlineMenuScreen extends SubMenuScreen{
 
         //Création du messageListener thread et du message sender
         try {
-            this.messageSender = new OnlineMessageSender(parent.getUserSettings().getUsername(), ip);
+            this.messageSender = new OnlineMessageSender(parent.getUserSettings().getUsername(), parent.getUserSettings().getNumberOfPlayers(), ip);
             this.messageListener = new OnlineMessageListener(messageSender.getClientChannel(), messageSender.getSelector());
             this.messageListener.start();
             messageSender.send(new TextMessage("getWaitingRooms"));

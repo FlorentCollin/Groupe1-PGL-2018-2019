@@ -61,8 +61,13 @@ public class WaitingRoom extends Room {
     private void executeMessage(Message message) {
         if (message instanceof TextMessage) {
             if (((TextMessage) message).getMessage().equals("ready")) {
-                int index = clients.indexOf(message.getClient());
-                clientsReady.set(index, !clientsReady.get(index));
+                int index = 0;
+                for(int i = 0; i < clients.indexOf(message.getClient()); i++) {
+                    index += clients.get(i).getNumberOfPlayer();
+                }
+                for(int i = 0; i < message.getClient().getNumberOfPlayer(); i++) {
+                    clientsReady.set(index + i, !clientsReady.get(index + i));
+                }
                 sendUpdateMessage();
             } else if (((TextMessage) message).getMessage().equals("close")) {
                 running.set(false);
@@ -92,16 +97,24 @@ public class WaitingRoom extends Room {
     @Override
     public void addClient(Client client){
         super.addClient(client);
-        System.out.println("ADDING CLIENT TO ROOM");
-        board.getPlayers().get(clients.size()-1).setName(client.getUsername());
+        for(int i = 0; i < client.getNumberOfPlayer(); i++) {
+            board.getPlayers().get(sizeOfClients++).setName(client.getUsername());
+        }
         sendUpdateMessage();
     }
 
     @Override
     public boolean remove(Client client) {
-        int index = clients.indexOf(client);
-        if (index != -1)
-            board.getPlayers().get(index).setName(null);
+        int index = -1;
+        for(int i = 0; i <= clients.indexOf(client); i++) {
+            index += clients.get(i).getNumberOfPlayer();
+        }
+        if (index != -1) {
+            for(int i = index; i < client.getNumberOfPlayer(); i++) {
+                board.getPlayers().get(i).setName(null);
+                clientsReady.set(i, false);
+            }
+        }
         sendUpdateMessage();
         return super.remove(client);
     }
@@ -124,7 +137,7 @@ public class WaitingRoom extends Room {
     }
 
     public int getNumberOfClients() {
-        int i = clients.size();
+        int i = sizeOfClients;
         //On ajoute les AI aux clients car elles sont aussi des joueurs
         for(Player player : board.getPlayers()) {
             if(player instanceof AI)
