@@ -123,13 +123,12 @@ public class NaturalDisasters {
 		else {
 			Item item = cell.getItem();
 			District district = cell.getDistrict();
-			if(district != null) {
-				district.removeCell(cell);
-			}
-			if(this instanceof Drought)
+			if(this instanceof Drought) {
 				cell = new DroughtCell(cell.getX(), cell.getY());
-			else if(this instanceof Blizzard)
+			}
+			else if(this instanceof Blizzard) {
 				cell = new BlizzardCell(cell.getX(), cell.getY());
+			}
 			cell.setItem(item);
 			cell.setDistrict(district);
 			if(district != null) {
@@ -141,9 +140,23 @@ public class NaturalDisasters {
 		}
 		affectedCells.add(cell);
 		board.addModification(cell);
-		board.checkCapitals();
+		board.checkDistricts();
+//		board.checkCapitals();
 		board.setCell(cell);
 		board.checkSplit(cell);
+		if(cell.getDistrict() != null && cell.getDistrict().getCapital() == null) {
+			System.out.println("sheiBe has no capital after "+this.getClass().getSimpleName());
+		}
+		for(District d : board.getDistricts()) {
+			if(d.getCapital() == null) {
+				System.out.println("sheiBe a district has no capital after "+this.getClass().getSimpleName());
+			}
+			for(Cell c : d.getCells()) {
+				if(c.getDistrict() == null) {
+					System.out.println("sheiBe a cell from a district has no district after "+this.getClass().getSimpleName());
+				}
+			}
+		}
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {
@@ -175,6 +188,9 @@ public class NaturalDisasters {
 					}
 					if(!(item instanceof TreeOnFire)) {
 						cell.setItem(item);
+					}
+					if(item instanceof Capital) {
+						district.addCapital(cell);
 					}
 					board.setCell(cell);
 					board.addModification(cell);

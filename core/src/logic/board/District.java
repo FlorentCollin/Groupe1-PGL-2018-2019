@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import logic.board.cell.Cell;
+import logic.board.cell.DroughtCell;
 import logic.board.cell.LandCell;
+import logic.board.cell.WaterCell;
 import logic.item.Capital;
 import logic.item.Item;
 import logic.item.Soldier;
@@ -166,5 +168,29 @@ public class District {
 
     public int size() {
     	return cells.size();
+    }
+    
+    public static void main(String[] args) {
+    	Player p = new Player();
+    	District district = new District(p);
+    	Cell c1 = new LandCell(0, 0);
+    	Cell c2 = new LandCell(0, 1);
+    	Cell c3 = new LandCell(1, 0);
+    	district.addCell(c1);
+    	district.addCell(c2);
+    	district.addCell(c3);
+    	district.addCapital(c3);
+    	System.out.println("capital : "+district.getCapital());
+    	for(Cell c : district.getCells()) {
+    		System.out.println(c);
+    	}
+    	district.removeCell(c3);
+    	c3 = new WaterCell(1, 0);
+    	district.addCell(c3);
+    	System.out.println("c3 : "+c3);
+    	System.out.println("capital : "+district.getCapital());
+    	for(Cell c : district.getCells()) {
+    		System.out.println(c);
+    	}
     }
 }

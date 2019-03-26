@@ -46,12 +46,12 @@ public class NaturalDisastersController {
 		for(NaturalDisasters nd : naturalDisasters) {
 			nd.play();
 		}
+		board.checkCapitals();
 		for(District d : board.getDistricts()) {
 			if(d.getCapital() == null) {
 				System.out.println("FuCK");
 			}
 		}
-		board.checkCapitals();
 	}
 	
 //	public void setProba(int proba) {

@@ -14,6 +14,12 @@ public class Shop {
 	private Item selectedItem;
 	
 	public void buy(District district) {
+		if(selectedItem == null) {
+			System.out.println("sheiBe item");
+		}
+		if(district == null) {
+			System.out.println("sheiBe district");
+		}
 		district.setGold(district.getGold() - selectedItem.getPrice());
 		selectedItem = null;
 	}

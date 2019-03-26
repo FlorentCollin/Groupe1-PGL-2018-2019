@@ -392,12 +392,15 @@ public class Board{
 //				return false;
 //			}
 //		}
-		for(Cell nb : getNeighbors(cell)) {
-			if(nb.getDistrict() != null &&
- 					nb.getDistrict() != selectedCell.getDistrict() && 
- 					nb.getItem() instanceof Soldier && 
- 					nb.getItem().isStronger(item)) {
-				return false;
+		
+		if(selectedCell != null) {
+			for(Cell nb : getNeighbors(cell)) {
+				if(nb.getDistrict() != null &&
+	 					nb.getDistrict() != selectedCell.getDistrict() && 
+	 					nb.getItem() instanceof Soldier && 
+	 					nb.getItem().isStronger(item)) {
+					return false;
+				}
 			}
 		}
 		if(cellItem == null) {
@@ -547,6 +550,12 @@ public class Board{
 		District newDistrict = new District(district.getPlayer());
 		for (Cell c : district.getCells()) {
 			visited.clear();
+			if(c == null) {
+				System.out.println("sheiBe c is null in split");
+			}
+			if(c.getDistrict() == null) {
+				System.out.println("sheiBe c has no district in split in "+c.getX()+" "+c.getY());
+			}
 			firstCell = c;
 			if (numberOfWayToCapital(c) == 0) {
 				newDistrict.addCell(c);
@@ -600,9 +609,6 @@ public class Board{
 	private int numberOfWayToCapital(Cell cell) {
 		if(visited.indexOf(cell) == -1) {
 			visited.add(cell);
-			if(firstCell == null) {
-				System.out.println("sheiBe");
-			}
 			if(cell == firstCell.getDistrict().getCapital()) {
 				return 1;
 			}
@@ -810,7 +816,7 @@ public class Board{
 	/**
 	 * Vérifie si un district est vide
 	 */
-	private void checkDistricts() {
+	public void checkDistricts() {
 		ArrayList<District> emptyDistricts = new ArrayList<>();
 		for(District district : districts) {
 			if (district.getCells().size() <= 1) {
