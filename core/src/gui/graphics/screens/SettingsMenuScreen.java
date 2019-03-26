@@ -31,7 +31,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         Label windowMode = new Label(Language.bundle.get("windowMode"), labelStyle);
         Label username = new Label(Language.bundle.get("username"), labelStyle);
         Label language = new Label(Language.bundle.get("language"), labelStyle);
-        Label numberOfPlayers = new Label(Language.bundle.get("numberOfPlayers"), labelStyle);
+        Label numberOfPlayers = new Label(Language.bundle.get("numberOnline"), labelStyle);
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
 

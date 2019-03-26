@@ -112,7 +112,13 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
             public void clicked(InputEvent event, float x, float y) {
                 messageSender.send(new ShopMessage(new Soldier(SoldierLevel.level4)));}
         });
-
+        hud.getDistrictInfo().endTurn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("clicked");
+                messageSender.send(new TextMessage("nextPlayer"));
+            }
+        });
         Hud.DisastersInfo disaster = hud.getDisastersInfo();
         if(disaster != null) {
             disaster.blizzard.addListener(disasterListener("blizzard", disaster.blizzard));

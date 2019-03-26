@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static gui.graphics.screens.animations.Animations.*;
-import static gui.utils.Constants.SERVER_ADDRESS;
 
 /**
  * Menu des parties en lignes
@@ -54,7 +53,7 @@ public class OnlineMenuScreen extends SubMenuScreen{
         createRoom.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                parent.setScreen(new CreateRoomMenuScreen(parent, stage, messageSender, messageListener));
+                parent.setScreen(new CreateRoomMenuScreen(parent, stage, true, messageSender, messageListener));
             }
         });
 
@@ -171,25 +170,27 @@ public class OnlineMenuScreen extends SubMenuScreen{
             ArrayList<Integer> nPlayerIn = messageListener.getnPlayerIn();
             ArrayList<UUID> ids = messageListener.getIds();
             for (int i = 0; i < roomNames.size(); i++) {
-                //Ajout du nom de la room
-                scrollTable.add(new Label(roomNames.get(i), labelStyle)).pad(10).align(Align.left);
-                //Ajout du nombre de joueur présent dans la room ainsi que la capacité maximale de celle-ci (exemple : 4/6)
-                scrollTable.add(new Label(nPlayerIn.get(i) + "/" + nPlayer.get(i), labelStyle)).pad(10).align(Align.center);
-                //Ajout d'un bouton qui permet au client de rejoindre une room qui n'est pas encore pleine
-                if (!nPlayerIn.get(i).equals(nPlayer.get(i))) {
-                    JoinButton join = new JoinButton(Language.bundle.get("join"), textButtonStyle, ids.get(i));
-                    join.setChecked(true);
-                    join.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            //Envoie d'un message au server qui indique que le client souhaite rejoindre une room
-                            messageSender.send(new JoinRoomMessage(join.getId()));
-                        }
-                    });
-                    //Ajout du bouton join
-                    scrollTable.add(join).maxWidth(200).pad(10).padRight(50).align(Align.right);
+                if (nPlayer.get(i) - nPlayerIn.get(i) >= parent.getUserSettings().getNumberOfPlayers()) { //On vérifie que la partie possède encore assez de place libre
+                    //Ajout du nom de la room
+                    scrollTable.add(new Label(roomNames.get(i), labelStyle)).pad(10).align(Align.left);
+                    //Ajout du nombre de joueur présent dans la room ainsi que la capacité maximale de celle-ci (exemple : 4/6)
+                    scrollTable.add(new Label(nPlayerIn.get(i) + "/" + nPlayer.get(i), labelStyle)).pad(10).align(Align.center);
+                    //Ajout d'un bouton qui permet au client de rejoindre une room qui n'est pas encore pleine
+                    if (!nPlayerIn.get(i).equals(nPlayer.get(i))) {
+                        JoinButton join = new JoinButton(Language.bundle.get("join"), textButtonStyle, ids.get(i));
+                        join.setChecked(true);
+                        join.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                //Envoie d'un message au server qui indique que le client souhaite rejoindre une room
+                                messageSender.send(new JoinRoomMessage(join.getId()));
+                            }
+                        });
+                        //Ajout du bouton join
+                        scrollTable.add(join).maxWidth(200).pad(10).padRight(50).align(Align.right);
+                    }
+                    scrollTable.row();
                 }
-                scrollTable.row();
             }
         }
     }

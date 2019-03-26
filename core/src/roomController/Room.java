@@ -2,6 +2,8 @@ package roomController;
 
 import communication.Messages.Message;
 import logic.board.Board;
+import logic.player.Player;
+import logic.player.ai.AI;
 import logic.player.ai.strategy.*;
 import server.Client;
 
@@ -66,7 +68,7 @@ public abstract class Room extends Thread {
         return id;
     }
 
-    public boolean isFull() {
-        return true;
+    public int waitingPlayer() {
+        return -1;
     }
 }
