@@ -18,10 +18,8 @@ import static gui.utils.Constants.PAD;
  */
 public class SettingsMenuScreen extends SubMenuScreen {
     private Table table;
-    private Slider musicSlider;
-    private Slider soundSlider;
-    private Label musicSliderPourcent;
-    private Label soundSliderPourcent;
+    private Slider playerSlider;
+    private Label playerSliderPourcent;
 
     public SettingsMenuScreen(Slay parent, Stage stage) {
         super(parent, stage, Language.bundle.get("settings"));
@@ -33,8 +31,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         Label windowMode = new Label(Language.bundle.get("windowMode"), labelStyle);
         Label username = new Label(Language.bundle.get("username"), labelStyle);
         Label language = new Label(Language.bundle.get("language"), labelStyle);
-        Label musicLevel = new Label(Language.bundle.get("music"), labelStyle);
-        Label soundLevel = new Label(Language.bundle.get("sound"), labelStyle);
+        Label numberOfPlayers = new Label(Language.bundle.get("numberOfPlayers"), labelStyle);
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get("button", TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontItalic;
 
@@ -105,26 +102,18 @@ public class SettingsMenuScreen extends SubMenuScreen {
         });
 
         //Slider pour la musique et les sons
-        musicSlider = new Slider(0, 100, 1, false, uiSkin);
-        musicSlider.setValue(100);
+        playerSlider = new Slider(1, 6, 1, false, uiSkin);
+        playerSlider.setValue(parent.getUserSettings().getNumberOfPlayers());
         //Update du pourcentage affiché à l'écran
-        musicSlider.addListener(new ChangeListener() {
+        playerSlider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                musicSliderPourcent.setText((int)musicSlider.getValue() + "%");
+                playerSliderPourcent.setText((int)playerSlider.getValue());
+                parent.getUserSettings().setNumberOfPlayer((int) playerSlider.getValue());
             }
         });
 
-        soundSlider = new Slider(0, 100, 1, false, uiSkin);
-        soundSlider.setValue(100);
-        //Update du pourcentage affiché à l'écran
-        soundSlider.addListener(new ChangeListener() {
-            public void changed(ChangeEvent event, Actor actor) {
-                soundSliderPourcent.setText((int)soundSlider.getValue() + "%");
-            }
-        });
         //Création des pourcentage correspondant au slider
-        musicSliderPourcent = new Label("100%", labelStyle);
-        soundSliderPourcent = new Label("100%", labelStyle);
+        playerSliderPourcent = new Label(Integer.toString(parent.getUserSettings().getNumberOfPlayers()), labelStyle);
 
         //Création de la table contenant l'ensemble des éléments définis plus haut
         Table scrollTable = new Table();
@@ -141,16 +130,10 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(languageSelectBox).pad(PAD).minWidth(fullScreen.getWidth());
         scrollTable.row();
 
-        scrollTable.add(musicLevel).expandX().fillY().align(Align.left);
-        scrollTable.add(musicSlider).pad(PAD)
+        scrollTable.add(numberOfPlayers).expandX().fillY().align(Align.left);
+        scrollTable.add(playerSlider).pad(PAD)
                 .minWidth(100 * ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2).fillX().align(Align.right).colspan(2);
-        scrollTable.add(musicSliderPourcent).minWidth(musicSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
-        scrollTable.row();
-
-        scrollTable.add(soundLevel).fillY().align(Align.left);
-        scrollTable.add(soundSlider).padRight(PAD).minWidth(100*ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2)
-                .pad(PAD).fillX().align(Align.right).colspan(2);
-        scrollTable.add(soundSliderPourcent).minWidth(soundSliderPourcent.getWidth()).padRight(PAD).fillY().align(Align.right);
+        scrollTable.add(playerSliderPourcent).minWidth(playerSlider.getWidth()).padRight(PAD).fillY().align(Align.right);
         scrollTable.row();
 
         ScrollPane scroller = new ScrollPane(scrollTable);

@@ -13,13 +13,16 @@ public class Client {
      */
     private SocketChannel socketChannel;
     private String username; //Nom de l'utilisateur pour pouvoir l'indentifié lors de partie en ligne
+    private int numberOfPlayer;
 
-    public Client(SocketChannel socketChannel) {
+    public Client(int numberOfPlayer, SocketChannel socketChannel) {
         this.username = "Player";
+        this.numberOfPlayer = numberOfPlayer;
         this.socketChannel = socketChannel;
     }
-    public Client(String username, SocketChannel socketChannel) {
+    public Client(String username, int numberOfPlayer, SocketChannel socketChannel) {
         this.username = username;
+        this.numberOfPlayer = numberOfPlayer;
         this.socketChannel = socketChannel;
     }
 
@@ -31,7 +34,12 @@ public class Client {
         return username;
     }
 
-    public void setUsername(String username) {
+    public int getNumberOfPlayer() {
+        return numberOfPlayer;
+    }
+
+    public void setInfo(String username, int numberOfPlayer) {
         this.username = username;
+        this.numberOfPlayer = numberOfPlayer;
     }
 }

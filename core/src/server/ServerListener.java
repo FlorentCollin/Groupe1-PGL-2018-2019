@@ -93,7 +93,7 @@ public class ServerListener extends Thread{
             clientChannel.configureBlocking(false);
             //On permet au client d'écrire
             clientChannel.register(selector, SelectionKey.OP_READ);
-            Client client = new Client(clientChannel);
+            Client client = new Client(1, clientChannel);
             ServerInfo.clients.put(clientChannel, client);
             Logger.info(String.format("Number of player %d", ServerInfo.clients.size()));
         } catch (IOException e) {
@@ -112,7 +112,7 @@ public class ServerListener extends Thread{
             for(Message message : messages) { //Itération sur l'ensemble des messages reçus et complet
                 message.setClient(ServerInfo.clients.get(clientChannel));
                 if (message instanceof UsernameMessage) {
-                    ServerInfo.clients.get(clientChannel).setUsername(((UsernameMessage) message).getUsername());
+                    ServerInfo.clients.get(clientChannel).setInfo(((UsernameMessage) message).getUsername(), ((UsernameMessage) message).getNumberOfPlayer());
                 } else {
                     //Si le message n'est pas un message réservé au serveur alors on l'envoie au roomController
                     roomController.manageMessage(ServerInfo.clients.get(clientChannel), message);

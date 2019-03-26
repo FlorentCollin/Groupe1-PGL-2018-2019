@@ -11,15 +11,13 @@ public class UserSettings {
     private boolean fullScreen;
     private String username;
     private String language;
-    private int musicLevel;
-    private int soundLevel;
+    private int numberOfPlayers;
 
     public UserSettings() {
         setFullScreen(false);
         setUsername("Player");
         setLanguage("en");
-        setMusicLevel(100);
-        setSoundLevel(100);
+        setNumberOfPlayer(1);
     }
 
 
@@ -27,8 +25,7 @@ public class UserSettings {
      * Initialisation des paramètres dans libgdx
      */
     public void init() {
-        setMusicLevel(musicLevel);
-        setSoundLevel(soundLevel);
+        setNumberOfPlayer(numberOfPlayers);
         setFullScreen(fullScreen);
     }
 
@@ -45,15 +42,16 @@ public class UserSettings {
         return username;
     }
 
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
-    public void setMusicLevel(int musicLevel) {
-        this.musicLevel = musicLevel;
-    }
 
-    public void setSoundLevel(int soundLevel) {
-        this.soundLevel = soundLevel;
+    public void setNumberOfPlayer(int numberOfPlayer) {
+        this.numberOfPlayers = numberOfPlayer;
     }
 
     public boolean isFullScreen() {

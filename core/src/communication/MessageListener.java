@@ -19,7 +19,7 @@ public abstract class MessageListener extends Thread {
     protected Board board;
     protected String mapName;
     protected String roomName;
-    protected int playerNumber;
+    protected ArrayList<Integer> playerNumber;
     protected ArrayList<String> roomNames;
     protected ArrayList<UUID> ids;
     protected ArrayList<Integer> nPlayer, nPlayerIn;
@@ -99,7 +99,7 @@ public abstract class MessageListener extends Thread {
         return mapName;
     }
 
-    public int getPlayerNumber() {
+    public ArrayList<Integer> getPlayerNumber() {
         return playerNumber;
     }
 

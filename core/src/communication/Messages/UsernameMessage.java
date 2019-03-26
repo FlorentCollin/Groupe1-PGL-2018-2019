@@ -5,12 +5,18 @@ package communication.Messages;
  */
 public class UsernameMessage extends Message {
     String username;
+    int numberOfPlayer;
 
-    public UsernameMessage(String username) {
+    public UsernameMessage(String username, int numberOfPlayer) {
         this.username = username;
+        this.numberOfPlayer = numberOfPlayer;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public int getNumberOfPlayer() {
+        return numberOfPlayer;
     }
 }

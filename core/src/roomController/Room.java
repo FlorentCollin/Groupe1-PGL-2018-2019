@@ -17,6 +17,8 @@ public abstract class Room extends Thread {
     LinkedBlockingQueue<Message> messagesToSend;
     ArrayList<Client> clients = new ArrayList<>();
     AtomicBoolean running = new AtomicBoolean(false);
+    int sizeOfClients = 0;
+
 
     Room() {}
 

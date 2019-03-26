@@ -59,7 +59,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
     private List<Cell> selectedCells = new ArrayList<>();
     private FillViewport fillViewport;
     private Hud hud;
-    private int playerNumber;
+    private ArrayList<Integer> playerNumber;
     private boolean alreadyShow = false;
 
     private MessageListener messageListener;
@@ -70,7 +70,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         super(parent);
         this.messageSender = messageSender;
         this.board = board;
-        playerNumber = -1;
+        playerNumber = null;
         //Chargement du TmxRenderer et des textures
         itemsSkin = new TextureAtlas(Gdx.files.internal("items/items.atlas"));
         map = new Map(mapName);
@@ -371,7 +371,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
                     if (cell != null) {
                         // Ne s'applique que si la case appartient au joueur
                         // Ainsi il voit directement avec quelles cases il peut interagir
-                        if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
+                        if (playerNumber == null || playerNumber.contains(board.getActivePlayerNumber())) {
                             if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
                                 hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
                                 cells.setOpacity(0.9f);
@@ -410,7 +410,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
 
     private void selectCells(List<Cell> cellsArray) {
         unselectCells();
-        if (playerNumber == -1 || playerNumber == board.getActivePlayerNumber()) {
+        if (playerNumber == null || playerNumber.contains(board.getActivePlayerNumber())) {
             selectedCells = new ArrayList<>(cellsArray);
             for (Cell cell : selectedCells) {
                 // On récupère les coordonnées dans la mapTmx car celles-ci sont différentes des coordonnées dans le board
