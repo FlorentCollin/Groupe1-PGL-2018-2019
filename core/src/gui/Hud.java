@@ -196,8 +196,8 @@ public class Hud extends Stage {
             table.setBackground("info-background");
             table.add(currentPlayerImage).maxWidth(50).padLeft(10).padRight(2);
             table.add(currentPlayer).expandX().pad(10).align(Align.left);
-            table.add(goldLabel).expandX().pad(10);
-            table.add(gold).expandX().maxWidth(50);
+            table.add(goldLabel).expandX().pad(10).align(Align.right);
+            table.add(gold).maxWidth(50).align(Align.right).pad(10);
         }
 
         private void addActorsToStage(Hud hud) {
