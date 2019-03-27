@@ -610,7 +610,7 @@ public class Board{
 	 * @param cell la cellule qui est testée
 	 * @return le nombre de chemin menant jusqu'à la capital
 	 * */
-	private int numberOfWayToCapital(Cell cell) {
+	public int numberOfWayToCapital(Cell cell) {
 		if(visited.indexOf(cell) == -1) {
 			visited.add(cell);
 			if(cell == firstCell.getDistrict().getCapital()) {

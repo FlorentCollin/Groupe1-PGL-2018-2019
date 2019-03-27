@@ -92,17 +92,44 @@ public class NaturalDisasters {
 	}
 	
 	protected Cell getOneFrom(ArrayList<Cell> cells) {
+		ArrayList<Cell> visited = new ArrayList<Cell>();
 		Cell cell = null;
 		if(cells.size() > 0) {
 			if(this instanceof Blizzard) {
 				do {
 					cell = cells.get(rand.nextInt(cells.size()));
+					if(visited.indexOf(cell) == -1) {
+						visited.add(cell);
+					}
+					if(visited.size() == cells.size()) {
+						cell = null;
+						break;
+					}
 				}while(!(cell instanceof LandCell || cell instanceof WaterCell));
 			}
 			else if(this instanceof Drought) {
 				do {
 					cell = cells.get(rand.nextInt(cells.size()));
+					if(visited.indexOf(cell) == -1) {
+						visited.add(cell);
+					}
+					if(visited.size() == cells.size()) {
+						cell = null;
+						break;
+					}
 				}while(!(cell instanceof LandCell));
+			}
+			else if(this instanceof VolcanicEruption) {
+				do {
+					cell = cells.get(rand.nextInt(cells.size()));
+					if(visited.indexOf(cell) == -1) {
+						visited.add(cell);
+					}
+					if(visited.size() == cells.size()) {
+						cell = null;
+						break;
+					}
+				}while(!(cell instanceof LandCell || cell instanceof DroughtCell));
 			}
 		}
 		return cell;
@@ -196,7 +223,9 @@ public class NaturalDisasters {
 						district.addCapital(cell);
 					}
 					board.setCell(cell);
-					board.checkMerge(cell);
+					if(cell.getDistrict() != null) {
+						board.checkMerge(cell);
+					}
 					board.addModification(cell);
 				}
 				keysToDelete.add(key);

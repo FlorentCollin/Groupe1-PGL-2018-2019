@@ -54,33 +54,35 @@ public class NaturalDisastersController {
 		}
 	}
 	
-//	public void setProba(int proba) {
-//		if(proba >-1 && proba <101) {
-//			switch(disaster) {
-//			case BLIZZARD:
-//				blizzard.setProba(proba);
-//				break;
-//			case DROUGHT:
-//				drought.setProba(proba);
-//				break;
-//			case FORESTFIRE:
-//				forestFire.setProba(proba);
-//				break;
-//			case LANDEROSION:
-//				landErosion.setProba(proba);
-//				break;
-//			case TSUNAMI:
-//				tsunami.setProba(proba);
-//				break;
-//			case VOLCANICERUPTION:
-//				volcanicEruption.setProba(proba);
-//				break;
-//			default:
-//				break;
-//				
-//			}
-//		}
-//	}
+	public void setProba(String disaster, int proba) {
+		if(proba >-1 && proba <101) {
+			switch(disaster) {
+			case "blizzard":
+				blizzard.setProba(proba);
+				break;
+			case "drought":
+				drought.setProba(proba);
+				break;
+			case "forestFire":
+				forestFire.setProba(proba);
+				break;
+			case "landErosion":
+				landErosion.setProba(proba);
+				break;
+			case "tsunami":
+				tsunami.setProba(proba);
+				break;
+			case "volcanicEruption":
+				volcanicEruption.setProba(proba);
+				break;
+			default:
+				break;
+				
+			}
+		}
+	}
+	
+	
 	
 	public NaturalDisasters[] getDisasters() {
 		return disasters;

@@ -88,9 +88,10 @@ public class Blizzard extends NaturalDisasters{
 	public void play() {
 		kill();
 		for(int key : durationMap.keySet()) { // car la proba est variable
-			setProba(durationMap.get(key));
+			setDuration(durationMap.get(key));
 			cancel();
 		}
+		System.out.println("blizzard proba : "+getProba());
 		if(mustHappen(getProba())) {
 			blizzard();
 		}

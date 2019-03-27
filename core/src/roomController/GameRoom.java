@@ -116,26 +116,7 @@ public class GameRoom extends Room {
     private void executeNDMessage(NaturalDisasterMessage message) {
         NaturalDisastersController controller = board.getNaturalDisastersController();
         if (controller != null) {
-            switch (message.getNaturalName()) {
-                case "blizzard":
-                    controller.getBlizzard().setProba(message.getPourcent());
-                    break;
-                case "drought":
-                    controller.getDrought().setProba(message.getPourcent());
-                    break;
-                case "forestFire":
-                    controller.getForestFire().setProba(message.getPourcent());
-                    break;
-                case "landErosion":
-                    controller.getLandErosion().setProba(message.getPourcent());
-                    break;
-                case "tsunami":
-                    controller.getTsunami().setProba(message.getPourcent());
-                    break;
-                case "volcanicEruption":
-                    controller.getVolcanicEruption().setProba(message.getPourcent());
-                    break;
-            }
+        	controller.setProba(message.getNaturalName(), message.getPourcent());
         }
     }
 
