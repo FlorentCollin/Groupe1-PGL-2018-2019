@@ -15,6 +15,7 @@ public class RandomStrategy extends AbstractStrategy{
 	
 	@Override
 	public void play(Board board, ArrayList<District> districts) {
+		System.out.println("random enter");
 		visitedDistricts.clear();
 		Cell cutTree;
 		Cell randomCell;
@@ -40,6 +41,9 @@ public class RandomStrategy extends AbstractStrategy{
 			for(int i=0; i<5; i++) {
 				newSoldier = bestSoldier(district);
 				if(newSoldier != null) {
+					if(district.getCapital() == null) {
+						System.out.println("sheiBe district has no capital in randomStrat");
+					}
 					board.setSelectedCell(district.getCapital());
 					board.setShopItem(newSoldier);
 					possibleMoves = board.possibleMove(district);
@@ -56,7 +60,6 @@ public class RandomStrategy extends AbstractStrategy{
 				}
 			}
 		}
+	System.out.println("random out");
 	}
-	
-	
 }

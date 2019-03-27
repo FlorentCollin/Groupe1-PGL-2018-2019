@@ -381,7 +381,8 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
                         // Ne s'applique que si la case appartient au joueur
                         // Ainsi il voit directement avec quelles cases il peut interagir
                         if (playerNumber == null || playerNumber.contains(board.getActivePlayerNumber())) {
-                            if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
+                        	if(cell.getDistrict() != null) {
+//                            if (cell.getDistrict() != null && cell.getDistrict().getPlayer().getId() == board.getActivePlayer().getId()) {
                                 hud.getDistrictInfo().goldLabel.setText(cell.getDistrict().getGold());
                                 cells.setOpacity(0.9f);
                                 selectCells(cell.getDistrict().getCells());

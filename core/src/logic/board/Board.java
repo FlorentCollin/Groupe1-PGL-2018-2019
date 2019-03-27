@@ -1,5 +1,9 @@
 package logic.board;
 
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import logic.allianceController.AllianceController;
 import logic.board.cell.Cell;
 import logic.board.cell.LandCell;
@@ -8,15 +12,12 @@ import logic.item.DestroyableItem;
 import logic.item.Item;
 import logic.item.Soldier;
 import logic.item.Tree;
+import logic.item.TreeOnFire;
 import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
 import logic.player.Player;
 import logic.player.ai.AI;
 import logic.player.ai.strategy.Strategy;
 import logic.shop.Shop;
-
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -405,6 +406,9 @@ public class Board{
 		}
 		if(cellItem == null) {
 			return true;
+		}
+		if(cellItem instanceof TreeOnFire) {
+			return false;
 		}
 		// Cas où la cellule nous appartient déjà
 		else if(isOnOwnTerritory(cell)) {

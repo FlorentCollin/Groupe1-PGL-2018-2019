@@ -18,44 +18,10 @@ public class Drought extends NaturalDisasters{
 	private void drought() {
 		nAffectedCells = 0;
 		affectedCells.clear();
-//		Cell cell = getAnyCell();
-//		if(cell instanceof LandCell) {
-//			droughtFrom(cell);
-//			saveChanges();
-//		}
-		destroy(getAnyCell());
-		saveChanges();
-	}
-	
-	private void droughtFrom(Cell cell) {
-		nAffectedCells ++;
-		affectedCells.add(cell);
-		//Récupération des info de cell
-		Item item = cell.getItem();
-		District district = cell.getDistrict();
-		//Suppression de la cellule du district
-		if(district != null) {
-			district.removeCell(cell);
-		}
-		//Réinitialisation de cell entant que DroughtCell avec les anciennes données
-		cell = new DroughtCell(cell.getX(), cell.getY());
-		cell.setItem(item);
-		cell.setDistrict(district);
-		//Ajout de la cellule au district
-		if(district != null) {
-			district.addCell(cell);			
-		}
-		//Mise à jour de la cellule contenant la capital du district
-		if(item instanceof Capital) {
-			district.addCapital(cell);
-		}
-		board.addModification(cell);
-		board.setCell(cell);
-		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
-			Cell c = getOneFrom(board.getNeighbors(cell));
-			if(c != null) {
-				droughtFrom(c);
-			}
+		Cell cell = getAnyCell();
+		if(cell != null) {
+			destroy(cell);
+			saveChanges();
 		}
 	}
 	

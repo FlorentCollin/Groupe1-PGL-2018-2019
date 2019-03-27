@@ -1,10 +1,10 @@
 package logic.board;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import logic.board.cell.Cell;
-import logic.board.cell.DroughtCell;
 import logic.board.cell.LandCell;
 import logic.board.cell.WaterCell;
 import logic.item.Capital;
@@ -168,6 +168,17 @@ public class District {
 
     public int size() {
     	return cells.size();
+    }
+    
+    public void check() {
+    	ArrayList<Cell> toRemove = new ArrayList<>();
+    	for(Cell cell : cells) {
+    		if(cell.getDistrict() == null) {
+    			toRemove.add(cell);
+    			cell.removeItem(); // Pour être vrmt sur
+    		}
+    	}
+    	cells.removeAll(toRemove);
     }
     
     public static void main(String[] args) {

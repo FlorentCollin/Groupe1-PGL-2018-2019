@@ -66,6 +66,7 @@ public class NaturalDisasters {
 	}
 	
 	protected Cell getAnyCell() {
+		System.out.println("enter getAnyCell");
 		int i = 0;
 		int j = 0;
 		if(this instanceof VolcanicEruption) {
@@ -84,8 +85,9 @@ public class NaturalDisasters {
 			do {
 				i = rand.nextInt(board.getColumns());
 				j = rand.nextInt(board.getRows());
-			}while(!(board.getCell(i, j) instanceof LandCell));
+			}while(!(board.getCell(i, j) instanceof LandCell || board.getCell(i, j) instanceof LavaCell));
 		}
+		System.out.println("out getAnyCell");
 		return board.getCell(i, j);
 	}
 	
@@ -108,6 +110,7 @@ public class NaturalDisasters {
 	
 	protected void destroy(Cell cell) {
 		nAffectedCells ++;
+		board.addModification(cell);
 		if(cell.getItem() instanceof Capital) {
 			cell.getDistrict().removeCapital();
 		}
@@ -193,6 +196,7 @@ public class NaturalDisasters {
 						district.addCapital(cell);
 					}
 					board.setCell(cell);
+					board.checkMerge(cell);
 					board.addModification(cell);
 				}
 				keysToDelete.add(key);

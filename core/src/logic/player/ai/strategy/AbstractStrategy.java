@@ -89,7 +89,8 @@ public abstract class AbstractStrategy implements Strategy {
 
 	protected void buy(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
-		board.play(toCell);
+		if(toCell.getDistrict() != null)
+			board.play(toCell);
 	}
 
 	protected Soldier bestSoldier(District district) {
@@ -120,18 +121,22 @@ public abstract class AbstractStrategy implements Strategy {
 	}
 
 	protected District getDistrict(ArrayList<District> districts) {
+		System.out.println("enter getDistrict");
 		for(int i=0; i<districts.size(); i++) {
 			if(! visitedDistricts.containsKey(districts.get(i))) {
 				visitedDistricts.put(districts.get(i), districts.get(i).getCells().size());
+				System.out.println("out getDistrict");
 				return districts.get(i);
 			}
 			else {
 				if(visitedDistricts.get(districts.get(i)) != districts.get(i).getCells().size()) {
 					visitedDistricts.put(districts.get(i), districts.get(i).getCells().size());
+					System.out.println("out getDistrict");
 					return districts.get(i);
 				}
 			}
 		}
+		System.out.println("out getDistrict");
 		return null;
 	}
 
