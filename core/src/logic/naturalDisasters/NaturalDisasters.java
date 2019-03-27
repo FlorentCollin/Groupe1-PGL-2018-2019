@@ -137,7 +137,7 @@ public class NaturalDisasters {
 	
 	protected void destroy(Cell cell) {
 		nAffectedCells ++;
-		board.addModification(cell);
+//		board.addModification(cell);
 		if(cell.getItem() instanceof Capital) {
 			cell.getDistrict().removeCapital();
 		}
@@ -168,11 +168,12 @@ public class NaturalDisasters {
 				district.addCapital(cell);
 			}
 		}
+		board.setCell(cell);
 		affectedCells.add(cell);
 		board.addModification(cell);
-		board.checkDistricts();
+		checkDistricts();
 //		board.checkCapitals();
-		board.setCell(cell);
+		board.checkDistricts();
 		board.checkSplit(cell);
 		if(cell.getDistrict() != null && cell.getDistrict().getCapital() == null) {
 			System.out.println("sheiBe has no capital after "+this.getClass().getSimpleName());
@@ -197,6 +198,19 @@ public class NaturalDisasters {
 	
 	public void play() {
 		
+	}
+	
+	public void checkDistricts() {
+		ArrayList<Cell> toRemove = new ArrayList<>();
+		for(District district : board.getDistricts()) {
+			toRemove.clear();
+			for(Cell cell :  district.getCells()) {
+				if(cell.getDistrict() == null) {
+					toRemove.add(cell);
+				}
+			}
+			district.getCells().removeAll(toRemove);
+		}
 	}
 	
 	protected void cancel() {

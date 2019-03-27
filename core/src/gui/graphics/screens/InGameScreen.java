@@ -347,6 +347,10 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
             System.out.println(board.getCell(boardCoords.col, boardCoords.row).getClass().getSimpleName()+", "+board.getCell(boardCoords.col, boardCoords.row).getDistrict());
+            if(board.getCell(boardCoords.col, boardCoords.row).getDistrict() != null) {
+            	System.out.println(board.getCell(boardCoords.col, boardCoords.row).getDistrict().getCapital());
+            	System.out.println(board.getCell(boardCoords.col, boardCoords.row).getDistrict().getCapital().getX()+" "+board.getCell(boardCoords.col, boardCoords.row).getDistrict().getCapital().getY());
+            }
         }
         return true;
     }

@@ -561,7 +561,7 @@ public class Board{
 				System.out.println("sheiBe c has no district in split in "+c.getX()+" "+c.getY());
 			}
 			firstCell = c;
-			if (numberOfWayToCapital(c) == 0) {
+			if (c.getDistrict() != null && numberOfWayToCapital(c) == 0) {
 				newDistrict.addCell(c);
 				c.setDistrict(newDistrict);
 			}

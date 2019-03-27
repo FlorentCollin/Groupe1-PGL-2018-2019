@@ -1,6 +1,7 @@
 package logic.naturalDisasters;
 
 import logic.board.Board;
+import logic.board.cell.Cell;
 
 public class VolcanicEruption extends NaturalDisasters{
 
@@ -16,6 +17,12 @@ public class VolcanicEruption extends NaturalDisasters{
 		destroy(getAnyCell());
 		saveChanges();
 	}
+	
+//	@Override
+//	protected void destroy(Cell cell) {
+//		
+//	}
+	
 	
 	@Override
 	public void play() {
