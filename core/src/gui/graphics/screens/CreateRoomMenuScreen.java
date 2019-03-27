@@ -225,7 +225,6 @@ public class CreateRoomMenuScreen extends SubMenuScreen{
                 XmlReader.Element xmlElement = xml.parse(file);
                 String worldName = xmlElement.getAttribute("name");
                 int maxValue = Integer.parseInt(xmlElement.getChildByName("players").getAttribute("number"));
-                System.out.println(online);
                 if (!online || maxValue >= parent.getUserSettings().getNumberOfPlayers()) {
                     worldsNames.add(worldName);
                     worldsNames.sort();
