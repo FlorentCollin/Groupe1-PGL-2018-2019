@@ -5,11 +5,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.board.District;
-import logic.board.cell.Cell;
-import logic.item.Soldier;
-import logic.item.level.SoldierLevel;
-import logic.player.ai.strategy.AttackStrategy;
+import ac.umons.slay.g01.logic.item.Soldier;
+import ac.umons.slay.g01.logic.item.level.SoldierLevel;
+import ac.umons.slay.g01.logic.player.ai.strategy.AttackStrategy;
 
 public class AttackStrategyTest extends StrategyTest{
 	

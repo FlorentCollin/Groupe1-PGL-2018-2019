@@ -1,22 +1,23 @@
-package com.gl1.slay.server;
+package src.com.gl1.slay.server;
 
-import communication.Messages.Message;
-import org.pmw.tinylog.Configurator;
-import org.pmw.tinylog.Level;
-import org.pmw.tinylog.Logger;
-import org.pmw.tinylog.writers.ConsoleWriter;
-import org.pmw.tinylog.writers.FileWriter;
-import server.ServerInfo;
-import server.ServerListener;
-import server.ServerSender;
+import static ac.umons.slay.g01.gui.utils.Constants.PORT;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.net.Inet4Address;
 import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static gui.utils.Constants.PORT;
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.writers.ConsoleWriter;
+
+import ac.umons.slay.g01.communication.Messages.Message;
+import ac.umons.slay.g01.logic.item.level.Level;
+import ac.umons.slay.g01.server.ServerInfo;
+import ac.umons.slay.g01.server.ServerListener;
+import ac.umons.slay.g01.server.ServerSender;
 
 /**
  * Classe qui démarre les différents threads liés au serveur

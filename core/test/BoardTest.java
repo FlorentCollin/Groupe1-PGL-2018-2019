@@ -1,21 +1,25 @@
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import logic.item.Tomb;
-import logic.item.Tree;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.board.Board;
-import logic.board.District;
-import logic.board.cell.Cell;
-import logic.item.Capital;
-import logic.item.Soldier;
-import logic.item.level.SoldierLevel;
-import logic.player.Player;
-import logic.shop.Shop;
-
-import static org.junit.Assert.*;
+import ac.umons.slay.g01.logic.board.Board;
+import ac.umons.slay.g01.logic.board.District;
+import ac.umons.slay.g01.logic.board.cell.Cell;
+import ac.umons.slay.g01.logic.item.Capital;
+import ac.umons.slay.g01.logic.item.Soldier;
+import ac.umons.slay.g01.logic.item.Tomb;
+import ac.umons.slay.g01.logic.item.Tree;
+import ac.umons.slay.g01.logic.item.level.SoldierLevel;
+import ac.umons.slay.g01.logic.player.Player;
+import ac.umons.slay.g01.logic.shop.Shop;
 
 public class BoardTest {
 	Board board;

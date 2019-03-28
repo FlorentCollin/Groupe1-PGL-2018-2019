@@ -1,15 +1,15 @@
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import logic.board.Board;
-import logic.board.District;
-import logic.item.Capital;
-import logic.item.Soldier;
-import logic.item.Tree;
-import logic.item.level.SoldierLevel;
-import logic.player.Player;
-import logic.player.ai.AI;
-import logic.player.ai.strategy.Strategy;
-import logic.shop.Shop;
+import ac.umons.slay.g01.logic.board.Board;
+import ac.umons.slay.g01.logic.board.District;
+import ac.umons.slay.g01.logic.item.Capital;
+import ac.umons.slay.g01.logic.item.Soldier;
+import ac.umons.slay.g01.logic.item.Tree;
+import ac.umons.slay.g01.logic.item.level.SoldierLevel;
+import ac.umons.slay.g01.logic.player.Player;
+import ac.umons.slay.g01.logic.player.ai.AI;
+import ac.umons.slay.g01.logic.player.ai.strategy.Strategy;
+import ac.umons.slay.g01.logic.shop.Shop;
 
 public class InitStrategy {
 	private AI ai;

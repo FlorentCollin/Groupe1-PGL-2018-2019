@@ -2,21 +2,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.board.Board;
-import logic.board.District;
-import logic.item.Capital;
-import logic.item.Soldier;
-import logic.item.Tree;
-import logic.item.level.SoldierLevel;
-import logic.player.Player;
-import logic.player.ai.AI;
-import logic.player.ai.strategy.RandomStrategy;
-import logic.shop.Shop;
+import ac.umons.slay.g01.logic.item.Soldier;
+import ac.umons.slay.g01.logic.item.level.SoldierLevel;
+import ac.umons.slay.g01.logic.player.ai.strategy.RandomStrategy;
 
 public class RandomStrategyTest extends StrategyTest{
 	

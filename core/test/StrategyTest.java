@@ -1,6 +1,6 @@
-import logic.board.District;
-import logic.board.cell.Cell;
-import logic.item.Soldier;
+import ac.umons.slay.g01.logic.board.District;
+import ac.umons.slay.g01.logic.board.cell.Cell;
+import ac.umons.slay.g01.logic.item.Soldier;
 
 public class StrategyTest {
 	protected InitStrategy init;

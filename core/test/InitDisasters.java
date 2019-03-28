@@ -1,9 +1,9 @@
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import logic.board.Board;
-import logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
-import logic.player.Player;
-import logic.shop.Shop;
+import ac.umons.slay.g01.logic.board.Board;
+import ac.umons.slay.g01.logic.naturalDisasters.naturalDisasterscontroller.NaturalDisastersController;
+import ac.umons.slay.g01.logic.player.Player;
+import ac.umons.slay.g01.logic.shop.Shop;
 
 public class InitDisasters {
 	private Board board;

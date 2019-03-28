@@ -1,7 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.player.ai.strategy.AdaptativeStrategy;
+import ac.umons.slay.g01.logic.player.ai.strategy.AdaptativeStrategy;
+
 
 public class AdaptativeStrategyTest extends StrategyTest {
 

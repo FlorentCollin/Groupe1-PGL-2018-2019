@@ -4,9 +4,11 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import gui.app.Slay;
+
+import ac.umons.slay.g01.gui.app.Slay;
 
 public class DesktopLauncher {
+	@SuppressWarnings("static-access")
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Slay";

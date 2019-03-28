@@ -1,8 +1,10 @@
-import logic.Coords.CubeCoords;
-import logic.Coords.OffsetCoords;
-import logic.Coords.TransformCoords;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import ac.umons.slay.g01.logic.Coords.CubeCoords;
+import ac.umons.slay.g01.logic.Coords.OffsetCoords;
+import ac.umons.slay.g01.logic.Coords.TransformCoords;
 
 public class CoordsTest {
 

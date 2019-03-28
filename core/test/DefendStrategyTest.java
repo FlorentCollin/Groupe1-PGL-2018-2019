@@ -4,10 +4,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.item.Item;
-import logic.item.Soldier;
-import logic.item.level.SoldierLevel;
-import logic.player.ai.strategy.DefenseStrategy;
+import ac.umons.slay.g01.logic.item.Item;
+import ac.umons.slay.g01.logic.item.Soldier;
+import ac.umons.slay.g01.logic.item.level.SoldierLevel;
+import ac.umons.slay.g01.logic.player.ai.strategy.DefenseStrategy;
 
 public class DefendStrategyTest extends StrategyTest{
 	

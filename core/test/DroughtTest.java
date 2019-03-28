@@ -1,14 +1,12 @@
-import java.lang.ModuleLayer.Controller;
-
 import org.junit.Before;
 
-import logic.naturalDisasters.NaturalDisasters;
+import ac.umons.slay.g01.logic.naturalDisasters.NaturalDisasters;
 
 public class DroughtTest extends NaturalDisastersTest {
 	@Before
 	public void init() {
 		for(NaturalDisasters nd : init.getController().getDisasters()) {
-			if(nd instanceof)
+			
 		}
 	}
 }
