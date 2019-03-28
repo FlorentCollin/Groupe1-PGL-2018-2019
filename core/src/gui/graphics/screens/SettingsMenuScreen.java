@@ -119,7 +119,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         Table scrollTable = new Table();
         scrollTable.add(windowMode).expandX().align(Align.left);
         scrollTable.add(fullScreen).pad(PAD).align(Align.right);
-        scrollTable.add(windowed).pad(PAD);
+        scrollTable.add(windowed).pad(PAD/2f);
         scrollTable.row();
 
         scrollTable.add(username).expandX().align(Align.left);
@@ -133,7 +133,7 @@ public class SettingsMenuScreen extends SubMenuScreen {
         scrollTable.add(numberOfPlayers).expandX().fillY().align(Align.left);
         scrollTable.add(playerSlider).pad(PAD)
                 .minWidth(100 * ratio).maxWidth(fullScreen.getWidth()*2 + PAD*2).fillX().align(Align.right).colspan(2);
-        scrollTable.add(playerSliderPourcent).minWidth(playerSlider.getWidth()).padRight(PAD).fillY().align(Align.right);
+        scrollTable.add(playerSliderPourcent).minWidth(playerSlider.getWidth()).padRight(5).fillY().align(Align.right);
         scrollTable.row();
 
         ScrollPane scroller = new ScrollPane(scrollTable);
