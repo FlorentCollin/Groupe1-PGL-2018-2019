@@ -111,9 +111,6 @@ public class District {
 			cell.setItem(new Capital());
 			capital = cell;
 		}
-		else {
-			System.out.println("sheiBe capital isn't added");
-		}
 	}
 
 	public void removeCapital() {

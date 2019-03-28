@@ -63,7 +63,6 @@ public abstract class NaturalDisasters {
 	}
 	
 	protected Cell getAnyCell() {
-		System.out.println("enter getAnyCell");
 		int i = 0;
 		int j = 0;
 		if(this instanceof VolcanicEruption) {
@@ -84,7 +83,6 @@ public abstract class NaturalDisasters {
 				j = rand.nextInt(board.getRows());
 			}while(!(board.getCell(i, j) instanceof LandCell || board.getCell(i, j) instanceof LavaCell));
 		}
-		System.out.println("out getAnyCell");
 		return board.getCell(i, j);
 	}
 	
@@ -172,19 +170,6 @@ public abstract class NaturalDisasters {
 //		board.checkCapitals();
 		board.checkDistricts();
 		board.checkSplit(cell);
-		if(cell.getDistrict() != null && cell.getDistrict().getCapital() == null) {
-			System.out.println("sheiBe has no capital after "+this.getClass().getSimpleName());
-		}
-		for(District d : board.getDistricts()) {
-			if(d.getCapital() == null) {
-				System.out.println("sheiBe a district has no capital after "+this.getClass().getSimpleName());
-			}
-			for(Cell c : d.getCells()) {
-				if(c.getDistrict() == null) {
-					System.out.println("sheiBe a cell from a district has no district after "+this.getClass().getSimpleName());
-				}
-			}
-		}
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
 			Cell c = getOneFrom(board.getNeighbors(cell));
 			if(c != null) {

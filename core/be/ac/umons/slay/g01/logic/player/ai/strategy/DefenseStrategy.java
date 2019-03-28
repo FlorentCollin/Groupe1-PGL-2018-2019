@@ -133,7 +133,6 @@ public class DefenseStrategy extends AbstractStrategy{
 		for(Cell neighbour : board.getNeighbors(cell)) {
 			neighbourDistrict = neighbour.getDistrict();
 			if((neighbourDistrict != null && neighbourDistrict.getPlayer() != currentPlayer) || (neighbour == cell.getDistrict().getCapital())) {
-				System.out.println(cell.getX()+", "+cell.getY()+" defend");
 				return true;
 			}
 		}

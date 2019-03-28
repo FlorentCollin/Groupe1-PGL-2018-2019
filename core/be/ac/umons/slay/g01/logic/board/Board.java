@@ -468,18 +468,6 @@ public class Board{
 //				}
 			}
 		}
-		else {
-			if(!(winner instanceof AI)) {
-				if(winner == godPlayer) {
-					System.out.println("Everyone lose");
-				}
-				else
-					System.out.println(winner+" wins");
-			}
-			else {
-				System.out.println("You lose");
-			}
-		}
 	}
 
 	public Cell getCell(int i, int j) {
@@ -543,12 +531,6 @@ public class Board{
 		District newDistrict = new District(district.getPlayer());
 		for (Cell c : district.getCells()) {
 			visited.clear();
-			if(c == null) {
-				System.out.println("sheiBe c is null in split");
-			}
-			if(c.getDistrict() == null) {
-				System.out.println("sheiBe c has no district in split in "+c.getX()+" "+c.getY());
-			}
 			firstCell = c;
 			if (c.getDistrict() != null && numberOfWayToCapital(c) == 0) {
 				newDistrict.addCell(c);
@@ -802,7 +784,6 @@ public class Board{
 				return true;
 			}
 		}
-		System.out.println(player+" is dead because he has no district");
 		return false;
 	}
 

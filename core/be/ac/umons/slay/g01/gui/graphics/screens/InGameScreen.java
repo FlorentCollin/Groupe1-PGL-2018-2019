@@ -126,7 +126,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         hud.getDistrictInfo().endTurn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("clicked");
                 for(int i = 0; i < 200; i++) {
                     messageSender.send(new TextMessage("nextPlayer"));
 
@@ -357,11 +356,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         if(boardCoords.col >= 0 && boardCoords.col < board.getColumns()
                 && boardCoords.row >= 0 && boardCoords.row < board.getRows()) {
             messageSender.send(new PlayMessage(boardCoords.col, boardCoords.row));
-            System.out.println(board.getCell(boardCoords.col, boardCoords.row).getClass().getSimpleName()+", "+board.getCell(boardCoords.col, boardCoords.row).getDistrict());
-            if(board.getCell(boardCoords.col, boardCoords.row).getDistrict() != null) {
-//            	System.out.println(board.getCell(boardCoords.col, boardCoords.row).getDistrict().getCapital());
-//            	System.out.println(board.getCell(boardCoords.col, boardCoords.row).getDistrict().getCapital().getX()+" "+board.getCell(boardCoords.col, boardCoords.row).getDistrict().getCapital().getY());
-            }
         }
         return true;
     }

@@ -42,11 +42,6 @@ public class NaturalDisastersController {
 			nd.play();
 		}
 		board.checkCapitals();
-		for(District d : board.getDistricts()) {
-			if(d.getCapital() == null) {
-				System.out.println("FuCK");
-			}
-		}
 	}
 	
 	public void setProba(String disaster, int proba) {

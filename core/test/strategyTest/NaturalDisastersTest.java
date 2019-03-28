@@ -1,3 +1,5 @@
+package strategyTest;
+import disastersTest.InitDisasters;
 
 public class NaturalDisastersTest {
 	InitDisasters init;

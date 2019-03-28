@@ -59,7 +59,6 @@ public class Blizzard extends NaturalDisasters{
 			setDuration(durationMap.get(key));
 			cancel();
 		}
-		System.out.println("blizzard proba : "+getProba());
 		if(mustHappen(getProba())) {
 			blizzard();
 		}
