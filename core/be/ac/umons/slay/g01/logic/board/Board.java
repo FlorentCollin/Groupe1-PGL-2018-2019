@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import ac.umons.slay.g01.logic.allianceController.AllianceController;
 import ac.umons.slay.g01.logic.board.cell.Cell;
 import ac.umons.slay.g01.logic.board.cell.LandCell;
 import ac.umons.slay.g01.logic.board.cell.WaterCell;
@@ -47,7 +46,6 @@ public class Board{
 	private transient ArrayList<Cell> visited = new ArrayList<>(); // Eviter de boucler indéfiniment pour numberOfWayToCapital
 	private transient ArrayList<Cell> waterCells;
 	private transient ArrayList<Cell> treeCells;
-	private transient AllianceController alliances;
 
 	//Vérifier où on appelle checkDistricts() !!!!!
 
@@ -75,7 +73,6 @@ public class Board{
 				district.calculateGold();
 			}
 		}
-		alliances = new AllianceController(this);
 	}
 
 	/**
@@ -91,7 +88,6 @@ public class Board{
 
 	public void setCell(Cell cell) {
 		board[cell.getX()][cell.getY()] = cell;
-		Cell cell2 = board[cell.getX()][cell.getY()];
 	}
 
 	/**
@@ -386,13 +382,6 @@ public class Board{
 	 * */
 	public boolean canGoOn(Cell cell, Item item) {
 		Item cellItem = cell.getItem();
-	
-		// Si il n'y a aucun item il est toujours possible de se placer sur la case
-//		if(alliances != null && cell.getDistrict() != null && cell.getDistrict().getPlayer() != selectedCell.getDistrict().getPlayer()) {
-//			if(alliances.areAllied(cell.getDistrict().getPlayer(), selectedCell.getDistrict().getPlayer())) {
-//				return false;
-//			}
-//		}
 		
 		if(selectedCell != null) {
 			for(Cell nb : getNeighbors(cell)) {
