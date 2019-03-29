@@ -1,4 +1,6 @@
+package strategyTest;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -6,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import ac.umons.slay.g01.logic.board.cell.Cell;
 import ac.umons.slay.g01.logic.item.Soldier;
 import ac.umons.slay.g01.logic.item.level.SoldierLevel;
 import ac.umons.slay.g01.logic.player.ai.strategy.AttackStrategy;
@@ -21,12 +24,11 @@ public class AttackStrategyTest extends StrategyTest{
 	@Test
 	public void testMove() {
 		init.getDistrict().setGold(15);
-		
 		init.getAI().play();
 		
-		assertNull(init.getBoard().getCell(1, 1).getItem());
-		assertNull(init.getBoard().getCell(2, 2).getItem());
-		assertNull(init.getBoard().getCell(1, 2).getItem());
+		assertFalse(init.getBoard().getCell(1, 1).getItem() instanceof Soldier);
+		assertFalse(init.getBoard().getCell(2, 2).getItem() instanceof Soldier);
+		assertFalse(init.getBoard().getCell(1, 2).getItem() instanceof Soldier);
 		assertTrue(init.getBoard().getCell(1, 3).getItem() instanceof Soldier);
 		assertTrue(init.getBoard().getCell(2, 1).getItem() instanceof Soldier);
 		assertSame(init.getBoard().getCell(1, 3).getDistrict().getPlayer(), init.getAI());
@@ -34,8 +36,7 @@ public class AttackStrategyTest extends StrategyTest{
 	}
 	
 	@Test
-	public void testBuy() {
-		//Test1 destruction abre
+	public void testBuyTree() {
 		init.getDistrict().setGold(20);
 		
 		lockSoldiers();
@@ -43,21 +44,15 @@ public class AttackStrategyTest extends StrategyTest{
 		init.getAI().play();
 		
 		assertTrue(init.getBoard().getCell(2, 1).getItem() instanceof Soldier);
-		
-		//Test2 kill enemy
-		init = new InitStrategy(new AttackStrategy());
-		init.initEnemy();
-		
+	}
+	
+	@Test
+	public void testBuyKill() {
 		init.getDistrict().setGold(20);
-		//Retrait arbre
-		init.getBoard().getCell(2, 1).removeItem();
-		
 		lockSoldiers();
-		
-		init.getAI().play(); // car le joueur actif n'est pas une ia, il faut donc repasser la main à l'ia
-		
+		init.getBoard().getCell(2,  1).removeItem();
+		init.getAI().play();
 		assertTrue(init.getBoard().getCell(1, 3).getItem() instanceof Soldier);
-		
 	}
 
 }

@@ -50,14 +50,6 @@ public abstract class NaturalDisasters {
 		this.duration = duration * board.getPlayers().size();
 	}
 
-	public ArrayList<Cell> getAffectedCells() {
-		return affectedCells;
-	}
-
-	public void setAffectedCells(ArrayList<Cell> affectedCells) {
-		this.affectedCells = affectedCells;
-	}
-	
 	protected boolean mustHappen(int x) {
 		return rand.nextInt(101) < x;
 	}

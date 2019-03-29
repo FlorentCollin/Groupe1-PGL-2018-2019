@@ -1,3 +1,4 @@
+package coordsTest;
 
 import static org.junit.Assert.assertEquals;
 

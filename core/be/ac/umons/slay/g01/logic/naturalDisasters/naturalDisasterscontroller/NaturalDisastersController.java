@@ -71,8 +71,4 @@ public class NaturalDisastersController {
 			}
 		}
 	}
-
-	public NaturalDisasters[] getDisasters() {
-		return disasters;
-	}
 }

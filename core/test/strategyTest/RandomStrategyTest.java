@@ -1,3 +1,4 @@
+package strategyTest;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -32,7 +33,7 @@ public class RandomStrategyTest extends StrategyTest{
 	
 	@Test
 	public void randomBuy() {
-		init.getDistrict().setGold(10);
+		init.getDistrict().setGold(15);
 		
 		lockSoldiers();
 		

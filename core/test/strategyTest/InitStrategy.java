@@ -1,3 +1,4 @@
+package strategyTest;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 

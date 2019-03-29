@@ -1,3 +1,4 @@
+package disastersTest;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -12,11 +13,7 @@ public class InitDisasters {
 	public InitDisasters() {
 		CopyOnWriteArrayList<Player> players = new CopyOnWriteArrayList<>();
 		players.add(new Player());
-		board = new Board(5, 5, players, true, new Shop());
-	}
-	
-	public NaturalDisastersController getController() {
-		return board.getNaturalDisastersController();
+		board = new Board(5, 5, players, false, new Shop());
 	}
 	
 	public Board getBoard() {
