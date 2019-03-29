@@ -1,4 +1,4 @@
-package disastersTest;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ac.umons.slay.g01.logic.board.Board;

@@ -1,4 +1,4 @@
-package strategyTest;
+
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +33,8 @@ public class RandomStrategyTest extends StrategyTest{
 	@Test
 	public void randomBuy() {
 		init.getDistrict().setGold(10);
+		
+		lockSoldiers();
 		
 		init.getAI().play();
 		

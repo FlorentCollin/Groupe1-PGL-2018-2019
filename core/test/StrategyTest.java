@@ -1,4 +1,4 @@
-package strategyTest;
+
 import ac.umons.slay.g01.logic.board.District;
 import ac.umons.slay.g01.logic.board.cell.Cell;
 import ac.umons.slay.g01.logic.item.Soldier;

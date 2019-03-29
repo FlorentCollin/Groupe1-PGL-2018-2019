@@ -13,7 +13,7 @@ public class ServerTmxMapLoader {
 
     private int width, height;
 
-    public HashMap[][] load(String fileName) {
+    public HashMap<String, Object>[][] load(String fileName) {
         String cwd = new File("").getAbsolutePath();
         XmlReader xmlReader = new XmlReader();
         FileHandle file = new FileHandle(new File(cwd + File.separator + "worlds" + File.separator + fileName.replace("/", File.separator) + ".tmx"));
@@ -45,7 +45,7 @@ public class ServerTmxMapLoader {
             tiles.add(properties);
         }
         int[] ids = getTileIds(root.getChildByName("layer"), width, height);
-        HashMap[][] map = new HashMap[width][height];
+        HashMap<String, Object>[][] map = new HashMap[width][height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int id = ids[y * width + x];

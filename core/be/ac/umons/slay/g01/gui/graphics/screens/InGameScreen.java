@@ -75,7 +75,6 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
 
     private MessageListener messageListener;
     private MessageSender messageSender;
-    private Room room;
 
     public InGameScreen(Slay parent, String mapName, Board board, MessageSender messageSender) {
         super(parent);

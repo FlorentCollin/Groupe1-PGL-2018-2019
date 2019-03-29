@@ -1,10 +1,8 @@
 package ac.umons.slay.g01.gui.settings;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.badlogic.gdx.Input;
 
 /**
  * Classe qui gère les raccourcis utilisateurs. Si l'utilisateur lance lance l'application pour la première fois

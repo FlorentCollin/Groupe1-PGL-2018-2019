@@ -8,14 +8,12 @@ import ac.umons.slay.g01.gui.utils.Language;
 import ac.umons.slay.g01.logic.board.Board;
 
 public class WinnerScreen extends BasicScreen{
-    private Board board;
     private TextButton nextButton;
     private TextButton restartButton;
     private TextButton quitButton;
 
-    public WinnerScreen(Slay parent, Board board) {
+    public WinnerScreen(Slay parent) {
         super(parent);
-        this.board = board;
         TextButton.TextButtonStyle textButtonStyle = uiSkin.get(TextButton.TextButtonStyle.class);
         textButtonStyle.font = defaultFontTitle;
         nextButton = new TextButton(Language.bundle.get("next"), textButtonStyle);
