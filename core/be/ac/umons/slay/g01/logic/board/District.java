@@ -33,6 +33,10 @@ public class District {
 
 	}
 
+	/**
+	 * Permet d'ajouter une cellule au district
+	 * @param cell la cellule à ajouter
+	 */
 	public void addCell(Cell cell) {
 		if(cells.indexOf(cell) == -1) {
 			cells.add(cell);
@@ -50,6 +54,10 @@ public class District {
 		}
 	}
 	
+	/**
+	 * Permet de retirer une cellule du district
+	 * @param cell la cellule à retirer
+	 */
 	public void removeCell(Cell cell) {
 		cells.remove(cell);
 		if(cell == capital) {
@@ -105,14 +113,20 @@ public class District {
 		}
 	}
 	
-
+	/**
+	 * Permet d'ajouter la capital au district
+	 * @param cell la cellule contenant la capital
+	 */
 	public void addCapital(Cell cell) {
 		if(cells.indexOf(cell) >= 0 && capital == null) { // On vérifie que la cellule appartient bien au district
 			cell.setItem(new Capital());
 			capital = cell;
 		}
 	}
-
+	
+	/**
+	 * Permet de retirer la capital
+	 */
 	public void removeCapital() {
 		if(capital != null) {
 			capital.removeItem();
@@ -173,12 +187,15 @@ public class District {
     	return cells.size();
     }
     
+    /**
+     * Permet de faire une vérification sur les cellules contenues dans le district
+     */
     public void check() {
     	ArrayList<Cell> toRemove = new ArrayList<>();
     	for(Cell cell : cells) {
     		if(cell.getDistrict() == null) {
     			toRemove.add(cell);
-    			cell.removeItem(); // Pour être vrmt sur
+    			cell.removeItem();
     		}
     	}
     	cells.removeAll(toRemove);

@@ -26,10 +26,18 @@ public class AI extends Player{
 		board.nextPlayer();
 	}
 	
+	/**
+	 * Permet d'ajouter un district à l'ia
+	 * @param district le district à ajouter
+	 */
 	public void addDistrict(District district) {
 		districts.add(district);
 	}
 	
+	/**
+	 * Permet d'enlever un district à l'ia
+	 * @param district le district à enlever
+	 */
 	public void removeDistrict(District district) {
 		districts.remove(district);
 	}

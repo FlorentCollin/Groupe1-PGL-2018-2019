@@ -17,12 +17,6 @@ public class VolcanicEruption extends NaturalDisasters{
 		saveChanges();
 	}
 	
-//	@Override
-//	protected void destroy(Cell cell) {
-//		
-//	}
-	
-	
 	@Override
 	public void play() {
 		cancel();

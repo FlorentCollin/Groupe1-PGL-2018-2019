@@ -50,10 +50,20 @@ public abstract class NaturalDisasters {
 		this.duration = duration * board.getPlayers().size();
 	}
 
+	/**
+	 * Permet de savoir si quelque chose doit se produire
+	 * @param x la probabilité
+	 * @return true si quelque chose doit se passer
+	 * 			false sinon
+	 */
 	protected boolean mustHappen(int x) {
 		return rand.nextInt(101) < x;
 	}
 	
+	/**
+	 * Permet de récupérer une cellule
+	 * @return une cellule du board
+	 */
 	protected Cell getAnyCell() {
 		int i = 0;
 		int j = 0;
@@ -78,6 +88,11 @@ public abstract class NaturalDisasters {
 		return board.getCell(i, j);
 	}
 	
+	/**
+	 * Permet de récupérer une cellule depuis une liste de cellules
+	 * @param cells la liste contenant les cellules
+	 * @return une cellule de cette liste ou null
+	 */
 	protected Cell getOneFrom(ArrayList<Cell> cells) {
 		ArrayList<Cell> visited = new ArrayList<Cell>();
 		Cell cell = null;
@@ -122,9 +137,12 @@ public abstract class NaturalDisasters {
 		return cell;
 	}
 	
+	/**
+	 * Produit un désastre sur la plateau
+	 * @param cell la cellule de départ du désastre
+	 */
 	protected void destroy(Cell cell) {
 		nAffectedCells ++;
-//		board.addModification(cell);
 		if(cell.getItem() instanceof Capital) {
 			cell.getDistrict().removeCapital();
 		}
@@ -159,7 +177,6 @@ public abstract class NaturalDisasters {
 		affectedCells.add(cell);
 		board.addModification(cell);
 		checkDistricts();
-//		board.checkCapitals();
 		board.checkDistricts();
 		board.checkSplit(cell);
 		if(nAffectedCells < getMaxAffectedCells() && mustHappen(50)) {
@@ -174,6 +191,9 @@ public abstract class NaturalDisasters {
 		
 	}
 	
+	/**
+	 * Permet de vérifier les districts
+	 */
 	protected void checkDistricts() {
 		ArrayList<Cell> toRemove = new ArrayList<>();
 		for(District district : board.getDistricts()) {
@@ -187,6 +207,9 @@ public abstract class NaturalDisasters {
 		}
 	}
 	
+	/**
+	 * Remet les cellules à neuf qaund le désastre ne se produit plus
+	 */
 	protected void cancel() {
 		ArrayList<Integer> keysToDelete = new ArrayList<>();
 		Item item;
@@ -226,6 +249,9 @@ public abstract class NaturalDisasters {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Permet de sauvegarder les modifications affectuées
+	 */
 	protected void saveChanges() {
 		ArrayList<Cell> save = (ArrayList<Cell>) affectedCells.clone();
 		modificatedCells.put(board.getTurn(), save);
@@ -239,6 +265,9 @@ public abstract class NaturalDisasters {
 		this.maxAffectedCells = maxAffectedCells;
 	}
 	
+	/**
+	 * @return les cellules voisines aux cellules d'eau
+	 */
 	protected ArrayList<Cell> getNeighboursWaterCells(){
 		ArrayList<Cell> neighbours = new ArrayList<>();
 		for(Cell waterCell : board.getWaterCells()) {

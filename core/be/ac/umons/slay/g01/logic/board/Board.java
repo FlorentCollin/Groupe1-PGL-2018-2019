@@ -85,7 +85,11 @@ public class Board{
 			}
 		}
 	}
-
+	
+	/**
+	 * Permet de placer une cellule sur le plateau
+	 * @param cell la cellule à placer
+	 */
 	public void setCell(Cell cell) {
 		board[cell.getX()][cell.getY()] = cell;
 	}
@@ -128,6 +132,10 @@ public class Board{
 		board[i][j] = new LandCell(i, j);
 	}
 
+	/**
+	 * Permet de sélectionner un item dans le shop
+	 * @param item l'item à sélectionner
+	 */
 	public void setShopItem(Item item) {
 		if(selectedCell != null) {
 			shop.setSelectedItem(item, selectedCell.getDistrict());
@@ -460,16 +468,17 @@ public class Board{
 				}
 			}
 			if(players.get(activePlayer) instanceof AI) {
-//				try {
-//					Thread.sleep(500);
-					((AI)players.get(activePlayer)).play();
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
+				((AI)players.get(activePlayer)).play();
 			}
 		}
 	}
 
+	/**
+	 * Permet la récupération d'une cellule
+	 * @param i la position en x de la cellule
+	 * @param j la position en y de la cellule
+	 * @return la cellule située en (x, y)
+	 */
 	public Cell getCell(int i, int j) {
 		return board[i][j];
 	}
@@ -658,6 +667,10 @@ public class Board{
 		return 0;
 	}
 
+	/**
+	 * Permet de supprimer un district de la liste des districts
+	 * @param district le district à supprimer
+	 */
 	private void removeDistrict(District district) {
 		districts.remove(district);
 		if(district.getPlayer() instanceof AI) {
@@ -669,7 +682,6 @@ public class Board{
 	 * Gère le placement d'un item sur les cellules
 	 * @param cell cell à mettre à jour
 	 * */
-	// revoir la documentation
 	private void updateCell(Cell cell) {
 		selectedCell.getItem().setHasMoved(true);
 		cell.setItem(selectedCell.getItem());
@@ -694,6 +706,10 @@ public class Board{
 		checkSplit(cell);
 	}
 
+	/**
+	 * Permet d'ajouter un district à la liste des districts
+	 * @param district le district à ajouter
+	 */
 	public void addDistrict(District district) {
 		districts.add(district);
 		if(district.getPlayer() instanceof AI) {
@@ -746,7 +762,7 @@ public class Board{
 	}
 
 	/**
-	 * Méthode qui vérifier si un joueur à gagné
+	 * Méthode qui vérifie si un joueur a gagné
 	 */
 	private void checkWinner() {
 		ArrayList<Player> deadPlayers = new ArrayList<>();
@@ -778,6 +794,12 @@ public class Board{
 		return false;
 	}
 
+	/**
+	 * Méthode permettant de savoir si un joueur est encore dans la capacité de jouer
+	 * @param player le jouer testé
+	 * @return true si le joueur peut encore jouer
+	 * 			false sinon
+	 */
 	private boolean canYetPlay(Player player) {
 		for(District district : districts) {
 			if(district.getPlayer() == player) {

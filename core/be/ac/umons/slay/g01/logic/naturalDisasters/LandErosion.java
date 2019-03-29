@@ -37,6 +37,10 @@ public class LandErosion extends NaturalDisasters{
 		saveChanges();
 	}
 	
+	/**
+	 * Permet d'éroder une cellule
+	 * @param cell la cellule à éroder
+	 */
 	private void erode(Cell cell) {
 		if(cell.getDistrict() != null) {
 			cell.getDistrict().removeCell(cell);
@@ -63,6 +67,11 @@ public class LandErosion extends NaturalDisasters{
 		board.addModification(cell);
 	}
 	
+	/**
+	 * Permet de savoir si la cellule sur laquelle on souhaite se placer a dans son voisinage 
+	 * @param cell
+	 * @return
+	 */
 	private boolean hasGoodNeighbour(Cell cell) {
 		for(Cell nb : board.getNeighbors(cell)) {
 			if(nb.getDistrict() == cell.getDistrict()) {

@@ -80,7 +80,13 @@ public class DefenseStrategy extends AbstractStrategy{
 		}
 
 	}
-
+	
+	/**
+	 * Permet de récupérer les cellules à défendre
+	 * @param board le plateau
+	 * @param districts la liste des districts
+	 * @return les cellules à défendre
+	 */
 	private ArrayList<Cell> cellToDefend(Board board, ArrayList<District> districts){
 		Player ai = districts.get(0).getPlayer();
 		ArrayList<Cell> toDefend = new ArrayList<>();
@@ -101,6 +107,12 @@ public class DefenseStrategy extends AbstractStrategy{
 		return toDefend;
 	}
 
+	/**
+	 * Peremet de vérifier si les capitals sont bien défendues
+	 * @param board le plateau
+	 * @param districts la liste des districts
+	 * @return les cellules non défendues autour des capitales
+	 */
 	private ArrayList<Cell> checkDefenseOfCapitals(Board board, ArrayList<District> districts){
 		ArrayList<Cell> defenseOfCapitals = new ArrayList<>();
 		for(District district : districts) {
@@ -113,6 +125,12 @@ public class DefenseStrategy extends AbstractStrategy{
 		return defenseOfCapitals;
 	}
 
+	/**
+	 * Permet de récupérer les cellules des soldats ne défendant rien
+	 * @param board le plateau
+	 * @param districts la liste des districts
+	 * @return les cellules des soldats ne défendant rien
+	 */
 	private ArrayList<Cell> inactifSoldiers(Board board, ArrayList<District> districts){
 		ArrayList<Cell> inactifSoldiers = new ArrayList<>();
 		for(District district : districts) {
@@ -127,6 +145,13 @@ public class DefenseStrategy extends AbstractStrategy{
 		return inactifSoldiers;
 	}
 
+	/**
+	 * Permet de savoir si la cellule est entain de défendre
+	 * @param cell la cellule testée
+	 * @param board le plateau
+	 * @return true si elle défend
+	 * 			false sinon
+	 */
 	private boolean defend(Cell cell, Board board) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		District neighbourDistrict;
@@ -139,6 +164,12 @@ public class DefenseStrategy extends AbstractStrategy{
 		return false;
 	}
 
+	/**
+	 * Permet de rejoindre une cellule à défendre
+	 * @param toDefend les cellules à défendre
+	 * @param possibleMove les déplacements possibles
+	 * @return null ou une cellule à défendre
+	 */
 	private Cell joinCellToDefend(ArrayList<Cell> toDefend, ArrayList<Cell> possibleMove) {
 		for(Cell cell : possibleMove) {
 			if(toDefend.indexOf(cell) > -1) {

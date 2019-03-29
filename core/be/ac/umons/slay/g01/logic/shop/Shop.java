@@ -6,13 +6,13 @@ package ac.umons.slay.g01.logic.shop;
 import ac.umons.slay.g01.logic.board.District;
 import ac.umons.slay.g01.logic.item.Item;
 
-/**
- * @author Justin
- *
- */
 public class Shop {
 	private Item selectedItem;
 	
+	/**
+	 * Permet d'acheter une nouvelle unité
+	 * @param district le district avec lequel payer
+	 */
 	public void buy(District district) {
 		district.setGold(district.getGold() - selectedItem.getPrice());
 		selectedItem = null;

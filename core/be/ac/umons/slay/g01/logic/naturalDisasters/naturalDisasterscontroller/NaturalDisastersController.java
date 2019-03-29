@@ -1,7 +1,6 @@
 package ac.umons.slay.g01.logic.naturalDisasters.naturalDisasterscontroller;
 
 import ac.umons.slay.g01.logic.board.Board;
-import ac.umons.slay.g01.logic.board.District;
 import ac.umons.slay.g01.logic.naturalDisasters.Blizzard;
 import ac.umons.slay.g01.logic.naturalDisasters.Drought;
 import ac.umons.slay.g01.logic.naturalDisasters.ForestFire;
@@ -44,6 +43,11 @@ public class NaturalDisastersController {
 		board.checkCapitals();
 	}
 	
+	/**
+	 * Permet de modifier la proba d'un désastre
+	 * @param disaster le désastre à modifier
+	 * @param proba la proba à placer
+	 */
 	public void setProba(String disaster, int proba) {
 		if(proba >-1 && proba <101) {
 			switch(disaster) {

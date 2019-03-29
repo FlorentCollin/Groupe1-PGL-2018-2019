@@ -23,7 +23,13 @@ public abstract class AbstractStrategy implements Strategy {
 		visitedDistricts = new HashMap<>();
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	/**
+	 * Permet de récupérer une cellule contenant un soldat améliorable
+	 * @param cell la cellule de départ
+	 * @param possibleMoves les déplacements possibles pour cette cellule
+	 * @return null ou une cellule contenant un soldat à améliorer
+	 */
 	protected Cell improveSoldier(Cell cell, ArrayList<Cell> possibleMoves) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		Soldier currentSoldier = (Soldier) cell.getItem();
@@ -40,7 +46,13 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Permet de récupérer une cellule contenant un enemi
+	 * @param cell la cellule de départ
+	 * @param possibleMoves les déplacements possibles
+	 * @return null ou une cellule contenant un enemi
+	 */
 	protected Cell killEnemy(Cell cell, ArrayList<Cell> possibleMoves) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		Player enemy;
@@ -56,6 +68,12 @@ public abstract class AbstractStrategy implements Strategy {
 		return null;
 	}
 
+	/**
+	 * Permet de récupérer une cellule contenant un arbre
+	 * @param cell la cellule de départ
+	 * @param possibleMoves les déplacement possible
+	 * @return null ou une cellule contenant un arbre
+	 */
 	protected Cell cutTrees(Cell cell, ArrayList<Cell> possibleMoves) {
 		Player currentPlayer = cell.getDistrict().getPlayer();
 		for(Cell possible : possibleMoves) {
@@ -66,6 +84,11 @@ public abstract class AbstractStrategy implements Strategy {
 		return null;
 	}
 
+	/**
+	 * Permet de connaître la somme des salaires des soldats d'un district
+	 * @param cell la cellule de départ
+	 * @return la somme des salaires
+	 */
 	protected int sommeSalary(Cell cell) {
 		District district = cell.getDistrict();
 		int sold = 0;
@@ -76,22 +99,44 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return sold;
 	}
-
+	
+	/**
+	 * Permet de connaître le nombre de cellule d'un district
+	 * @param cell la cellule de départ
+	 * @return la taille du district de la cellule
+	 */
 	protected int nCells(Cell cell) {
 		return cell.getDistrict().getCells().size();
 	}
-
+	
+	/**
+	 * Permet de déplacer un soldat
+	 * @param fromCell la cellule de départ
+	 * @param toCell la cellule d'arrivé
+	 * @param board le plateau
+	 */
 	protected void move(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
 		board.play(toCell);
 	}
 
+	/**
+	 * Permet d'acheter un soldat
+	 * @param fromCell la cellule de départ
+	 * @param toCell la cellule d'arrivé
+	 * @param board le plateau
+	 */
 	protected void buy(Cell fromCell, Cell toCell, Board board) {
 		board.setSelectedCell(fromCell);
 		if(toCell.getDistrict() != null)
 			board.play(toCell);
 	}
 
+	/**
+	 * Permet de récupérer le meilleur soldat achetable
+	 * @param district le district avec lequel acheter
+	 * @return le meilleur soldat ou null
+	 */
 	protected Soldier bestSoldier(District district) {
 		int gold = district.getGold();
 		SoldierLevel level = null;
@@ -107,6 +152,11 @@ public abstract class AbstractStrategy implements Strategy {
 		return null;
 	}
 
+	/**
+	 * Permet de récupérer les cellules contenant des soldats
+	 * @param districts la liste des districts
+	 * @return les cellules des soldats
+	 */
 	protected ArrayList<Cell> soldierCells(ArrayList<District> districts){
 		ArrayList<Cell> soldierCells = new ArrayList<>();
 		for(District district : districts) {
@@ -118,7 +168,12 @@ public abstract class AbstractStrategy implements Strategy {
 		}
 		return soldierCells;
 	}
-
+	
+	/**
+	 * Permet de récupérer un district
+	 * @param districts la liste des districts
+	 * @return un district
+	 */
 	protected District getDistrict(ArrayList<District> districts) {
 		for(int i=0; i<districts.size(); i++) {
 			if(! visitedDistricts.containsKey(districts.get(i))) {
@@ -135,6 +190,12 @@ public abstract class AbstractStrategy implements Strategy {
 		return null;
 	}
 
+	/**
+	 * Permet de récupérer une cellule aléatoire
+	 * @param cell la cellule de départ
+	 * @param possibleMoves les déplacements possible
+	 * @return null ou une cellule
+	 */
 	protected Cell randomCell(Cell cell, ArrayList<Cell> possibleMoves) {
 		int size = possibleMoves.size();
 		if(size > 0) {

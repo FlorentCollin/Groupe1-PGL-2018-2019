@@ -28,6 +28,12 @@ public abstract class Item {
 		
 	}
 	
+	/**
+	 * Permet de savoir si l'item est supérieur à un autre
+	 * @param item l'autre item
+	 * @return true si l'item est supérieur
+	 * 			false sinon
+	 */
 	public boolean isStronger(Item item) {
 		if(this.isImprovable() && item.isImprovable()) {
 			return this.level.compareTo(item) > 0;
@@ -35,6 +41,12 @@ public abstract class Item {
 		return false;
 	}
 	
+	/**
+	 * Permet de savoir si l'item est égal à un autre item
+	 * @param item l'autre item
+	 * @return true si les deux items sont égaux
+	 * 			false sinon
+	 */
 	public boolean isEqual(Item item) {
 		if(this.isImprovable() && item.isImprovable()) {
 			return this.level.compareTo(item) == 0; 
@@ -47,15 +59,6 @@ public abstract class Item {
 	 * */
 	public void improve() {
 		
-	}
-
-	public void update() {
-		movable = false;
-		buyable = false;
-		improvable = false;
-		hasMoved = false;
-		hasSalary = false;
-		maxMove = 0;
 	}
 	
 	public Level getLevel() {
