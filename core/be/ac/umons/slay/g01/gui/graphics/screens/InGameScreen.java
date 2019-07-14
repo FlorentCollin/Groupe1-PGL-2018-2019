@@ -125,10 +125,7 @@ public class InGameScreen extends MenuScreen implements InputProcessor {
         hud.getDistrictInfo().endTurn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                for(int i = 0; i < 200; i++) {
-                    messageSender.send(new TextMessage("nextPlayer"));
-
-                }
+                messageSender.send(new TextMessage("nextPlayer"));
             }
         });
         Hud.DisastersInfo disaster = hud.getDisastersInfo();
