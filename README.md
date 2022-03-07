@@ -1,5 +1,5 @@
 # Slay
-Slay is a turn base strategy game created for the Software Engineering course at UMons. The goal of this game is to capture regions of a map by moving and buying soldiers. 
+Slay is a turn-based strategy game created for the Software Engineering course at UMons. The goal of this game is to capture regions of a map by moving and buying soldiers. 
 This game is playable offline and online versus up to 6 players.
 
 ## Screenshots
